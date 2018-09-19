@@ -1,0 +1,199 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "ODIN Tutorial\n\n\nWe recommend logging into ODIN while you work through the tutorial. \nodin.opturo.com/ODIN/ODIN_LandingPage/index.html\n\n\nWhat is ODIN?\n\n\nODIN is Opturo's web application for performance & attribution, composite management, and general financial data management.\n\n\nKey Features:\n\n\n\n\nAvailable on our cloud hosted platform or locally deployed platforms\n\n\nSimple and easy to use\n\n\nAdditional custom processes can be run through ODIN\n\n\n\n\nODIN Applications\n\n\n\n\nPerformance & Attribution\n\n\nComposite Management\n\n\nProcess Manager (Section under development)\n\n\nData Manager (Section under development)\n\n\nUser Files (Section under development)",
+            "title": "Home"
+        },
+        {
+            "location": "/#odin-tutorial",
+            "text": "We recommend logging into ODIN while you work through the tutorial.  odin.opturo.com/ODIN/ODIN_LandingPage/index.html",
+            "title": "ODIN Tutorial"
+        },
+        {
+            "location": "/#what-is-odin",
+            "text": "ODIN is Opturo's web application for performance & attribution, composite management, and general financial data management.  Key Features:   Available on our cloud hosted platform or locally deployed platforms  Simple and easy to use  Additional custom processes can be run through ODIN",
+            "title": "What is ODIN?"
+        },
+        {
+            "location": "/#odin-applications",
+            "text": "Performance & Attribution  Composite Management  Process Manager (Section under development)  Data Manager (Section under development)  User Files (Section under development)",
+            "title": "ODIN Applications"
+        },
+        {
+            "location": "/user-guides/performance-attribution/",
+            "text": "Performance & Attribution\n\n\nWe recommend logging into ODIN while you work through the tutorial. \nodin.opturo.com/ODIN/ODIN_LandingPage/index.html\n\n\nPerformance & Attribution Features\n\n\nKey Features:\n\n\n\n\nAbility to drill down into calculations and export data to Excel or CSV\n\n\nInteractive charts and data visualizations to analyze performance and attribution\n\n\nBatch reporting can be set for daily or monthly reporting\n\n\n\n\nGetting started\n\n\nLogging In\n\n\nLog in to your ODIN account. You may have been provided a link that doesn't show an entity code. If so, just enter the User Name and Password provided to you.\n\n\n\n\nIf you are unsure of your credentials or experiencing problems logging in, please reach out to Opturo support.\n\n\nOnce you successfuly login, you will see the ODIN platform and the applications you are permissioned to use. Select Performance & Attribution.\n\n\n\n\nGenerating Reports\n\n\nThe Performance & Attribution application is an interface for running performance & attribution reports given the user's fund and benchmark data. The settings that will be described below give the users powerful analytics and tools to drill down into their data.\n\n\nIn this section, we explain how to select the settings for a report and generate it.\n\n\nGeneral Settings\n\n\nThe first tab in the application is the \nGeneral\n settings tab. These settings are used to select the fund/benchmark/market you would like to analyze, as well as the time period for your report. There are additional settings that will be covered in the following section.\n\n\nPortfolio\n\n\n\n\nFund: Select a fund from the list of available funds. Use the tree display to find the fund you are looking for.\n\n\n\n\n\n\n\n\nBenchmark: Select a benchmark from the list of avaiable benchmarks. Be sure that there is benchmark data available for the same time period as the fund.\n\n\n\n\n\n\n\n\nMarket: Select a market from the list of available markets. We recommend selecting the same benchmark as you did in the Benchmark dropdown.\n\n\n\n\nReporting Period\n\n\nThe Reporting Period section is used for selecting the date range and frequency of the report you want to produce. Use the Date Range button and select a range in which there is fund and benchmark data.\n\n\n\n\nReport Start Date: Enter the starting date of the report by entering a date, or using the calendar dropdown.\n\n\n\n\n\n\n\n\n\n\nReport End Date: Enter the end date of the report by entering a date, or using the calendar dropdown.\n\n\n\n\n\n\nReport Frequency: Select the appropriate frequency of the data used in the report. If you have provided monthly holdings and market values, you will use Monthly. If you have provided daily or business day frequency, then you will select the respective frequency.\n\n\n\n\n\n\n\n\n\n\nHoliday Country: If your data has gaps in it's holdings on certain holidays, then select the country which adheres to those holiday conventions. If your data does not have holiday gaps, select None.\n\n\n\n\nMulti-Factor Attribution Model\n\n\nThis section is under development.\n\n\nFixed Income Analysis\n\n\nThis section is under development.\n\n\nRisk Characteristics\n\n\nThese are list of available risk statistics that can be included in your report. Click the checkbox next to \nRisk Types\n to select all risk statistics.\n\n\n\n\nSegment Settings\n\n\nThe second tab in the application is the \nSegment\n settings tab. These settings are used to segment performance given the chosen fields. There are also decision attribution options if you're data has been configured to run attribution.\n\n\nCascading Decision Tree\n\n\nThis tree format lists the available segments that can be used in your performance & attribution report. There can be both discrete and continuous segments depending on your configuration. Use your mouse to drag the desired segment into the \nSegment Selections\n box.\n\n\n\n\nSegment Selections\n\n\nUsers can reorder the segments using their mouse to change the order of the segments shown in the reports. This is important when thinking about decision attribution and the order your investment decisions. Use the delete key to remove segments.\n\n\n\n\nDecision Attribution Options\n\n\nThese options are used for controlling the type of Decision Attribution you would like calculated. For basic decision attribution, given the segments selected, check the \nPerform Decision Attribution\n box.\n\n\n\n\nReporting Settings\n\n\nThe third tab in the application is the \nReporting\n settings tab. This tab is used to control the appearance of the report, and toggle on/off certain functionality of the report. Users do not change these settings often, and many settings can be specific to the configuration of your data.\n\n\n\n\nReporting Currency\n\n\nSelect the currency used in the report from the dropdown.\n\n\nPerformance Calculation Methodology\n\n\nSelect \nBuy & Hold\n if your data does not have any transaction or flow data. Use the other methodologies if you have transaction data. For more information, request documentation from Opturo support.\n\n\nRuntime Options\n\n\nThese are special settings used for certain configurations. If you are unfamiliar with the settings in regards to your data, you probably don't need to use them.\n\n\nData Export Options\n\n\n\n\nAnnualized Returns: Select this box to annualize the returns in the report.\n\n\nTime-series Analytics Mode: Select this box to allow drill downs into the time series of each security in the fund and benchmark.\n\n\nWeights & Returns Only Report: Select this box if you only want the report to have weights and returns. We recommend unselecting this to give full data insights.\n\n\n\n\nAnalytics Reporting Options\n\n\nThis section is under development.\n\n\nMarket & Trade Data Audit\n\n\nClick the \nEnable Audit\n check box to run the report directly from the database. We recommend leaving this unchecked, so the report will run faster from the cache.\n\n\nAdditional Settings\n\n\nHere we can define custom settings for the report for each client.\n\n\nSaving & Loading a Report\n\n\nUsers can save the settings they've selected, so that the same report can be run the next time they log in. Use the dropdown menu in the \nRun Analysis\n button to save the settings.\n\n\n\n\nEnter a report name, and select \nLoad at Start\n if you'd like these settings to be loaded when you first open the Performance & Attribution application.\n\n\n\n\nWhen you want to load other saved settings, select \nLoad Settings\n and select the report you saved.\n\n\n\n\nRunning a Report\n\n\nAfter you are satisfied with your settings you have selected, click the \nRun Analysis\n button in the bottom right of the application.\n\n\n\n\nViewing the Report\n\n\nAfter you have selected \nRun Analysis\n and the process has finished running, you should see a new window with the fund and benchmark name, as well as the time period of the report. The entire report is exportable to Excel by clicking on the \nView Reports\n dropdown in the lower right, and selecting \nOpturo Excel Report\n.\n\n\nExecutive Summary\n\n\nThe \nExecutive Summary\n page gives statistics on the cumulative returns of the fund and benchmark over the selected time period. There are also many other useful statistics to analyze the time period.\n\n\n\n\n\n\nPeriod\n\n\nThis page will be called \nDaily\n or \nMonthly\n depending on the frequency of your data. This lists the returns, market values, contributions, among other things, for each date in the time period.\n\n\n\n\nYou can export this spreadsheet to Excel by selecting the Excel Icon in the lower right.\n\n\n\n\nAsset Contribution\n\n\nThis section is under development.\n\n\nSegment Attribution - Rollup's\n\n\nThis section is under development.\n\n\nCharts\n\n\nThis section is under development.\n\n\nDebug Data\n\n\nThis section is under development.",
+            "title": "Performance & Attribution"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#performance-attribution",
+            "text": "We recommend logging into ODIN while you work through the tutorial.  odin.opturo.com/ODIN/ODIN_LandingPage/index.html",
+            "title": "Performance &amp; Attribution"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#performance-attribution-features",
+            "text": "Key Features:   Ability to drill down into calculations and export data to Excel or CSV  Interactive charts and data visualizations to analyze performance and attribution  Batch reporting can be set for daily or monthly reporting",
+            "title": "Performance &amp; Attribution Features"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#getting-started",
+            "text": "",
+            "title": "Getting started"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#logging-in",
+            "text": "Log in to your ODIN account. You may have been provided a link that doesn't show an entity code. If so, just enter the User Name and Password provided to you.   If you are unsure of your credentials or experiencing problems logging in, please reach out to Opturo support.  Once you successfuly login, you will see the ODIN platform and the applications you are permissioned to use. Select Performance & Attribution.",
+            "title": "Logging In"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#generating-reports",
+            "text": "The Performance & Attribution application is an interface for running performance & attribution reports given the user's fund and benchmark data. The settings that will be described below give the users powerful analytics and tools to drill down into their data.  In this section, we explain how to select the settings for a report and generate it.",
+            "title": "Generating Reports"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#general-settings",
+            "text": "The first tab in the application is the  General  settings tab. These settings are used to select the fund/benchmark/market you would like to analyze, as well as the time period for your report. There are additional settings that will be covered in the following section.",
+            "title": "General Settings"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#portfolio",
+            "text": "Fund: Select a fund from the list of available funds. Use the tree display to find the fund you are looking for.     Benchmark: Select a benchmark from the list of avaiable benchmarks. Be sure that there is benchmark data available for the same time period as the fund.     Market: Select a market from the list of available markets. We recommend selecting the same benchmark as you did in the Benchmark dropdown.",
+            "title": "Portfolio"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#reporting-period",
+            "text": "The Reporting Period section is used for selecting the date range and frequency of the report you want to produce. Use the Date Range button and select a range in which there is fund and benchmark data.   Report Start Date: Enter the starting date of the report by entering a date, or using the calendar dropdown.      Report End Date: Enter the end date of the report by entering a date, or using the calendar dropdown.    Report Frequency: Select the appropriate frequency of the data used in the report. If you have provided monthly holdings and market values, you will use Monthly. If you have provided daily or business day frequency, then you will select the respective frequency.      Holiday Country: If your data has gaps in it's holdings on certain holidays, then select the country which adheres to those holiday conventions. If your data does not have holiday gaps, select None.",
+            "title": "Reporting Period"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#multi-factor-attribution-model",
+            "text": "This section is under development.",
+            "title": "Multi-Factor Attribution Model"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#fixed-income-analysis",
+            "text": "This section is under development.",
+            "title": "Fixed Income Analysis"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#risk-characteristics",
+            "text": "These are list of available risk statistics that can be included in your report. Click the checkbox next to  Risk Types  to select all risk statistics.",
+            "title": "Risk Characteristics"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#segment-settings",
+            "text": "The second tab in the application is the  Segment  settings tab. These settings are used to segment performance given the chosen fields. There are also decision attribution options if you're data has been configured to run attribution.",
+            "title": "Segment Settings"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#cascading-decision-tree",
+            "text": "This tree format lists the available segments that can be used in your performance & attribution report. There can be both discrete and continuous segments depending on your configuration. Use your mouse to drag the desired segment into the  Segment Selections  box.",
+            "title": "Cascading Decision Tree"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#segment-selections",
+            "text": "Users can reorder the segments using their mouse to change the order of the segments shown in the reports. This is important when thinking about decision attribution and the order your investment decisions. Use the delete key to remove segments.",
+            "title": "Segment Selections"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#decision-attribution-options",
+            "text": "These options are used for controlling the type of Decision Attribution you would like calculated. For basic decision attribution, given the segments selected, check the  Perform Decision Attribution  box.",
+            "title": "Decision Attribution Options"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#reporting-settings",
+            "text": "The third tab in the application is the  Reporting  settings tab. This tab is used to control the appearance of the report, and toggle on/off certain functionality of the report. Users do not change these settings often, and many settings can be specific to the configuration of your data.",
+            "title": "Reporting Settings"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#reporting-currency",
+            "text": "Select the currency used in the report from the dropdown.",
+            "title": "Reporting Currency"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#performance-calculation-methodology",
+            "text": "Select  Buy & Hold  if your data does not have any transaction or flow data. Use the other methodologies if you have transaction data. For more information, request documentation from Opturo support.",
+            "title": "Performance Calculation Methodology"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#runtime-options",
+            "text": "These are special settings used for certain configurations. If you are unfamiliar with the settings in regards to your data, you probably don't need to use them.",
+            "title": "Runtime Options"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#data-export-options",
+            "text": "Annualized Returns: Select this box to annualize the returns in the report.  Time-series Analytics Mode: Select this box to allow drill downs into the time series of each security in the fund and benchmark.  Weights & Returns Only Report: Select this box if you only want the report to have weights and returns. We recommend unselecting this to give full data insights.",
+            "title": "Data Export Options"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#analytics-reporting-options",
+            "text": "This section is under development.",
+            "title": "Analytics Reporting Options"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#market-trade-data-audit",
+            "text": "Click the  Enable Audit  check box to run the report directly from the database. We recommend leaving this unchecked, so the report will run faster from the cache.",
+            "title": "Market &amp; Trade Data Audit"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#additional-settings",
+            "text": "Here we can define custom settings for the report for each client.",
+            "title": "Additional Settings"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#saving-loading-a-report",
+            "text": "Users can save the settings they've selected, so that the same report can be run the next time they log in. Use the dropdown menu in the  Run Analysis  button to save the settings.   Enter a report name, and select  Load at Start  if you'd like these settings to be loaded when you first open the Performance & Attribution application.   When you want to load other saved settings, select  Load Settings  and select the report you saved.",
+            "title": "Saving &amp; Loading a Report"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#running-a-report",
+            "text": "After you are satisfied with your settings you have selected, click the  Run Analysis  button in the bottom right of the application.",
+            "title": "Running a Report"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#viewing-the-report",
+            "text": "After you have selected  Run Analysis  and the process has finished running, you should see a new window with the fund and benchmark name, as well as the time period of the report. The entire report is exportable to Excel by clicking on the  View Reports  dropdown in the lower right, and selecting  Opturo Excel Report .",
+            "title": "Viewing the Report"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#executive-summary",
+            "text": "The  Executive Summary  page gives statistics on the cumulative returns of the fund and benchmark over the selected time period. There are also many other useful statistics to analyze the time period.",
+            "title": "Executive Summary"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#period",
+            "text": "This page will be called  Daily  or  Monthly  depending on the frequency of your data. This lists the returns, market values, contributions, among other things, for each date in the time period.   You can export this spreadsheet to Excel by selecting the Excel Icon in the lower right.",
+            "title": "Period"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#asset-contribution",
+            "text": "This section is under development.",
+            "title": "Asset Contribution"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#segment-attribution-rollups",
+            "text": "This section is under development.",
+            "title": "Segment Attribution - Rollup's"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#charts",
+            "text": "This section is under development.",
+            "title": "Charts"
+        },
+        {
+            "location": "/user-guides/performance-attribution/#debug-data",
+            "text": "This section is under development.",
+            "title": "Debug Data"
+        },
+        {
+            "location": "/user-guides/composite-management/",
+            "text": "Composite Management\n\n\nWe recommend logging into ODIN while you work through the tutorial. \nodin.opturo.com/ODIN/ODIN_LandingPage/index.html\n\n\nThis section is under development.",
+            "title": "Composite Management"
+        },
+        {
+            "location": "/user-guides/composite-management/#composite-management",
+            "text": "We recommend logging into ODIN while you work through the tutorial.  odin.opturo.com/ODIN/ODIN_LandingPage/index.html  This section is under development.",
+            "title": "Composite Management"
+        }
+    ]
+}

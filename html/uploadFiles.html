@@ -1,0 +1,29 @@
+<!-- Upload Application -->
+<!-- Displays the form -->
+<div id="uploadPanel" class="container-fluid" style="display:none;">
+   <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+         <div class="panel panel-default">
+            <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Upload</strong> <span class="applicationAndModelName"></span></div>
+            <div class="panel-body" style="margin:10px;">
+               <!--This contains the form for uploading files-->
+               <form id="fileUpload_form" method="post">
+                  <input type="hidden" name="action" value="odinLite.uploadFiles.uploadFilesToStagingArea"/>
+                  <div class="col-md-12">
+                     <label class="tr">Select Files to Upload </label><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;left:3px;" onclick="odinLite_uploadFiles.displayHelpLink('UPLOAD_FILES','Upload Help');">
+                     <input style="width:100%;" type="file" class="kendo-file" name="uploadFiles" id="uploadFiles">
+
+                     <button onclick="odinLite.loadModelCacheApplication();" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary">< Previous</button>
+                     <label style="margin: 20px 5px 0 20px;" for="uploadFiles_templateCheck" class="tr">Uploading a Template File: </label>
+                     <input style="margin: 20px 5px 0 0;" type="checkbox" id="uploadFiles_templateCheck" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TEMPLATE_FILE','Uploading a Template File');">
+					 <!--<input style="margin: 20px 5px 0 0;" type="checkbox" id="uploadFiles_templateCheck"><label for="uploadFiles_templateCheck">Uploading a Template File <img src="../images/help.png" style="cursor:pointer;" onclick="odinLite_uploadFiles.displayHelpLink('TEMPLATE_FILE','Uploading a Template File');"></label>-->
+                     <button style="float:right;margin:10px 0 10px 0;" type="submit" class="tr btn btn-primary">Upload Data</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class="col-md-3"></div>
+   </div>
+</div>

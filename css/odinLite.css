@@ -1,0 +1,112 @@
+/* Update the loading image */
+.k-loading-mask .k-loading-image {    background-image:url('../../images/128_loading.gif'); }
+
+/* Background */
+.desktopBackground{
+    background-image:url('../../images/watermark.png');
+    background-repeat:no-repeat;
+    background-position:50% 62%;
+}
+
+/* For the tree icons */
+.leafArrowCls{ background-image:url('../../images/16_file.png'); }
+.folderCls{ background-image:url('../../images/16_folder.png'); }
+
+/* Borders for columns */
+.requiredColumnBorder {
+    border: 1px solid #9a2830;
+}
+.customColumnBorder {
+    border: 1px solid #66ccff;
+}
+
+.fieldlist {
+    margin: 0 0 -2em;
+    padding: 0;
+}
+
+.fieldlist li {
+    list-style: none;
+    padding-bottom: 20px;
+}
+
+.fieldlist label {
+    display: block;
+    padding-bottom: 1px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #444;
+}
+
+/* Badge for notifications */
+.nav-badge-blur{
+    background: #6c6c6c;
+    position:relative;
+    top: -15px;
+    left: -18px;
+}
+.nav-badge-notify{
+    background:red;
+    position:relative;
+    top: -15px;
+    left: -18px;
+}
+
+/* Callouts */
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+.bs-callout code {
+    border-radius: 3px;
+}
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+.bs-callout-default {
+    border-left-color: #777;
+}
+.bs-callout-default h4 {
+    color: #777;
+}
+.bs-callout-primary {
+    border-left-color: #428bca;
+}
+.bs-callout-primary h4 {
+    color: #428bca;
+}
+.bs-callout-success {
+    border-left-color: #5cb85c;
+}
+.bs-callout-success h4 {
+    color: #5cb85c;
+}
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+.bs-callout-danger h4 {
+    color: #d9534f;
+}
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+.bs-callout-warning h4 {
+    color: #f0ad4e;
+}
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+.bs-callout-info h4 {
+    color: #5bc0de;
+}
+/* End - Callouts */

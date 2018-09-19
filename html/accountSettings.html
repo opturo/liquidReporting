@@ -1,0 +1,137 @@
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li id="li_accountSettings_home" class="active"><a data-toggle="tab" href="#accountSettings_home"><i class="tr fa fa-home fa-fw"></i> Home</a></li>
+            <!--<li id="li_accountSettings_reportPackages"><a data-toggle="tab" href="#accountSettings_reportPackages" ><i class="tr fa fa-book fa-fw"></i> Reporting Packages</a></li>-->
+            <li id="li_accountSettings_billing"><a data-toggle="tab" href="#accountSettings_billing" ><i class="tr fa fa-bar-chart-o fa-fw"></i> Billing</a></li>
+            <li id="li_accountSettings_settings"><a data-toggle="tab" href="#accountSettings_settings"><i class="tr fa fa-cogs fa-fw"></i> Account Settings</a></li>
+            <li id="li_accountSettings_password"><a data-toggle="tab" href="#accountSettings_password"><i class="tr fa fa-key fa-fw"></i> Change Password</a></li>
+		    <li id="li_accountSettings_support"><a data-toggle="tab" href="#accountSettings_support"><i class="tr fa fa-comment fa-fw"></i> Submit Support Ticket</a></li>
+       </ul>
+   </div>
+   <div class="col-md-6 well">
+       <div class="tab-content">
+           <div id="accountSettings_home" class="tab-pane active" style="height:200px">
+               <h4 class="tr">Account Information</h4>
+               <table style="width:400px;margin:5px;">
+                   <tr><td style="padding-left:5px;padding-top:3px;font-weight: bold;" class="tr">First Name:</td><td id="accountSettings_firstName"></td></tr>
+                   <tr><td style="padding-left:5px;font-weight: bold;" class="tr">Last Name:</td><td id="accountSettings_lastName"></td></tr>
+                   <tr><td style="padding-left:5px;font-weight: bold;" class="tr">User Name:</td><td id="accountSettings_userName"></td></tr>
+                   <tr><td style="padding-left:5px;font-weight: bold;" class="tr">Entity Code:</td><td id="accountSettings_entityCode"></td></tr>
+                   <tr><td style="padding-left:5px;font-weight: bold;" class="tr">Build Date:</td><td id="accountSettings_buildDate"></td></tr>
+                   <tr><td style="padding-left:5px;padding-bottom:3px;font-weight: bold;" class="tr">Version:</td><td id="accountSettings_viaVersion"></td></tr>
+               </table>
+           </div>
+           <!--
+           <div id="accountSettings_reportPackages" class="tab-pane" style="height:200px">
+               <h4 class="tr">Report Packages</h4>
+               <span class="tr">Placeholder for report packages</span>
+           </div>
+           -->
+            <div id="accountSettings_billing" class="tab-pane" style="height:200px">
+                <h4 class="tr">Billing</h4>
+                <span class="tr">Placeholder for billing information</span>
+            </div>
+            <div id="accountSettings_settings" class="tab-pane" style="height:200px">
+                <h4 class="tr">User Specific Settings</h4>
+                <div id="accountSettings_languages" style="display:none;">
+                    <label for="accountSettings_languageList" style="margin-right:10px;margin-bottom:20px;width:150px;" class="tr">Language </label>
+                    <input id="accountSettings_languageList" style="width:225px;"/>
+                </div>
+                <label for="accountSettings_dateFormat" style="margin-right:10px;width:150px;margin-bottom:20px;" class="tr">Default Date Format </label>
+                <select style="width:225px;" id="accountSettings_dateFormat">
+                    <option value="dd-MMM-yyyy">dd-MMM-yyyy (15-Jan-2016)</option>
+                    <option value="MM/dd/yyyy">MM/dd/yyyy (01/15/2016)</option>
+                    <option value="dd.MMM.yyyy">dd.MMM.yyyy (15.Jan.2016)</option>
+                    <option value="yyyy-MMM-dd">yyyy-MMM-dd (2016-Jan-15)</option>
+                    <option value="yyyyMMdd">yyyyMMdd (20160115)</option>
+                    <option value="yyyy-MM-dd">yyyy-MM-dd (2016-01-15)</option>
+                    <option value="MM-dd-yyyy">MM-dd-yyyy (01-15-2016)</option>
+                </select>
+                <br/>
+                <label for="accountSettings_theme" style="margin-right:10px;width:150px;" class="tr">Theme </label>
+                <select style="width:225px;" id="accountSettings_theme">
+                    <option value="classic">Classic</option>
+                    <option value="dark">Dark</option>
+                    <option value="crisp">Crisp</option>
+                    <option value="orange">Orange</option>
+                    <option value="paper">Paper</option>
+                </select>
+                <button id="accountSettings_saveButton" style="position:absolute;right:0;bottom:0;margin:10px;" type="button" class="tr btn btn-primary">Save</button>
+            </div>
+            <div id="accountSettings_password" class="tab-pane" style="height:275px">
+                <h4 class="tr">Password Settings</h4>
+                <form>
+                    <div class="form-group">
+                        <label for="accountSettings_oldPassword" style="width:200px;" class="tr">Old Password</label>
+                        <input id="accountSettings_oldPassword" class="k-textbox" type="password"/>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <label for="accountSettings_newPassword" style="width:200px;" class="tr">New Password</label>
+                        <input id="accountSettings_newPassword" class="k-textbox" type="password"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountSettings_confirmNewPassword" style="width:200px;" class="tr">Confirm New Password</label>
+                        <input id="accountSettings_confirmNewPassword" class="k-textbox" type="password"/>
+                    </div>
+                    <div id="accountSettings_passwordErrorAlert" class="alert alert-warning alert-dismissible" role="alert" style="width:450px;display:none;">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <span id="accountSettings_passwordErrorAlert_text"></span>
+                    </div>
+                    <button id="accountSettings_updatePasswordButton" style="position:absolute;right:0;bottom:0;margin:10px;" type="button" class="tr btn btn-primary">Update Password</button>
+                </form>
+            </div>
+
+            <div id="accountSettings_support" class="tab-pane" style="height:600px">
+            <div>
+              <h4>Before you submit your ticket...</h4>
+              <h5><a href="#">Have you tried the tour functionality to demo the environment?</a></h5>
+              <h5><a href="#">Have you looked through the user guide?</a></h5>
+            </div>
+
+            <h4 style="text-align:center;">Create Ticket</h4>
+            <form name="contact_form" id="contact_form" action="submission.php" method="post">
+              <input type="hidden" name="type" id="type" value="contact" />
+              <div class="form-group">
+                <input name= "title" type="title" class="form-control" id="title" placeholder="Title">
+              </div>
+              <div class="form-group">
+                <select name="category" class="form-control">
+                  <option value="" disabled selected>Category</option>
+                  <option value="Functionality">Functionality</option>
+                  <option value="System Bug">System Bug</option>
+                  <option value="Custom Feature Request">Custom Feature Request</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <select name="application" class="form-control">
+                  <option value="" disabled selected>Application</option>
+                  <option value="Composite Construction">Composite Construction</option>
+                  <option value="Composite Reporting">Composite Reporting</option>
+                  <option value="Ex-Post Analytics">Ex-Post Analytics</option>
+                  <option value="Custom Benchmark">Custom Benchmark</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="btn btn-default">
+                  Browse <input type="file" chidden>
+                </label>
+              </div>
+              <div class="form-group">
+                <label>Please provide as much detail as possible about the ticket.</label>
+                <textarea name="comment" class="form-control" rows="3" placeholder="Additional Information"></textarea>
+              </div>
+              <br></br>
+              <div class="form-group">
+                 <input type="button" value="Submit Ticket" onclick="supportTicket.getTicket();" />
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>

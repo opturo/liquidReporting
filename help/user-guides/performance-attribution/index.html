@@ -1,0 +1,972 @@
+
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A tutorial for Opturo's ODIN platform">
+      
+      
+        <link rel="canonical" href="http://www.opturo.com/websiteTest/ODIN_Tutorial/user-guides/performance-attribution/">
+      
+      
+        <meta name="author" content="Chris Fallon">
+      
+      
+        <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      
+      <meta name="generator" content="mkdocs-0.16.2, mkdocs-material-1.3.0">
+    
+    
+      
+        <title>Performance & Attribution - ODIN Tutorial</title>
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr-56ade86843.js"></script>
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application-1d1da4857d.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/application-66fa0d9bba.palette.css">
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    
+    
+  </head>
+  
+  
+  
+  
+    <body data-md-color-primary="blue-grey" data-md-color-accent="deep-orange">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
+    <label class="md-overlay" data-md-component="overlay" for="drawer"></label>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <a href="../.." title="ODIN Tutorial" class="md-icon md-icon--home md-header-nav__button">
+          </a>
+        
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <span class="md-flex__ellipsis md-header-nav__title">
+          
+            
+              
+                <span class="md-header-nav__parent">
+                  User Guides
+                </span>
+              
+            
+            Performance & Attribution
+          
+        </span>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
+          
+<div class="md-search" data-md-component="search">
+  <div class="md-search__overlay"></div>
+  <div class="md-search__inner">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" accesskey="s" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query">
+      <label class="md-icon md-search__icon" for="search"></label>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <div class="md-header-nav__source">
+          
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="drawer">
+    
+      <i class="md-icon md-icon--home md-nav__button"></i>
+    
+    ODIN Tutorial
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      User Guides
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        User Guides
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="toc">
+        Performance & Attribution
+      </label>
+    
+    <a href="./" title="Performance & Attribution" class="md-nav__link md-nav__link--active">
+      Performance & Attribution
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#performance-attribution-features" title="Performance &amp; Attribution Features" class="md-nav__link">
+    Performance &amp; Attribution Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" title="Getting started" class="md-nav__link">
+    Getting started
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging-in" title="Logging In" class="md-nav__link">
+    Logging In
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generating-reports" title="Generating Reports" class="md-nav__link">
+    Generating Reports
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-settings" title="General Settings" class="md-nav__link">
+    General Settings
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portfolio" title="Portfolio" class="md-nav__link">
+    Portfolio
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporting-period" title="Reporting Period" class="md-nav__link">
+    Reporting Period
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-factor-attribution-model" title="Multi-Factor Attribution Model" class="md-nav__link">
+    Multi-Factor Attribution Model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed-income-analysis" title="Fixed Income Analysis" class="md-nav__link">
+    Fixed Income Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risk-characteristics" title="Risk Characteristics" class="md-nav__link">
+    Risk Characteristics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segment-settings" title="Segment Settings" class="md-nav__link">
+    Segment Settings
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cascading-decision-tree" title="Cascading Decision Tree" class="md-nav__link">
+    Cascading Decision Tree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segment-selections" title="Segment Selections" class="md-nav__link">
+    Segment Selections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-attribution-options" title="Decision Attribution Options" class="md-nav__link">
+    Decision Attribution Options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporting-settings" title="Reporting Settings" class="md-nav__link">
+    Reporting Settings
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reporting-currency" title="Reporting Currency" class="md-nav__link">
+    Reporting Currency
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-calculation-methodology" title="Performance Calculation Methodology" class="md-nav__link">
+    Performance Calculation Methodology
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-options" title="Runtime Options" class="md-nav__link">
+    Runtime Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-export-options" title="Data Export Options" class="md-nav__link">
+    Data Export Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analytics-reporting-options" title="Analytics Reporting Options" class="md-nav__link">
+    Analytics Reporting Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#market-trade-data-audit" title="Market &amp; Trade Data Audit" class="md-nav__link">
+    Market &amp; Trade Data Audit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-settings" title="Additional Settings" class="md-nav__link">
+    Additional Settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#saving-loading-a-report" title="Saving &amp; Loading a Report" class="md-nav__link">
+    Saving &amp; Loading a Report
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-a-report" title="Running a Report" class="md-nav__link">
+    Running a Report
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-the-report" title="Viewing the Report" class="md-nav__link">
+    Viewing the Report
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#executive-summary" title="Executive Summary" class="md-nav__link">
+    Executive Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#period" title="Period" class="md-nav__link">
+    Period
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asset-contribution" title="Asset Contribution" class="md-nav__link">
+    Asset Contribution
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segment-attribution-rollups" title="Segment Attribution - Rollup's" class="md-nav__link">
+    Segment Attribution - Rollup's
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#charts" title="Charts" class="md-nav__link">
+    Charts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-data" title="Debug Data" class="md-nav__link">
+    Debug Data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../composite-management/" title="Composite Management" class="md-nav__link">
+      Composite Management
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#performance-attribution-features" title="Performance &amp; Attribution Features" class="md-nav__link">
+    Performance &amp; Attribution Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" title="Getting started" class="md-nav__link">
+    Getting started
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logging-in" title="Logging In" class="md-nav__link">
+    Logging In
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generating-reports" title="Generating Reports" class="md-nav__link">
+    Generating Reports
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#general-settings" title="General Settings" class="md-nav__link">
+    General Settings
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#portfolio" title="Portfolio" class="md-nav__link">
+    Portfolio
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporting-period" title="Reporting Period" class="md-nav__link">
+    Reporting Period
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-factor-attribution-model" title="Multi-Factor Attribution Model" class="md-nav__link">
+    Multi-Factor Attribution Model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed-income-analysis" title="Fixed Income Analysis" class="md-nav__link">
+    Fixed Income Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risk-characteristics" title="Risk Characteristics" class="md-nav__link">
+    Risk Characteristics
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segment-settings" title="Segment Settings" class="md-nav__link">
+    Segment Settings
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cascading-decision-tree" title="Cascading Decision Tree" class="md-nav__link">
+    Cascading Decision Tree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segment-selections" title="Segment Selections" class="md-nav__link">
+    Segment Selections
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-attribution-options" title="Decision Attribution Options" class="md-nav__link">
+    Decision Attribution Options
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reporting-settings" title="Reporting Settings" class="md-nav__link">
+    Reporting Settings
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reporting-currency" title="Reporting Currency" class="md-nav__link">
+    Reporting Currency
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-calculation-methodology" title="Performance Calculation Methodology" class="md-nav__link">
+    Performance Calculation Methodology
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-options" title="Runtime Options" class="md-nav__link">
+    Runtime Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-export-options" title="Data Export Options" class="md-nav__link">
+    Data Export Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analytics-reporting-options" title="Analytics Reporting Options" class="md-nav__link">
+    Analytics Reporting Options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#market-trade-data-audit" title="Market &amp; Trade Data Audit" class="md-nav__link">
+    Market &amp; Trade Data Audit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-settings" title="Additional Settings" class="md-nav__link">
+    Additional Settings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#saving-loading-a-report" title="Saving &amp; Loading a Report" class="md-nav__link">
+    Saving &amp; Loading a Report
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-a-report" title="Running a Report" class="md-nav__link">
+    Running a Report
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-the-report" title="Viewing the Report" class="md-nav__link">
+    Viewing the Report
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#executive-summary" title="Executive Summary" class="md-nav__link">
+    Executive Summary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#period" title="Period" class="md-nav__link">
+    Period
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asset-contribution" title="Asset Contribution" class="md-nav__link">
+    Asset Contribution
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segment-attribution-rollups" title="Segment Attribution - Rollup's" class="md-nav__link">
+    Segment Attribution - Rollup's
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#charts" title="Charts" class="md-nav__link">
+    Charts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-data" title="Debug Data" class="md-nav__link">
+    Debug Data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="performance-attribution">Performance &amp; Attribution</h1>
+<p>We recommend logging into ODIN while you work through the tutorial. <a href="http://odin.opturo.com/ODIN/ODIN_LandingPage/index.html">odin.opturo.com/ODIN/ODIN_LandingPage/index.html</a></p>
+<h2 id="performance-attribution-features">Performance &amp; Attribution Features</h2>
+<p>Key Features:</p>
+<ul>
+<li>Ability to drill down into calculations and export data to Excel or CSV</li>
+<li>Interactive charts and data visualizations to analyze performance and attribution</li>
+<li>Batch reporting can be set for daily or monthly reporting</li>
+</ul>
+<h2 id="getting-started">Getting started</h2>
+<h3 id="logging-in">Logging In</h3>
+<p>Log in to your ODIN account. You may have been provided a link that doesn't show an entity code. If so, just enter the User Name and Password provided to you.</p>
+<p><img alt="ODIN_Login" src="../../images/odin_login.png" /></p>
+<p>If you are unsure of your credentials or experiencing problems logging in, please reach out to Opturo support.</p>
+<p>Once you successfuly login, you will see the ODIN platform and the applications you are permissioned to use. Select Performance &amp; Attribution.</p>
+<p><img alt="Select Performance &amp; Attribution" src="../../images/open_performance.png" /></p>
+<h2 id="generating-reports">Generating Reports</h2>
+<p>The Performance &amp; Attribution application is an interface for running performance &amp; attribution reports given the user's fund and benchmark data. The settings that will be described below give the users powerful analytics and tools to drill down into their data.</p>
+<p>In this section, we explain how to select the settings for a report and generate it.</p>
+<h4 id="general-settings">General Settings</h4>
+<p>The first tab in the application is the <code>General</code> settings tab. These settings are used to select the fund/benchmark/market you would like to analyze, as well as the time period for your report. There are additional settings that will be covered in the following section.</p>
+<h5 id="portfolio">Portfolio</h5>
+<ul>
+<li>Fund: Select a fund from the list of available funds. Use the tree display to find the fund you are looking for.</li>
+</ul>
+<p><img alt="Select Fund" src="../../images/performance_select_fund.png" /></p>
+<ul>
+<li>Benchmark: Select a benchmark from the list of avaiable benchmarks. Be sure that there is benchmark data available for the same time period as the fund.</li>
+</ul>
+<p><img alt="Select Benchmark" src="../../images/performance_select_benchmark.png" /></p>
+<ul>
+<li>Market: Select a market from the list of available markets. We recommend selecting the same benchmark as you did in the Benchmark dropdown.</li>
+</ul>
+<h5 id="reporting-period">Reporting Period</h5>
+<p>The Reporting Period section is used for selecting the date range and frequency of the report you want to produce. Use the Date Range button and select a range in which there is fund and benchmark data.</p>
+<ul>
+<li>Report Start Date: Enter the starting date of the report by entering a date, or using the calendar dropdown.</li>
+</ul>
+<p><img alt="Report Start Date" src="../../images/performance_select_dates.png" /></p>
+<ul>
+<li>
+<p>Report End Date: Enter the end date of the report by entering a date, or using the calendar dropdown.</p>
+</li>
+<li>
+<p>Report Frequency: Select the appropriate frequency of the data used in the report. If you have provided monthly holdings and market values, you will use Monthly. If you have provided daily or business day frequency, then you will select the respective frequency.</p>
+</li>
+</ul>
+<p><img alt="Report Frequency" src="../../images/performance_select_frequency.png" /></p>
+<ul>
+<li>Holiday Country: If your data has gaps in it's holdings on certain holidays, then select the country which adheres to those holiday conventions. If your data does not have holiday gaps, select None.</li>
+</ul>
+<h5 id="multi-factor-attribution-model">Multi-Factor Attribution Model</h5>
+<p>This section is under development.</p>
+<h5 id="fixed-income-analysis">Fixed Income Analysis</h5>
+<p>This section is under development.</p>
+<h5 id="risk-characteristics">Risk Characteristics</h5>
+<p>These are list of available risk statistics that can be included in your report. Click the checkbox next to <code>Risk Types</code> to select all risk statistics.</p>
+<p><img alt="Risk Stats" src="../../images/performance_select_holiday_and_risk_stats.png" /></p>
+<h4 id="segment-settings">Segment Settings</h4>
+<p>The second tab in the application is the <code>Segment</code> settings tab. These settings are used to segment performance given the chosen fields. There are also decision attribution options if you're data has been configured to run attribution.</p>
+<h5 id="cascading-decision-tree">Cascading Decision Tree</h5>
+<p>This tree format lists the available segments that can be used in your performance &amp; attribution report. There can be both discrete and continuous segments depending on your configuration. Use your mouse to drag the desired segment into the <code>Segment Selections</code> box.</p>
+<p><img alt="Cascading Decision Tree" src="../../images/performance_add_segment.png" /></p>
+<h5 id="segment-selections">Segment Selections</h5>
+<p>Users can reorder the segments using their mouse to change the order of the segments shown in the reports. This is important when thinking about decision attribution and the order your investment decisions. Use the delete key to remove segments.</p>
+<p><img alt="Segment Selection" src="../../images/performance_reorder_segments.png" /></p>
+<h5 id="decision-attribution-options">Decision Attribution Options</h5>
+<p>These options are used for controlling the type of Decision Attribution you would like calculated. For basic decision attribution, given the segments selected, check the <code>Perform Decision Attribution</code> box.</p>
+<p><img alt="Decision Attribution" src="../../images/performance_select_decision_attribution.png" /></p>
+<h4 id="reporting-settings">Reporting Settings</h4>
+<p>The third tab in the application is the <code>Reporting</code> settings tab. This tab is used to control the appearance of the report, and toggle on/off certain functionality of the report. Users do not change these settings often, and many settings can be specific to the configuration of your data.</p>
+<p><img alt="Reporting Settings" src="../../images/performance_reporting_settings.png" /></p>
+<h5 id="reporting-currency">Reporting Currency</h5>
+<p>Select the currency used in the report from the dropdown.</p>
+<h5 id="performance-calculation-methodology">Performance Calculation Methodology</h5>
+<p>Select <code>Buy &amp; Hold</code> if your data does not have any transaction or flow data. Use the other methodologies if you have transaction data. For more information, request documentation from Opturo support.</p>
+<h5 id="runtime-options">Runtime Options</h5>
+<p>These are special settings used for certain configurations. If you are unfamiliar with the settings in regards to your data, you probably don't need to use them.</p>
+<h5 id="data-export-options">Data Export Options</h5>
+<ul>
+<li>Annualized Returns: Select this box to annualize the returns in the report.</li>
+<li>Time-series Analytics Mode: Select this box to allow drill downs into the time series of each security in the fund and benchmark.</li>
+<li>Weights &amp; Returns Only Report: Select this box if you only want the report to have weights and returns. We recommend unselecting this to give full data insights.</li>
+</ul>
+<h5 id="analytics-reporting-options">Analytics Reporting Options</h5>
+<p>This section is under development.</p>
+<h5 id="market-trade-data-audit">Market &amp; Trade Data Audit</h5>
+<p>Click the <code>Enable Audit</code> check box to run the report directly from the database. We recommend leaving this unchecked, so the report will run faster from the cache.</p>
+<h5 id="additional-settings">Additional Settings</h5>
+<p>Here we can define custom settings for the report for each client.</p>
+<h4 id="saving-loading-a-report">Saving &amp; Loading a Report</h4>
+<p>Users can save the settings they've selected, so that the same report can be run the next time they log in. Use the dropdown menu in the <code>Run Analysis</code> button to save the settings.</p>
+<p><img alt="Save Settings" src="../../images/performance_save_settings.png" /></p>
+<p>Enter a report name, and select <code>Load at Start</code> if you'd like these settings to be loaded when you first open the Performance &amp; Attribution application.</p>
+<p><img alt="Saving Settings" src="../../images/performance_saving_settings_2.png" /></p>
+<p>When you want to load other saved settings, select <code>Load Settings</code> and select the report you saved.</p>
+<p><img alt="Load Settings" src="../../images/performance_load_settings.png" /></p>
+<h4 id="running-a-report">Running a Report</h4>
+<p>After you are satisfied with your settings you have selected, click the <code>Run Analysis</code> button in the bottom right of the application.</p>
+<p><img alt="Run Report" src="../../images/performance_run_analysis.png" /></p>
+<h2 id="viewing-the-report">Viewing the Report</h2>
+<p>After you have selected <code>Run Analysis</code> and the process has finished running, you should see a new window with the fund and benchmark name, as well as the time period of the report. The entire report is exportable to Excel by clicking on the <code>View Reports</code> dropdown in the lower right, and selecting <code>Opturo Excel Report</code>.</p>
+<h3 id="executive-summary">Executive Summary</h3>
+<p>The <code>Executive Summary</code> page gives statistics on the cumulative returns of the fund and benchmark over the selected time period. There are also many other useful statistics to analyze the time period.</p>
+<p><img alt="Executive Summary 1" src="../../images/performance_executive_summary_1.png" /></p>
+<p><img alt="Executive Summary 2" src="../../images/performance_executive_summary_2.png" /></p>
+<h3 id="period">Period</h3>
+<p>This page will be called <code>Daily</code> or <code>Monthly</code> depending on the frequency of your data. This lists the returns, market values, contributions, among other things, for each date in the time period.</p>
+<p><img alt="Performance Daily 1" src="../../images/performance_daily_tab_1.png" /></p>
+<p>You can export this spreadsheet to Excel by selecting the Excel Icon in the lower right.</p>
+<p><img alt="Performance Daily 2" src="../../images/performance_daily_tab_2.png" /></p>
+<h3 id="asset-contribution">Asset Contribution</h3>
+<p>This section is under development.</p>
+<h3 id="segment-attribution-rollups">Segment Attribution - Rollup's</h3>
+<p>This section is under development.</p>
+<h3 id="charts">Charts</h3>
+<p>This section is under development.</p>
+<h3 id="debug-data">Debug Data</h3>
+<p>This section is under development.</p>
+                
+                  
+                
+              
+              
+                
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../.." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../composite-management/" title="Composite Management" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Composite Management
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2017 Opturo
+          </div>
+        
+        powered by
+        <a href="http://www.mkdocs.org" title="MkDocs">MkDocs</a>
+        and
+        <a href="http://squidfunk.github.io/mkdocs-material/" title="Material for MkDocs">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application-7aa26ad9ec.js"></script>
+      <script>app.initialize({url:{base:"../.."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>

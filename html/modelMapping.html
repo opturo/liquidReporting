@@ -1,0 +1,61 @@
+<!-- Spreadsheet -->
+<div class="col-md-1"></div>
+<!-- Used for spacing. -->
+<div class="col-md-10">
+  <div class="panel panel-default">
+	 <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - Model Mapping</strong> <span class="applicationAndModelName"></span></div>
+	 <div class="panel-body" style="margin:10px;">
+		<p class="tr">
+		   The settings below let you map your columns to the model.
+		</p>
+		
+		<!-- mapping columns will be diplayed here -->
+		<div id="modelMappingColumnPanel" class="row" style="display:none;"></div>
+		
+		<!-- Date Format -->
+		 <button onclick="odinLite_modelMapping.dateFormatWindow();" id="modelMapping_dateFormatButton" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary">Define Date Format</button>
+
+		<!-- data merge window and button -->
+		<!--
+		<label style="margin-left:10px;" class="tr" for="modelMapping_dataMergeOptionsButton">Data Merge Options <button title="Data Merge Options" onclick="odinLite_modelMapping.launchDataMergeOptionsWindow();" id="modelMapping_dataMergeOptionsButton" style="margin:0;" type="button" class="tr btn btn-primary btn-xs"><i class="fa fa-plus-circle"></i></button></label>
+		 <div id="modelMapping_dataMergeWindow" style="display:none;overflow:hidden;">
+			 <form class="form-inline" >
+				 <label style="margin: 20px 5px 0 20px;" for="modelMapping_timeSeriesMerge" class="tr">Merge Static Data to Loaded Time Series Data: </label>
+				 <input style="margin: 20px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_MERGE','Merge Static Data to Loaded Time Series Data');">
+				 <hr/>
+				 <label style="margin: 20px 5px 0 20px;" for="modelMapping_timeSeriesToPortIndexMerge" class="tr">Merge Time Series Data to Loaded Portfolio Indexed Time Series Data: </label>
+				 <input style="margin: 20px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesToPortIndexMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_PORTFOLIO_MERGE','Merge Time Series Data to Loaded Portfolio Indexed Time Series Data');">
+			 </form>
+			 <p style="margin-top:10px;">
+				 <button type="button" style="float:right;" class="tr btn btn-primary  modelMapping_dataMergeOKButton">OK</button>
+			 </p>
+		 </div>
+		-->
+
+		 <!--Spreadsheet Preview -->
+		<div class="bs-callout bs-callout-info row">
+		   <div class="col-md-6" >
+			  <h4 class="tr">Data Preview <button title="Update Preview" onclick="odinLite_modelMapping.updateFilePreview();" id="modelMapping_updatePreviewButton" style="margin:0;" type="button" class="tr btn btn-success btn-xs"><i class="fa fa-refresh"></i></button></h4>
+		   </div>
+		   <div class="col-md-6" >
+			  <input style="float:right;width:300px;" id="modelMapping_fileList"/>
+		   </div>
+		   <div class="col-md-12" style="margin-top:10px;">
+			  <div id="modelMapping_spreadsheet" style="height:300px;width:100%;"></div>
+		   </div>
+		</div>
+
+		<!-- previous and next buttons -->
+		<button onclick="odinLite_fileFormat.showFileFormat();" id="modelMapping_previousButton" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary">< Previous</button>
+		<button onclick="odinLite_modelMapping.persistFilesToCache();" id="modelMapping_saveButton" style="float:right;margin:10px 0 10px 0;" type="button" class="tr btn btn-success">Save Mapped Data</button>
+	 </div>
+  </div>
+</div>
+<!-- Used for spacing. -->
+<div class="col-md-1"></div>
+<!-- Used for spacing. -->
+</div>
+<!-- /textImportWizard_Step_2 -->
+
+
+

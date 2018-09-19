@@ -1,0 +1,16 @@
+<div data-colId="{column_idName}" class="well {column_idName}" style="background-color:#fff;width:400px;height:385px;float:left;margin-right:2px;">
+	<button title="Delete Custom Column" onclick="odinLite_modelCache.deleteCustomColumn('{column_idName}',this);" style="float:right;display:none;margin-left:4px;" type="button" class="tr btn btn-danger deleteCustomButton"><i class="fa fa-trash"></i></button>
+	<button title="Column Information" onclick="odinLite_modelCache.getHelpLink('{column_idName}',this);" style="float:right;" type="button" class="tr btn btn-primary"><i class="fa fa-question-circle"></i></button>
+	<!-- Display Name -->
+	<p><label>Column Name</label><br/><input disabled class="column_displayName k-textbox" type="text" value="{column_displayName}" class="k-textbox" style="width:300px;"/></p>
+	<!-- Apply Use Column List -->
+	<p class="applyUseColumnList_selector" ><label class="applyUseColumnList_label" ></label><br/><input class="applyUseColumnList_input" style="width:300px;"/></p>
+	<!-- Apply Data Type List -->
+	<p class="applyDataTypeList_selector" ><label class="applyDataTypeList_label" ></label><br/><input class="applyDataTypeList_input" style="width:300px;"/></p>
+	<!-- Apply FX Rate List -->
+	<p class="applyFXRateList_selector" ><label class="applyFXRateList_label" ></label><br/><input class="applyFXRateList_input" style="width:300px;"/></p>
+	<!-- Apply FX Return List -->
+	<p class="applyFXReturnList_selector" ><label class="applyFXReturnList_label" ></label><br/><input class="applyFXReturnList_input" style="width:300px;"/></p>
+	<!-- Apply Factor List -->
+	<p class="applyFactorList_selector" ><label class="applyFactorList_label" ></label><br/><input class="applyFactorList_input" style="width:300px;"/></p>
+</div>

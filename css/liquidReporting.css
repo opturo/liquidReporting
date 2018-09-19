@@ -1,0 +1,59 @@
+
+.padded-row {
+  padding: 10px 0 10px 0;
+}
+
+/*
+.main-step-description {
+  display: table;
+  border: 1px solid #185a9d;
+  height: 350px;
+}
+
+.main-step-description .left-panel {
+  display: table-cell;
+  vertical-align: middle;
+  border-right: 1px solid #185a9d;
+  padding-top: 15px;
+  width: 300px;
+}
+
+.main-step-description .right-panel {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  width: 700px;
+}
+
+.main-step-description .top-panel {
+  vertical-align: middle;
+  border-bottom: 1px solid #185a9d;
+  padding-top: 15px;
+  width: 300px;
+}
+
+*/
+
+.main-step-description .bottom-panel .panel-heading {
+  text-align: center;
+  padding-top: 20px;
+}
+
+
+.main-step-description .bottom-panel .panel-body {
+  vertical-align: middle;
+  text-align: left;
+  padding-top: 15px;
+  height: 100px;
+}
+
+
+
+#package-list {
+  height: 800px;
+  overflow: auto;
+}
+
+.application-selection-panel .panel-heading h3{
+  color: white;
+}

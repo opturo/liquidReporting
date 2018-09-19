@@ -1,0 +1,257 @@
+<div id="odinLite_advancedSettingsWindow" style="overflow-y: auto;overflow-x:hidden;">
+	<div id='tabstrip'><ul><li class='k-state-active'>Data Management Plug-in</li><li>Map Column</li><li>Add Column</li><li>Filter Data</li><li>Validate Data</li><li>Data Merge Options</li></ul>
+        <!-- Data Management Plug-in -->
+        <div>
+            <ul class="fieldlist">
+                <li>
+                    <label for="fileFormat_validateData_comparisonColumn" class="tr">Select a plugin:</label>
+                    <input style="width:300px;" id="fileFormat_dataManagementPlugin"/>
+                </li>
+            </ul>
+            <br>
+        </div>
+
+        <!-- Map Column -->
+        <div style="overflow:hidden;">
+            <ul class="fieldlist row">
+                <li class="col-md-5">
+                    <label for="fileFormat_mapColumn_headerList" class="tr" >Data Column: </label>
+                    <input style="width:300px;" id="fileFormat_mapColumn_headerList"/>
+                </li>
+
+                <li class="col-md-6">
+                    <label for="fileFormat_mapColumn_columnList" class="tr" >Template Column: </label>
+                    <input style="width:300px;" id="fileFormat_mapColumn_columnList"/>
+                </li>
+                <li class="col-md-6">
+                    <label for="fileFormat_mapColumn_dateFormat" class="tr" >Date Format: </label>
+                    <input id="fileFormat_mapColumn_dateFormat" style="width:200px;"/>
+                </li>
+            </ul>
+            <p style="margin-top:10px;">
+                <button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_mapColumnButton">Map Column</button>
+            </p>
+
+            <br/>
+            <hr/>
+            <div id="fileFormat_mapColumn_grid"></div>
+        </div>
+
+        <!-- Add Column -->
+		<div>
+			<form class="form-inline" >
+                <ul class="fieldlist row">
+                    <li class="col-md-5">
+                        <label for="fileFormat_addColumn_columnType" class="tr" >Column Type: </label>
+                        <input style="width:300px;" id="fileFormat_addColumn_columnType"/>
+                    </li>
+                    <li class="col-md-6">
+                        <label for="fileFormat_addColumn_columnList" class="tr" >Mapping Column: </label>
+                        <input style="width:300px;" id="fileFormat_addColumn_columnList"/>
+                    </li>
+				</ul>
+
+                <hr style="clear:both;"/>
+
+                <!-- assign -->
+				<div class="fileFormat_addColumn_assignContainer">
+                    <ul class="fieldlist row">
+                        <li class="col-md-11">
+                            <label>Value: </label>
+                            <span class="fileFormat_addColumn_columnValue"></span>
+                        </li>
+                    </ul>
+				</div>
+
+				<!-- extract -->
+				<div class="fileFormat_addColumn_extractContainer" style="display:none;">
+                    <ul class="fieldlist row">
+                        <li class="col-md-2">
+                            <label for="fileFormat_addColumn_prefix" class="tr">Prefix: </label>
+                            <input class="k-textbox" id="fileFormat_addColumn_prefix" style="width:150px;"/><!--<img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;left:3px;" onclick="odinLite_uploadFiles.displayHelpLink('DATE_FORMAT','Date Format');" />-->
+                        </li>
+                        <li class="col-md-1">
+                            <label for="fileFormat_addColumn_prefixIsRegex" class="tr">Prefix Is Regex: </label>
+                            <input type="checkbox" id="fileFormat_addColumn_prefixIsRegex">
+                        </li>
+                        <li class="col-md-2">
+                            <label for="fileFormat_addColumn_suffix" class="tr">Suffix: </label>
+                            <input class="k-textbox" id="fileFormat_addColumn_suffix" style="width:150px;"/><!--<img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;left:3px;" onclick="odinLite_uploadFiles.displayHelpLink('DATE_FORMAT','Date Format');" />-->
+                        </li>
+                        <li class="col-md-1">
+                            <label for="fileFormat_addColumn_suffixIsRegex" class="tr">Suffix Is Regex: </label>
+                            <input type="checkbox" id="fileFormat_addColumn_suffixIsRegex">
+                        </li>
+                        <li class="col-md-4">
+                            <label for="fileFormat_addColumn_dateFormat" class="tr">Date Format: </label>
+                            <input id="fileFormat_addColumn_dateFormat" style="width:200px;"/>
+                        </li>
+                    </ul>
+				</div>
+
+				<!-- multi-column -->
+				<div class="fileFormat_addColumn_multiContainer" style="display:none;">
+                    <ul class="fieldlist row">
+                        <li class="col-md-5">
+                            <label for="fileFormat_addColumn_multiColumnOperationType" class="tr">Multi-Column Operation Type: </label>
+                            <input id="fileFormat_addColumn_multiColumnOperationType" style="width:170px;"/>
+                        </li>
+                        <li class="col-md-5">
+                            <label for="fileFormat_addColumn_multiColumnColumnList" class="tr">Operation Column List: </label>
+                            <input id="fileFormat_addColumn_multiColumnColumnList" style="width:500px;"/>
+                        </li>
+                    </ul>
+                    <br/>
+				</div>
+
+			</form>
+			<p style="margin-top:10px;">
+				<button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_addColumnButton">Add Column</button>
+                <br/>
+			</p>
+
+            <br/>
+            <hr style="clear:both;" />
+            <div id="fileFormat_addColumn_grid"></div>
+		</div>
+
+        <!-- Filter Data -->
+		<div>
+            <ul class="fieldlist row">
+                <li  class="col-md-3">
+                    <label for="fileFormat_filterData_whereClauseType" class="tr" >Where Clause Type: </label>
+                    <input id="fileFormat_filterData_whereClauseType" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_filterData_dataColumn" class="tr" >Data Column: </label>
+                    <input id="fileFormat_filterData_dataColumn" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_filterData_dataType" class="tr" >Data Type: </label>
+                    <input id="fileFormat_filterData_dataType" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_filterData_operation" class="tr" >Operation: </label>
+                    <input id="fileFormat_filterData_operation" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_filterData_comparisonType" class="tr" >Comparison Type: </label>
+                    <input id="fileFormat_filterData_comparisonType" style="width:200px;"/>
+                </li>
+                <li class="col-md-3" >
+                    <label class="tr" >Comparison Value: </label>
+                    <span class="fileFormat_filterData_comparisonValue" style="width:200px;"></span>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_filterData_comparisonColumn" class="tr" >Comparison Column: </label>
+                    <input id="fileFormat_filterData_comparisonColumn" style="width:200px;"/>
+                </li>
+            </ul>
+
+            <p style="margin-top:10px;">
+                <button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_addFilterIntermediateButton">Add Where Clause</button>
+                <br/>
+            </p>
+
+            <br/>
+            <hr style="clear:both;" />
+            <div id="fileFormat_filterData_intermediateGrid"></div>
+            <div style="clear:both;" >
+                <div class="col-md-3"></div>
+                <div class="col-md-5" style="text-align:center;margin:10px 0px 10px 0px;">
+                    <button type="button" class="tr btn btn-primary  fileFormat_addFilterFinalButton"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Add Filter Rule</button>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div style="clear:both;" id="fileFormat_filterData_finalGrid"></div>
+        </div>
+
+        <!-- Validate Data -->
+        <div>
+            <ul class="fieldlist row">
+                <li  class="col-md-3">
+                    <label for="fileFormat_validateData_whereClauseType" class="tr" >Where Clause Type: </label>
+                    <input id="fileFormat_validateData_whereClauseType" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_validateData_dataColumn" class="tr" >Data Column: </label>
+                    <input id="fileFormat_validateData_dataColumn" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_validateData_dataType" class="tr" >Data Type: </label>
+                    <input id="fileFormat_validateData_dataType" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_validateData_operation" class="tr" >Operation: </label>
+                    <input id="fileFormat_validateData_operation" style="width:200px;"/>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_validateData_comparisonType" class="tr" >Comparison Type: </label>
+                    <input id="fileFormat_validateData_comparisonType" style="width:200px;"/>
+                </li>
+                <li class="col-md-3" >
+                    <label class="tr" >Comparison Value: </label>
+                    <span class="fileFormat_validateData_comparisonValue" style="width:200px;"></span>
+                </li>
+                <li class="col-md-3">
+                    <label for="fileFormat_validateData_comparisonColumn" class="tr" >Comparison Column: </label>
+                    <input id="fileFormat_validateData_comparisonColumn" style="width:200px;"/>
+                </li>
+            </ul>
+
+            <p style="margin-top:10px;">
+                <button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_addValidateIntermediateButton">Add Where Clause</button>
+                <br/>
+            </p>
+
+            <br/>
+            <hr style="clear:both;" />
+            <!-- Intermediate Grid -->
+            <div id="fileFormat_validateData_intermediateGrid"></div>
+
+            <!-- Add Rule Button -->
+            <ul class="fieldlist row" style="margin-top:10px;">
+                <li  class="col-md-3">
+                    <label for="fileFormat_validateData_validationOperation" class="tr" >Data Validation Operation: </label>
+                    <input id="fileFormat_validateData_validationOperation" style="width:200px;"/>
+                </li>
+                <li  class="col-md-3">
+                    <label for="fileFormat_validateData_validationColumn" class="tr" >Data Validation Column: </label>
+                    <input id="fileFormat_validateData_validationColumn" style="width:200px;"/>
+                </li>
+                <li  class="col-md-3">
+                    <label class="tr" >Validation Value: </label>
+                    <span class="fileFormat_validateData_validationValue" style="width:200px;"></span>
+                </li>
+                <li  class="col-md-3">
+                    <label for="fileFormat_validateData_validationValueFetchColumn" class="tr" >Validation Value Fetch Column: </label>
+                    <input id="fileFormat_validateData_validationValueFetchColumn" style="width:200px;"/>
+                </li>
+            </ul>
+            <div style="clear:both;" >
+                <div class="col-md-3"></div>
+                <div class="col-md-5" style="text-align:center;margin:10px 0px 10px 0px;">
+                    <button type="button" class="tr btn btn-primary  fileFormat_addValidationRuleFinalButton"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Add Validation Rule</button>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            <div style="clear:both;" id="fileFormat_validateData_finalGrid"></div>
+        </div>
+
+        <!-- Data Merge Options -->
+        <div>
+            <form class="form-inline" >
+                <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_timeSeriesMerge" class="tr">Merge Static Data to Loaded Time Series Data: </label>
+                <input style="margin: 10px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_MERGE','Merge Static Data to Loaded Time Series Data');">
+                <hr/>
+                <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_timeSeriesToPortIndexMerge" class="tr">Merge Time Series Data to Loaded Portfolio Indexed Time Series Data: </label>
+                <input style="margin: 10px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesToPortIndexMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_PORTFOLIO_MERGE','Merge Time Series Data to Loaded Portfolio Indexed Time Series Data');">
+            </form>
+        </div>
+	</div>
+
+    <!-- Apply Settings Button -->
+    <p style="margin-top:10px;">
+        <button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_applyAdvancedSettingsButton">Apply Settings</button>
+    </p>
+</div>

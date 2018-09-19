@@ -1,0 +1,124 @@
+<!-- Spreadsheet -->
+<div class="col-md-1"></div>
+<!-- Used for spacing. -->
+<div class="col-md-10">
+  <div class="panel panel-default">
+	 <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Format</strong> <span class="applicationAndModelName"></span></div>
+	 <div class="panel-body" style="margin:10px;">
+		<p class="tr fileFormat_settingText">
+		   The settings below let you determine the format of your files. Check the preview below and adjust the settings as needed.
+		</p>
+		<div class="bs-callout bs-callout-info" id="fileFormatDelimiterPanel" style="display:none;">
+		   <h4 class="tr">File Delimiter</h4>
+		   <div class="k-content">
+			  <b class="tr">Choose the data delimiter in your file:</b>
+			  <ul class="fieldlist" >
+				 <li style="list-style: none;">
+					<input type="radio" name="fileFormat_delimiterType" id="fileFormat_delimiterTab" value="tab" class="k-radio" checked="checked">
+					<label class="tr k-radio-label" for="fileFormat_delimiterTab" style="font-size:small">Tab</label>
+				 </li>
+				 <li style="list-style: none;">
+					<input type="radio" name="fileFormat_delimiterType" id="fileFormat_delimiterSemicolon" value=";" class="k-radio">
+					<label class="tr k-radio-label" for="fileFormat_delimiterSemicolon" style="font-size:small">Semicolon (;)</label>
+				 </li>
+				 <li style="list-style: none;">
+					<input type="radio" name="fileFormat_delimiterType" id="fileFormat_delimiterComma" value="," class="k-radio">
+					<label class="tr k-radio-label" for="fileFormat_delimiterComma" style="font-size:small">Comma (,)</label>
+				 </li>
+				 <li style="list-style: none;">
+					<input type="radio" name="fileFormat_delimiterType" id="fileFormat_delimiterSpace" value="space" class="k-radio">
+					<label class="tr k-radio-label" for="fileFormat_delimiterSpace" style="font-size:small">Space</label>
+				 </li>
+				 <li style="list-style: none;">
+					<input type="radio" name="fileFormat_delimiterType" id="fileFormat_delimiterPipe" value="|" class="k-radio">
+					<label class="tr k-radio-label" for="fileFormat_delimiterPipe" style="font-size:small">Pipe (|)</label>
+				 </li>
+				 <li style="list-style: none;">
+					<input type="radio" name="fileFormat_delimiterType" id="fileFormat_delimiterOther" value="other" class="k-radio">
+					<label class="tr k-radio-label" for="fileFormat_delimiterOther" style="font-size:small">Other: <input class="k-textbox" type="text" id="fileFormat_delimiterOther_textBox" style="width:35px;" /></label>
+				 </li>
+			  </ul>
+		   </div>
+		</div>
+		<div class="bs-callout bs-callout-info" id="fileFormat_settingsPanel">
+		   <h4 class="tr" style="margin-bottom:10px;">File Formatting</h4>
+		   <div class="row">
+				<div class="col-md-6" style="margin-bottom:10px;">
+				 <label style="font-size:small;width: 140px;" for="fileFormat_columnHeaders" class="tr">Has Column Headers: </label><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('COLUMN_HEADERS','Column Headers');">
+				 <input type="checkbox" id="fileFormat_columnHeaders" class="k-checkbox" style="margin-bottom:10px;" checked />
+				 <label class="k-checkbox-label" for="fileFormat_columnHeaders" style="font-size:small"></label>
+				</div>
+				
+				<div class="col-md-6" style="margin-bottom:10px;height:25px;">
+				 <div id="fileFormat_textQualifierBox">
+				  <label style="font-size:small;width: 150px;" for="fileFormat_textQualifier" class="tr">Text Qualifier: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TEXT_QUALIFIER','Text Qualifier');"></label>
+				  <input id="fileFormat_textQualifier" type="text" class="k-textbox" style="width: 75px;" />
+				 </div>
+				</div>
+
+				<div class="col-md-6" style="margin-bottom:10px;">
+				 <label style="font-size:small;width: 150px;" for="fileFormat_startRow" class="tr">Start Row: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('START_ROW','Start Row');"></label>
+				 <input id="fileFormat_startRow" style="width: 75px;" value="1" />
+				</div>
+				
+				<div class="col-md-6" style="margin-bottom:10px;">
+				 <label style="font-size:small;width: 150px;" for="fileFormat_endRow" class="tr">End Row: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('END_ROW','End Row');"></label>
+				 <input id="fileFormat_endRow" style="width: 75px;" value="" />
+				</div>
+				
+				<div class="col-md-6" style="margin-bottom:10px;">
+				 <label style="font-size:small;width: 150px;" for="fileFormat_startColumn" class="tr">Start Column: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('START_COLUMN','Start Column');"></label>
+				 <input id="fileFormat_startColumn" style="width: 75px;" value="1"/>
+				</div>
+				
+				<div class="col-md-6" style="margin-bottom:10px;">
+				 <label style="font-size:small;width: 150px;" for="fileFormat_endColumn" class="tr">End Column: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('END_COLUMN','End Column');"></label>
+				 <input id="fileFormat_endColumn" style="width: 75px;" value="0"/>
+				</div>
+
+
+			   <!-- Button Row -->
+			   <div style="clear:both;">
+				   <button type="button" onclick="odinLite_fileFormat.loadSettingsWindow();" style="margin:10px 10px 10px 0;" title="Load Settings" class="tr btn btn-primary">
+					   <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+				   </button>
+				   <button type="button" onclick="odinLite_fileFormat.saveSettings();" style="margin:10px 10px 10px 0;" title="Save Settings" class="tr btn btn-primary">
+					   <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+				   </button>
+
+					<button title="Update Preview" onclick="odinLite_fileFormat.updateFilePreview();" style="float:right;margin:10px 0 0 0;" type="button" class="tr btn btn-success"><i class="fa fa-refresh"></i> Update Preview</button>
+				</div>
+		   </div>
+		</div>
+		<div class="bs-callout bs-callout-info row">
+		   <div class="col-md-4" >
+			  <h4 class="tr">Data Preview <button title="Update Preview" onclick="odinLite_fileFormat.updateFilePreview();" id="fileFormat_updatePreviewButton" style="margin:0;" type="button" class="tr btn btn-success btn-xs"><i class="fa fa-refresh"></i></button></h4>
+
+		   </div>
+
+			<!-- Adding a static Column -->
+			<div class="col-md-4" >
+				<b class="tr"><button title="Advanced Settings" onclick="odinLite_fileFormat.advancedSettingsWindow();" id="fileFormat_advancedSettingsButton" style="margin:0;" type="button" class="tr btn btn-primary btn-xs"><i class="fa fa-cog"></i></button> Advanced Settings</b>
+				<b class="tr removeStaticColumn" style="display:none;"> | <button title="Remove Static Column" onclick="odinLite_fileFormat.deleteStaticColumn();" id="fileFormat_deleteStaticColumnButton" style="margin:0;" type="button" class="tr btn btn-danger btn-xs"><i class="fa fa-minus-circle"></i></button> Remove Column</b>
+			</div>
+
+		   <div class="col-md-4" >
+			  <input style="float:right;width:300px;" id="fileFormat_fileList"/>
+		   </div>
+		   <div class="col-md-12" style="margin-top:10px;">
+			  <div id="import_fileFormat_spreadsheet" style="height:300px;width:100%;"></div>
+		   </div>
+		</div>
+		 <button onclick="odinLite_fileFormat.showUploadFiles();" id="fileFormat_previousButton" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary">< Previous</button>
+		 <button id="fileFormat_nextButton" style="float:right;margin:10px 0 10px 0;" onclick="odinLite_modelMapping.init();" type="button" class="tr btn btn-primary">Next ></button>
+	 </div>
+  </div>
+</div>
+<!-- Used for spacing. -->
+<div class="col-md-1"></div>
+<!-- Used for spacing. -->
+</div>
+<!-- /textImportWizard_Step_2 -->
+
+
+

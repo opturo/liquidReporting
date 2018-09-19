@@ -1,0 +1,71 @@
+<div class="row" style="padding-bottom:10px;">
+   <div class="col-md-4"></div>
+   <div class="col-md-4">
+      <h3 style="text-align:center;" class="tr">
+         <button id="start-manage-data-tour" type="button" class="tr btn btn-success" onclick="userTour.initManageDataTour()"><i class="fa fa-play"></i> Tour</button>
+      </h3>
+   </div>
+   <div class="col-md-4"></div>
+</div>
+
+<div style="margin:5px;"  class="row">
+   <div class="col-md-3 well manageData_modelInfo">
+      <div id="manageData_modelSelection">
+         <div class="dialogContent">
+            <h4 class="tr">Select a Data Model <span class="manageData_entitySize"></span></h4>
+            <span class="form-inline">
+               <input id="manageData_modelFilterText" type="text" class="tr form-control" placeholder="Data Model Filter" style="width:230px"/>
+               <a style="margin-left:8px;" title="Expand All"  id="manageData_modelExpandButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-plus"></i></a>
+               <a style="margin-right:5px;" title="Collapse All"  id="manageData_modelCollapseButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-minus"></i></a>
+
+               <button title="Delete Data Model" disabled onclick="odinLite_manageData.deleteModelData();" style="margin-right:5px;" type="button" class="tr demoButton pull-right tr btn btn-danger navbar-btn "><i class="fa fa-minus-circle"></i></button>
+            </span>
+            <div id="manageData_modelTreeview" style="height:500px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
+         </div>
+      </div>
+   </div>
+   <div id="manageData_welcomeMessage" class="col-md-6">
+      <div class="tr well">Select a data model to manage data.</div>
+   </div>
+   <div id="manageData_existingEntity" style="display:none;" class="col-md-6">
+      <div class="tr well manageData_entityInfo">
+         <h4><span class="manageData_modelName"></span><br/><small class="manageData_modelDescription"></small></h4>
+	  </div>
+	  <div class="tr well manageData_tableSpreadhseetContainer">
+		<span class="tr manageData_tableSpreadhseetName" style="font-size:18px;font-weight:bold;margin-right:8px;"></span>
+		<button title="Maximize" onclick="odinLite_manageData.maximizeSheet();" style="position:relative;top:-5px;margin:0;" type="button" class="tr btn btn-default maximizeButton"><i class="fa fa-expand maximizeButtonIcon"></i></button>
+		|
+		<button title="Edit Data" onclick="odinLite_manageData.editSheet();" style="position:relative;top:-5px;margin:0;" type="button" class="tr btn btn-default editButton"><i class="fa fa-pencil"></i></button>
+		|
+		<button title="Export to Excel" onclick="odinLite_manageData.exportSheet();" style="position:relative;top:-5px;margin:0;" type="button" class="tr btn btn-success excelExportButton"><i class="fa fa-file-excel-o"></i></button>
+        |
+        <button title="Delete Table" onclick="odinLite_manageData.deleteTable();" style="position:relative;top:-5px;margin:0;" type="button" class="tr demoButton btn btn-danger deleteTableButton"><i class="fa fa-minus-circle"></i></button>
+		<span id="manageData_editModeLabel">
+			|
+			<span class="label label-warning"> <i class="fa fa-pencil"></i> edit mode</span>
+			<button title="Save Edit Data" onclick="odinLite_manageData.saveSheetEdits();" style="position:relative;top:-5px;margin:0;float:right;" type="button" class="tr demoButton btn btn-success editSaveButton"><i class="fa fa-pencil"></i> Save</button>
+			<button title="Cancel Edit" onclick="odinLite_manageData.cancelSheetEdits();" style="position:relative;top:-5px;margin:0 5px 0 5px;float:right;" type="button" class="tr btn btn-danger editCancelButton"><i class="fa fa-ban"></i> Cancel</button>
+		</span>
+		<div id="manageData_tableSpreadhseet" style="width:100%;height:435px;">
+		</div>
+	  </div>
+   </div>
+   <div id="manageData_tableSelection" style="display:none;" class="col-md-3 well">
+      <div >
+         <div class="dialogContent">
+            <h4 class="tr">Select a Data Item</h4>
+			<span class="form-inline manageData_zeroTablesFound" style="display:none;">
+			</span>
+            <span class="form-inline manageData_tablesFound" style="display:none;">
+            <br/>
+            <input id="manageData_tableFilterText" type="text" class="tr form-control" placeholder="Data Item Filter" style="width:150px"/>
+            <a style="margin-left:8px;" title="Expand All"  id="manageData_tableExpandButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-plus"></i></a>
+            <a style="margin-right:5px;" title="Collapse All"  id="manageData_tableCollapseButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-minus"></i></a>
+            | <a style="margin-right:5px;" title="Delete Data Item Chooser"  onclick="odinLite_manageData.deleteTablesWindow();" id="manageData_deleteTableButton" class="tr btn navbar-btn btn-danger" href="#"><i class="fa fa-minus-circle"></i></a>
+
+            <div id="manageData_tableTreeview" style="height:500px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
+            </span>
+         </div>
+      </div>
+   </div>
+</div>

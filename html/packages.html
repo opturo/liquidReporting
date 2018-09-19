@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-md-1 col-sm-12"></div>
+  <div id="package-list" class="col-md-6">
+    <h2>Available Packages</h2>
+    <small>Note: Any upgrades or downgrades within applications will be reflected on the next page.</small>
+    <table id="data-usage-table" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Data Storage</th>
+          <th>Cost</th>
+        </tr>
+     </thead>
+     <tbody></tbody>
+    </table>
+    <br></br>
+    <form id="package-selection-form" name="packages_form" action="" method="post">
+    </form>
+  </div>
+
+  <div class="col-md-4 col-sm-12">
+    <div class="panel panel-info application-selection-panel">
+      <div class="panel-heading"><h3>Your Current Packages</h3></div>
+      <div id="current-package-list" class="panel-body">
+        <ul style="list-style:none;"></ul>
+      </div>
+    </div>
+
+    <div class="panel panel-success application-selection-panel">
+      <div class="panel-heading"><h3>Package Updates</h3></div>
+      <div class="panel-body">
+        <div id="selected-package-list">
+          <h4>New:</h4>
+          <ul style="list-style:none;"></ul>
+        </div>
+        <div id="delete-package-list">
+          <h4>Cancellations:</h4>
+          <ul style="list-style:none;"></ul>
+        </div>
+      </div>
+    </div>
+
+    <hr></hr>
+    <div class="form-group">
+         <button id="update-package-button" style="margin:10px 0 0 0;" type="button" class="tr btn btn-primary pull-right" onclick="packageSelection.submitPackageUpdate()">Next</button>
+    </div>
+    </div>
+</div>
+<div id="package-modals"></div>
