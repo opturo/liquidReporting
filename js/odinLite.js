@@ -62,10 +62,9 @@ var odinLite = {
                     via.debug("Successful Initializing:", data);
 
                     /**TESTING**/
-                    /* setTimeout(function(){
-                        odinLite_billing.packageTesting();
-                    },3500);
-                    */
+                    /*setTimeout(function(){
+                        odinLite_support.getOpenIssues();
+                    },3500);*/
                     /**END TESTING**/
 
                     odinLite_billing.checkBillingIsVerified(function(){//Check to make sure they have verified billing if they are a billing client.
@@ -181,7 +180,7 @@ var odinLite = {
         }
 
         //Switch User Button
-        if(odin.USER_INFO.isAdminUser === true && odin.USER_INFO.userName === "rocco"){
+        if(odin.USER_INFO.isAdminUser === true){
             $('#switchUserButton').fadeIn();
             $('#switchUserButton').off();
             $('#switchUserButton').click(function(){
