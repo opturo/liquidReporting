@@ -19,18 +19,6 @@ var odinLite_modelMapping = {
         //Empty the spreadsheet data if it was there before
         $("#modelMapping_spreadsheet").empty();
 
-        //Enable/disable time series
-        $('#modelMapping_timeSeriesMerge').prop('checked',false);
-        $('#modelMapping_timeSeriesToPortIndexMerge').prop('checked',false);
-        $('#modelMapping_dataMergeOptionsButton').removeClass('btn-warning');
-        $('#modelMapping_dataMergeOptionsButton').addClass('btn-primary');
-        if(odinLite_modelCache.currentEntity.isStaticToTimeSeriesAllowed){
-            $('#modelMapping_timeSeriesMerge').prop('disabled',true);
-        }
-        if(odinLite_modelCache.currentEntity.isTimeSeriesToPortIndexTimeSeriesAllowed){
-            $('#modelMapping_timeSeriesMerge').prop('disabled',true);
-        }
-
         //update the preview in case it was not called
         odinLite_fileFormat.updateFilePreview(function(){
             kendo.ui.progress($("body"), true);//Wait Message
@@ -49,6 +37,10 @@ var odinLite_modelMapping = {
                     //Get the initial preview
                     odinLite_modelMapping.updateFilePreview(true);
                     odinLite_modelMapping.hasBeenLoaded = true;//Set the loaded variable after first load.
+
+                    //Enable or diable columns based on the data merge options.
+                    odinLite_modelMapping.checkDataMergeOptions();
+
                     kendo.ui.progress($("body"), false);//Wait Message
                 }, 'text');
             }else{//Template already fetched
@@ -58,10 +50,12 @@ var odinLite_modelMapping = {
                 //Get the initial preview
                 odinLite_modelMapping.updateFilePreview(true);
                 odinLite_modelMapping.hasBeenLoaded = true;//Set the loaded variable after first load.
+
+                //Enable or diable columns based on the data merge options.
+                odinLite_modelMapping.checkDataMergeOptions();
+
                 kendo.ui.progress($("body"), false);//Wait Message
             }
-
-
         });
 
 
@@ -81,115 +75,33 @@ var odinLite_modelMapping = {
     },
 
     /**
-     * launchDataMergeOptionsWindow
-     * This will launch the data merge options popup
+     * checkDataMergeOptions
+     * This will check to see if the data merge options is enabled and disable/enable columns based on what is checked.
+     * NOTE: This is no longer used. It has been moved to advanced settings.
      */
-    launchDataMergeOptionsWindow: function(){
-        //Window has already been launched.
-        if(!via.undef($('#modelMapping_dataMergeWindow').data('kendoWindow'))){
-            $('#modelMapping_dataMergeWindow').data('kendoWindow').center();
-            $('#modelMapping_dataMergeWindow').data('kendoWindow').open();
-            return;
-        }
-        //Make the window.
-        $('#modelMapping_dataMergeWindow').show();
-        var dataMergeWindow = $('#modelMapping_dataMergeWindow').kendoWindow({
-            title: "Data Merge Options",
-            draggable: false,
-            resizable: false,
-            width: "550px",
-            height: "200px",
-            modal: true,
-            close: true,
-            actions: [
-                //"Maximize"
-            ],
-            close: function () {
+    checkDataMergeOptions: function(){
 
-            }
-        }).data("kendoWindow");
-
-        dataMergeWindow.center();
-
-        //Ok button
-        $(".modelMapping_dataMergeOKButton").click(function(){
-            if($('#modelMapping_timeSeriesToPortIndexMerge').prop('checked') || $('#modelMapping_timeSeriesMerge').prop('checked')) {
-                $('#modelMapping_dataMergeOptionsButton').removeClass('btn-primary');
-                $('#modelMapping_dataMergeOptionsButton').addClass('btn-warning');
-            }else{
-                $('#modelMapping_dataMergeOptionsButton').removeClass('btn-warning');
-                $('#modelMapping_dataMergeOptionsButton').addClass('btn-primary');
-            }
-            dataMergeWindow.close();
-        });
-
-        //Static to port index time series checkbox
-        if(odinLite_modelCache.currentEntity.isTimeSeriesToPortIndexTimeSeriesAllowed){
-            $('#modelMapping_timeSeriesToPortIndexMerge').prop("disabled", false);
-            $('#modelMapping_timeSeriesToPortIndexMerge').on('change',function() {
-                if($('#modelMapping_timeSeriesMerge').prop('checked')) {
-                    $('#modelMapping_timeSeriesMerge').prop('checked', false);
-                    enableAllColumns();
-                }
-                //$('#modelMapping_timeSeriesToPortIndexMerge').prop('checked', true);
-            });
-        }else{
-            $('#modelMapping_timeSeriesToPortIndexMerge').prop("disabled", true);
-        }
-
-
-        //Static to time series checkbox
-        if(odinLite_modelCache.currentEntity.isStaticToTimeSeriesAllowed){
-            $('#modelMapping_timeSeriesMerge').prop("disabled", false);
-            $('#modelMapping_timeSeriesMerge').on('change',function(){
-                if($('#modelMapping_timeSeriesToPortIndexMerge').prop('checked')) {
-                    $('#modelMapping_timeSeriesToPortIndexMerge').prop('checked', false);
-                    enableAllColumns();
-                }
-                //$('#modelMapping_timeSeriesMerge').prop('checked', true);
-
-                //get the columns to be disabled
-                var arr = [];
-                var savedCol = odinLite_modelCache.currentEntity.savedColumnInfo;
-                var timeSeriesCol = odinLite_modelCache.currentEntity.staticToTimeSeriesSavedColumnInfo;
-                for(var i=0;i<savedCol.length;i++){
-                    var saved = savedCol[i];
-                    var timeSeries = timeSeriesCol[i];
-                    if(saved.isRequired===true && timeSeries.isRequired===false){
-                        arr.push(timeSeries);
-                    }
-                }
-                if($('#modelMapping_timeSeriesMerge').prop('checked') ===true){
-                    for(var i=0;i<arr.length;i++){
-                        var columnContainers = $('#modelMappingColumnPanel').find("."+arr[i].id + "_" + via.cleanId(arr[i].name));
-                        for(var j=0;j<columnContainers.length;j++) {
-                            var colContainer = columnContainers[j];
-                            $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').value(null);
-                            $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(false);
-                        }
-                    }
-                }else{
-                    for(var i=0;i<arr.length;i++){
-                        var columnContainers = $('#modelMappingColumnPanel').find("."+arr[i].id + "_" + via.cleanId(arr[i].name));
-                        for(var j=0;j<columnContainers.length;j++) {
-                            var colContainer = columnContainers[j];
-                            $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(true);
-                        }
-                    }
-                }
-            })
-        }else{
-            $('#modelMapping_timeSeriesMerge').prop("disabled", true);
-        }
-
-
-        function enableAllColumns(){
+        //Time Series
+        if(!via.undef(odinLite_fileFormat.dataMergeOptions.timeSeries) && odinLite_fileFormat.dataMergeOptions.timeSeries === true){
+            //get the columns to be disabled
+            var arr = [];
             var savedCol = odinLite_modelCache.currentEntity.savedColumnInfo;
+            var timeSeriesCol = odinLite_modelCache.currentEntity.staticToTimeSeriesSavedColumnInfo;
             for(var i=0;i<savedCol.length;i++){
-                var columnContainers = $('#modelMappingColumnPanel').find("."+savedCol[i].id + "_" + via.cleanId(savedCol[i].name));
+                var saved = savedCol[i];
+                var timeSeries = timeSeriesCol[i];
+                if(saved.isRequired===true && timeSeries.isRequired===false){
+                    arr.push(timeSeries);
+                }
+            }
+
+            for(var i=0;i<arr.length;i++){
+                var columnContainers = $('#modelMappingColumnPanel').find("."+arr[i].id + "_" + via.cleanId(arr[i].name));
                 for(var j=0;j<columnContainers.length;j++) {
                     var colContainer = columnContainers[j];
-                    $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(true);
+                    console.log('disable',colContainer);
+                    $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').value(null);
+                    $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(false);
                 }
             }
         }

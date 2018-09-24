@@ -710,10 +710,34 @@ var odinLite_fileFormat = {
         //Initial Values
         if(!via.undef(odinLite_fileFormat.dataMergeOptions.timeSeries) && odinLite_fileFormat.dataMergeOptions.timeSeries === true){
             $('#modelMapping_timeSeriesMerge').prop("checked",odinLite_fileFormat.dataMergeOptions.timeSeries);
-        }
-        if(!via.undef(odinLite_fileFormat.dataMergeOptions.portIndex  && odinLite_fileFormat.dataMergeOptions.portIndex === true)){
+            $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked",false);
+        }else if(!via.undef(odinLite_fileFormat.dataMergeOptions.portIndex  && odinLite_fileFormat.dataMergeOptions.portIndex === true)){
             $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked",odinLite_fileFormat.dataMergeOptions.portIndex);
+            $('#modelMapping_timeSeriesMerge').prop("checked",false);
         }
+
+        //Check to see if it is enabled. Disable and uncheck if it is not.
+        if(odinLite_modelCache.currentEntity.isTimeSeriesToPortIndexTimeSeriesAllowed === false){
+            odinLite_modelCache.currentEntity.isStaticToTimeSeriesAllowed
+            $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked",false);
+            $('#modelMapping_timeSeriesToPortIndexMerge').prop("disabled",true);
+        }
+        if(odinLite_modelCache.currentEntity.isStaticToTimeSeriesAllowed === false){
+            $('#modelMapping_timeSeriesMerge').prop("checked",false);
+            $('#modelMapping_timeSeriesMerge').prop("disabled",true);
+        }
+
+        //Events - disable the other if checked
+        $('#modelMapping_timeSeriesToPortIndexMerge').on('change',function() {
+            if($('#modelMapping_timeSeriesToPortIndexMerge').prop('checked')) {
+                $('#modelMapping_timeSeriesMerge').prop("checked",false);
+            }
+        });
+        $('#modelMapping_timeSeriesMerge').on('change',function() {
+            if($('#modelMapping_timeSeriesMerge').prop('checked')) {
+                $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked",false);
+            }
+        });
     },
 
     /**
