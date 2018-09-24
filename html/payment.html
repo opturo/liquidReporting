@@ -16,36 +16,62 @@
     <h4><b>Step 2:</b> Check package updates and cancellations</h4>
     <hr></hr>
 
-    <h5>Updates</h5>
-    <table id="package-update-table" class="table table-striped">
+
+
+    <div class="panel panel-info">
+      <div class="panel-heading">
+          <h5 class="panel-title">Updates</h5>
+      </div>
+      <div class="panel-body">
+        <table id="package-update-table" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Description</th>
+              <th>Cost (USD)</th>
+            </tr>
+         </thead>
+         <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+          <h5 class="panel-title">Cancellations</h5>
+      </div>
+      <div class="panel-body">
+        <table id="package-cancel-table" class="table table-striped">
+          <thead>
+            <tr>
+              <th>Package Name</th>
+              <th>Description</th>
+            </tr>
+         </thead>
+         <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <table id="data-usage-table" class="table table-striped">
       <thead>
         <tr>
-          <th>Package Name</th>
-          <th>Description</th>
-          <th>Cost</th>
+          <th>Data Storage</th>
+          <th>Cost (USD) Per Month</th>
         </tr>
      </thead>
      <tbody></tbody>
     </table>
-
-    <h5>Cancellations</h5>
-    <table id="package-cancel-table" class="table table-striped">
-      <thead>
-        <tr>
-          <th>Package Name</th>
-          <th>Description</th>
-        </tr>
-     </thead>
-     <tbody></tbody>
-    </table>
-
+    <p>Note: Data storage costs, discount codes, and package costs subject to change</p>
     <br></br>
 
     <h4><b>Step 3:</b> Apply any discount codes or promotional offers</h4>
     <hr></hr>
-    <div style="width:100%">
+    <div id="discount-code-box" style="width:100%">
       <input id="discount-code" name="discount-code" style="display:inline-block;" value=""/>
-      <button class="btn btn-primary btn-block" style="display:inline-block;width:100px;">Apply Code</button>
+      <button id="discount-code-button" class="btn btn-primary btn-block" style="display:inline-block;width:100px;" onclick="packageSelection.applyDiscountCode();">Apply Code</button>
+      <div id="discount-code-response"></div>
     </div>
 
     <br></br>

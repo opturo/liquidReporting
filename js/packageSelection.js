@@ -6,6 +6,7 @@ var packageSelection = {
 
   PACKAGES_URL: odin.SERVLET_PATH + "/ODIN_LITE/PRICING_PACKAGE_USAGE",
   DATA_USAGE_URL: odin.SERVLET_PATH + "/ODIN_LITE/PRICING_DATA_USAGE",
+  DISCOUNT_CODE_URL: odin.SERVLET_PATH + "/ODIN_LITE/VALIDATE_DISCOUNT_CODE",
 
   userPackages: [{"packageId": "TEST_1", "packageName": "Test 1"},{"packageId": "TEST_2", "packageName": "Test 2"},{"packageId": "TEST_3", "packageName": "Test 3"}],
   newPackages: [],
@@ -228,8 +229,8 @@ var packageSelection = {
                   "<p>{{description}}</p>"+
                   "<a href='http://opturo.com/liquidreporting/analytics.php?package_id={{packageId}}' target='_blank'>See More Details</a>"+
                   "<br></br>"+
-                  "<p>Monthly Cost: <span> {{monthlyCost}} per month </span></p>"+
-                  "<p>One-time Set Up Fee: <span>{{setUpFee}}</span></p>"+
+                  "<p>Monthly Cost (USD): <span> {{monthlyCost}} per month </span></p>"+
+                  "<p>One-time Set Up Fee (USD): <span>{{setUpFee}}</span></p>"+
                 "</div>";
 
       var output = Mustache.render(html, packageView);
@@ -405,6 +406,8 @@ var packageSelection = {
 
     packageSelection.displayBillingInfo();
 
+    packageSelection.displayDataUsageCosts();
+
   },
 
   /*Display billing info on payment page */
@@ -412,7 +415,7 @@ var packageSelection = {
   {
     var billingInfo = $("#billing-info-display");
     billingInfo.empty();
-    
+
     var data = {"cardType": "Mastercard", "ccDigits": "1234", "expirationDate": "05/2021"};
 
     var html = "<p><b>{{cardType}}</b> ending with <b>{{ccDigits}}</b><p>"+
@@ -421,6 +424,44 @@ var packageSelection = {
     var output = Mustache.render(html, data);
 
     billingInfo.append(output);
-  }
+  },
+
+  /* Apply discount code and sees if the code is valid or not */
+  applyDiscountCode: function()
+  {
+    var discountCode = $("#discount-code").val();
+    var discountCodeBox = $("#discount-code-box");
+    var discountCodeResponse = $("#discount-code-response");
+    discountCodeResponse.empty();
+
+    $.get(packageSelection.DISCOUNT_CODE_URL + "?packageList=EX_POST_ADVANCED_USER_GROUP" +
+          "&userEmail=cfallon@opturo.com" +
+          "&initialSignUpdate=20180920" +
+          "&discountCode=" + discountCode,
+          function(data){
+            var response = jQuery.parseJSON(data)
+
+            if(response["success"])
+            {
+              var validateDiscountCode = {"discountCodeText" : "Whatever the discount code does will appear here."};
+
+              var success = "<div class='alert alert-success alert-dismissible'>"+
+                            "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
+                            "<strong>{{discountCodeText}}</strong>"+
+                          "</div>";
+              var output = Mustache.render(success, validateDiscountCode);
+
+              discountCodeResponse.append(output);
+            }else{
+              var error = "<div class='alert alert-danger alert-dismissible'>"+
+                            "<a class='close' data-dismiss='alert' aria-label='close'>&times;</a>"+
+                            "<strong>You entered an invalid discount code. Please try again.</strong>"+
+                          "</div>";
+              discountCodeResponse.append(error);
+            }
+          }
+    );
+  },
+
 
 };

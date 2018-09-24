@@ -132,6 +132,8 @@ var odinLite_billing = {
 
         //Check if they have been verified.
         if(via.undef(isBillingVerified,true) || isBillingVerified==="false"){
+
+
             console.log("checkBillingIsVerified: Popup modal window, which will call the server with the arguments on submit. Below is the call.");
 
             kendo.ui.progress($("body"), true);//Wait Message on
@@ -253,5 +255,17 @@ var odinLite_billing = {
                 }
             },
             'json');
+    },
+
+    /* Converts modal form with credit card information into JSON data
+    that will be sent to Paylane for authorization */
+    getBillingInfo: function(){
+
+      var data = {};
+      
+      $("#billing-form").serializeArray().map(function(x){data[x.name] = x.value;});
+
+      return data;
+
     }
 };
