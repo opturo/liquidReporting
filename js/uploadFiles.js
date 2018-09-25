@@ -10,6 +10,7 @@ var odinLite_uploadFiles = {
     //Platform Settings
     fileExtension: null,
     fileSavedReport: null,
+    initialValues: null, //This holds the initial guessed values for fileFormat in case it fails.
 
     /**
      * init
@@ -261,6 +262,9 @@ var odinLite_uploadFiles = {
                         });
                     } else {//Success - Files Uploaded
                         via.debug("Files Uploaded Successfully:", data);
+
+                        odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
+
                         $('#cancelUploadButton').prop("disabled", true);
                         $('#uploadProgressPanel').fadeOut(function () {
                             //Move onto the import wizard.

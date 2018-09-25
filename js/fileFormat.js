@@ -15,6 +15,17 @@ var odinLite_fileFormat = {
     dataManagementPlugin: null,
     filterRules: [],
     validationRules: [],
+    loadedReport: null, //holds the name of the currently loaded report.
+    rowData: [
+        {text: "50",value:50},
+        {text: "500",value:500},
+        {text: "1,000",value:1000},
+        {text: "2,500",value:2500},
+        {text: "5,000",value:5000},
+        {text: "10,000",value:10000},
+        {text: "20,000",value:20000},
+        {text: "All Rows",value:"All"}
+    ], //Holds the row variables.
 
     /**
      * init
@@ -33,6 +44,17 @@ var odinLite_fileFormat = {
         odinLite_fileFormat.FILE_DATA.fileIdx = 0;
         delete(odinLite_fileFormat.FILE_DATA.message);
         delete(odinLite_fileFormat.FILE_DATA.success);
+
+        // create DropDownList for rows
+        $("#import_fileFormat_rows").kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: odinLite_fileFormat.rowData,
+            index: 0,
+            change: function(e){
+                odinLite_fileFormat.updateFilePreview();
+            }
+        });
 
         //Check multiple sheets for excel
         if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames) && odinLite_fileFormat.FILE_DATA.sheetNames.length > 1
@@ -2007,6 +2029,13 @@ var odinLite_fileFormat = {
             return;
         }
 
+        odinLite_fileFormat.loadedReport = null;
+        $('.fileFormat_reportName').empty();
+        if(!via.undef(loadJson.reportName)){
+            odinLite_fileFormat.loadedReport = loadJson.reportName;
+            $('.fileFormat_reportName').html("<b>Loaded: </b>" + loadJson.reportName);
+        }
+
         //Load the file formatting
         odinLite_fileFormat.FILE_DATA.staticColumns = JSON.parse(loadJson.delimType);
         odinLite_fileFormat.FILE_DATA.endColumn = JSON.parse(loadJson.endColumn);
@@ -2098,12 +2127,21 @@ var odinLite_fileFormat = {
 
         //See if there is a Platform Saved Report otherwise look for default, then just try to guess.
         if(!via.undef(odinLite_uploadFiles.fileSavedReport)){
-            via.debug("Loading System Report:",odinLite_uploadFiles.fileSavedReport);
+            via.confirm("Load System Report","Would you like to load the system report: " + odinLite_uploadFiles.fileSavedReport,function(){
+                via.debug("Loading System Report:",odinLite_uploadFiles.fileSavedReport);
 
-            //Load the system saved report.
-            via.loadReport(odin.ODIN_LITE_APP_ID,odinLite_modelCache.currentEntity.saveId,odinLite_uploadFiles.fileSavedReport,"Common",
-                function(loadJson){
-                    odinLite_fileFormat.loadSettings(loadJson);
+                //Load the system saved report.
+                via.loadReport(odin.ODIN_LITE_APP_ID,odinLite_modelCache.currentEntity.saveId,odinLite_uploadFiles.fileSavedReport,"Common",
+                    function(loadJson){
+                        odinLite_fileFormat.loadSettings(loadJson);
+                    });
+            },
+            function(){//No
+                //Update the initial values
+                odinLite_fileFormat.setFormattingOptions();
+
+                //Update the preview for the first time.
+                odinLite_fileFormat.updateFilePreview(null, overrideInitialValues);
             });
         }else {
             //Check for a default report. Otherwise guess at the format.
@@ -2147,7 +2185,7 @@ var odinLite_fileFormat = {
      * Updates the file preview based on the settings passed.
      */
     updateFilePreview: function(callbackFn,overrideInitialValues){
-        kendo.ui.progress($("body"), true);//Wait Message
+        kendo.ui.progress($("#import_fileFormat_spreadsheet"), true);//Wait Message
 
         //Update the formatting options.
         var formattingOptions = odinLite_fileFormat.getFormattingOptions();
@@ -2175,16 +2213,30 @@ var odinLite_fileFormat = {
                 overrideUser: odinLite.OVERRIDE_USER
             },formattingOptions,advancedSettingsOptions),
             function(data, status){
-                kendo.ui.progress($("body"), false);//Wait Message off
+                kendo.ui.progress($("#import_fileFormat_spreadsheet"), false);//Wait Message off
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure generating preview:", data.message);
-                    via.alert("Failure generating preview", data.message);
+                    if(!via.undef(odinLite_fileFormat.loadedReport,true)){
+                        via.alert("Failure generating preview", data.message + "<br/><b>Unloading saved report:</b> " + odinLite_fileFormat.loadedReport, function () {
+                            odinLite_fileFormat.loadedReport = null;
+                            $('.fileFormat_reportName').empty();//Remove the loaded report text
+                            odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings.
 
-                    if(via.undef(data.tsEncoded)){
-                        $('#fileFormat_advancedSettingsButton').prop("disabled",true);//disable the advanced setting button
-                        odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings.
-                        $("#import_fileFormat_spreadsheet").empty();
+                            //Update the initial values
+                            odinLite_fileFormat.setInitialValues();
+                            odinLite_fileFormat.setFormattingOptions();
+
+                            //Update the preview for the first time.
+                            odinLite_fileFormat.updateFilePreview(null, overrideInitialValues);
+                        });
+                    }else {
+                        via.alert("Failure generating preview", data.message, function () {
+                            if (via.undef(data.tsEncoded)) {
+                                odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings.
+                                $("#import_fileFormat_spreadsheet").empty();
+                            }
+                        });
                     }
                 }else{
                     via.debug("Successful generating preview:", data);
@@ -2200,7 +2252,12 @@ var odinLite_fileFormat = {
 
                     $('#fileFormat_advancedSettingsButton').prop("disabled",false);//Enable the advanced setting button
 
-                    var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_fileFormat.FILE_DATA.tsEncoded,false,false);
+                    //Get the # of rows to display
+                    var maxRows = $("#import_fileFormat_rows").data('kendoDropDownList').value();
+                    if(maxRows === "All"){
+                        maxRows = null;
+                    }
+                    var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_fileFormat.FILE_DATA.tsEncoded,false,false,maxRows);
                     //Insert the sheet preview.
                     $("#import_fileFormat_spreadsheet").empty();
                     $("#import_fileFormat_spreadsheet").kendoSpreadsheet({
@@ -2210,8 +2267,6 @@ var odinLite_fileFormat = {
                         rows: 20,
                         toolbar: false,
                         sheetsbar: false,
-                        rows: null,
-                        columns: null,
                         sheets: [sheetData]
                     });
                     $("#import_fileFormat_spreadsheet .k-spreadsheet-sheets-bar-add").hide();
@@ -2237,6 +2292,20 @@ var odinLite_fileFormat = {
         odinLite_fileFormat.dataManagementPlugin = null;
         odinLite_fileFormat.filterRules = [];
         odinLite_fileFormat.validationRules = [];
+    },
+
+    /**
+     * setInitialValues
+     * This will set the intial values back to what was oringinally guessed by the system
+     */
+    setInitialValues: function(){
+        odinLite_fileFormat.FILE_DATA.hasColumnHeader = odinLite_uploadFiles.initialValues.hasColumnHeader;
+        odinLite_fileFormat.FILE_DATA.delimType = odinLite_uploadFiles.initialValues.delimType;
+        odinLite_fileFormat.FILE_DATA.startColumn = odinLite_uploadFiles.initialValues.startColumn;
+        odinLite_fileFormat.FILE_DATA.endColumn = odinLite_uploadFiles.initialValues.endColumn;
+        odinLite_fileFormat.FILE_DATA.startRow = odinLite_uploadFiles.initialValues.startRow;
+        odinLite_fileFormat.FILE_DATA.endRow = odinLite_uploadFiles.initialValues.endRow;
+        odinLite_fileFormat.FILE_DATA.textQualifier = odinLite_uploadFiles.initialValues.textQualifier;
     },
 
     /**
@@ -2333,10 +2402,16 @@ var odinLite_fileFormat = {
      * buildSpreadsheetFromTableSet
      * Makes a spreadsheet form tableset data
      */
-    getSpreadsheetDataFromTableSet: function(tsData,isEnabled,displayDataTypes){
+    getSpreadsheetDataFromTableSet: function(tsData,isEnabled,displayDataTypes,maxRows){
         var rows = [];
         var columns = [];
         if(via.undef(isEnabled,true)){ isEnabled = true; }
+        if(via.undef(maxRows,true)) {
+            maxRows = tsData.data.length;
+        }
+        if(maxRows > tsData.data.length){
+            maxRows = tsData.data.length;
+        }
 
         //Display the data types
         if(!via.undef(displayDataTypes) && displayDataTypes===true){
@@ -2361,7 +2436,7 @@ var odinLite_fileFormat = {
 
         //Add the row data
         if(!via.undef(tsData) && !via.undef(tsData.data,true)) {
-            for (var i = 0; i < tsData.data.length; i++) {
+            for (var i = 0; i < maxRows; i++) {
                 var row = [];
                 var rowData = tsData.data[i];
                 var cellObject = null;

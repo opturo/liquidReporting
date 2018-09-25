@@ -20,7 +20,8 @@ var odinLite_modelMapping = {
         $("#modelMapping_spreadsheet").empty();
 
         //update the preview in case it was not called
-        odinLite_fileFormat.updateFilePreview(function(){
+
+        //odinLite_fileFormat.updateFilePreview(function(){
             kendo.ui.progress($("body"), true);//Wait Message
 
             //Hide the Previous Step
@@ -30,33 +31,32 @@ var odinLite_modelMapping = {
             if (via.undef(odinLite_modelMapping.columnTemplate)){
                 //Get the column template
                 $.get('./html/modelMapping_columnTemplate.html', function (data) {
+                    kendo.ui.progress($("body"), false);//Wait Message
+
                     odinLite_modelMapping.columnTemplate = data;
                     odinLite_modelMapping.showModelMapping();
                     odinLite_modelMapping.initUI();
 
                     //Get the initial preview
-                    odinLite_modelMapping.updateFilePreview(true);
+                    odinLite_modelMapping.updateFilePreview();
                     odinLite_modelMapping.hasBeenLoaded = true;//Set the loaded variable after first load.
 
                     //Enable or diable columns based on the data merge options.
                     odinLite_modelMapping.checkDataMergeOptions();
-
-                    kendo.ui.progress($("body"), false);//Wait Message
                 }, 'text');
             }else{//Template already fetched
+                kendo.ui.progress($("body"), false);//Wait Message
                 odinLite_modelMapping.showModelMapping();
                 odinLite_modelMapping.initUI();
 
                 //Get the initial preview
-                odinLite_modelMapping.updateFilePreview(true);
+                odinLite_modelMapping.updateFilePreview();
                 odinLite_modelMapping.hasBeenLoaded = true;//Set the loaded variable after first load.
 
                 //Enable or diable columns based on the data merge options.
                 odinLite_modelMapping.checkDataMergeOptions();
-
-                kendo.ui.progress($("body"), false);//Wait Message
             }
-        });
+        //});
 
 
         //Enable/Disable Date Format
@@ -99,7 +99,6 @@ var odinLite_modelMapping = {
                 var columnContainers = $('#modelMappingColumnPanel').find("."+arr[i].id + "_" + via.cleanId(arr[i].name));
                 for(var j=0;j<columnContainers.length;j++) {
                     var colContainer = columnContainers[j];
-                    console.log('disable',colContainer);
                     $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').value(null);
                     $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(false);
                 }
@@ -122,6 +121,17 @@ var odinLite_modelMapping = {
             via.alert("Model Mapping Error","Please try again.");
             return;
         }
+
+        // create DropDownList for rows
+        $("#modelMapping_rows").kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: odinLite_fileFormat.rowData,
+            index: 0,
+            change: function(e){
+                odinLite_modelMapping.updateFilePreview();
+            }
+        });
 
         //Get the column list for the dropdown
         var comboArr = odinLite_modelMapping.getColumnListFromTableSet();
@@ -187,10 +197,11 @@ var odinLite_modelMapping = {
         $('#modelMapping_updatePreviewButton').removeClass('btn-danger');
         $('#modelMapping_updatePreviewButton').addClass('btn-success');
 
-        kendo.ui.progress($("body"), true);//Wait Message
+        kendo.ui.progress($("#modelMapping_spreadsheet"), true);//Wait Message
 
         //Update the formatting options.
         var formattingOptions = odinLite_fileFormat.getFormattingOptions();
+
         //Get the Column Mapping
         formattingOptions = odinLite_modelMapping.getColumnMappingValues(formattingOptions,false);
         //Sheet Names
@@ -215,14 +226,19 @@ var odinLite_modelMapping = {
                 overrideUser: odinLite.OVERRIDE_USER
             },formattingOptions,advancedSettingsOptions),
             function(data, status){
-                kendo.ui.progress($("body"), false);//Wait Message off
+                kendo.ui.progress($("#modelMapping_spreadsheet"), false);//Wait Message off
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure generating Model Mapping preview:", data.message);
                     via.alert("Failure generating preview", data.message);
                 }else{
                     via.debug("Successful generating Model Mapping preview:", data);
-                    var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(data.tsEncoded,false,false);
+                    //Get the # of rows to display
+                    var maxRows = $("#modelMapping_rows").data('kendoDropDownList').value();
+                    if(maxRows === "All"){
+                        maxRows = null;
+                    }
+                    var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(data.tsEncoded,false,false,maxRows);
                     //Color the headers.
                     if(!via.undef(sheetData.rows) && sheetData.rows.length > 0) {
                         var firstRow = sheetData.rows[0];
@@ -248,7 +264,6 @@ var odinLite_modelMapping = {
                         rows: 20,
                         toolbar: false,
                         sheetsbar: false,
-                        rows: null,
                         columns: null,
                         sheets: [sheetData]
                     });
