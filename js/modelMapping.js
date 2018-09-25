@@ -337,7 +337,7 @@ var odinLite_modelMapping = {
         }).data('kendoDropDownList');
 
         if(colObj.isRequired === true){
-
+            newColumn.addClass('customColumnBorder');
         }
 
     },
