@@ -79,28 +79,48 @@ var odinLite_modelMapping = {
      * This will check to see if the data merge options is enabled and disable/enable columns based on what is checked.
      * NOTE: This is no longer used. It has been moved to advanced settings.
      */
-    checkDataMergeOptions: function(){
+    checkDataMergeOptions: function() {
 
         //Time Series
-        if(!via.undef(odinLite_fileFormat.dataMergeOptions.timeSeries) && odinLite_fileFormat.dataMergeOptions.timeSeries === true){
+        if (!via.undef(odinLite_fileFormat.dataMergeOptions.timeSeries) && odinLite_fileFormat.dataMergeOptions.timeSeries === true) {
             //get the columns to be disabled
             var arr = [];
             var savedCol = odinLite_modelCache.currentEntity.savedColumnInfo;
             var timeSeriesCol = odinLite_modelCache.currentEntity.staticToTimeSeriesSavedColumnInfo;
-            for(var i=0;i<savedCol.length;i++){
+            for (var i = 0; i < savedCol.length; i++) {
                 var saved = savedCol[i];
                 var timeSeries = timeSeriesCol[i];
-                if(saved.isRequired===true && timeSeries.isRequired===false){
+                if (saved.isRequired === true && timeSeries.isRequired === false) {
                     arr.push(timeSeries);
                 }
             }
 
-            for(var i=0;i<arr.length;i++){
-                var columnContainers = $('#modelMappingColumnPanel').find("."+arr[i].id + "_" + via.cleanId(arr[i].name));
-                for(var j=0;j<columnContainers.length;j++) {
+            for (var i = 0; i < arr.length; i++) {
+                var columnContainers = $('#modelMappingColumnPanel').find("." + arr[i].id + "_" + via.cleanId(arr[i].name));
+                for (var j = 0; j < columnContainers.length; j++) {
                     var colContainer = columnContainers[j];
                     $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').value(null);
                     $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(false);
+                }
+            }
+        }
+
+        //Portfolio Indexed Time Series Data
+        if (!via.undef(odinLite_fileFormat.dataMergeOptions.portIndex) && odinLite_fileFormat.dataMergeOptions.portIndex === true) {
+            var portIndexTimeSeriesColumns = odinLite_modelCache.currentEntity.timeSeriesToPortIndexTimeSeriesColumns
+            var requiredColumns = portIndexTimeSeriesColumns[0];
+            var oneOrMoreColumns = portIndexTimeSeriesColumns[1];
+
+            var savedCol = odinLite_modelCache.currentEntity.savedColumnInfo;
+            for(var i=0;i<savedCol.length;i++){
+                var saved = savedCol[i];
+                if (saved.isRequired === true && $.inArray(saved.name, requiredColumns) === -1) {
+                    var columnContainers = $('#modelMappingColumnPanel').find("." + saved.id + "_" + via.cleanId(saved.name));
+                    for (var j = 0; j < columnContainers.length; j++) {
+                        var colContainer = columnContainers[j];
+                        $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').value(null);
+                        $(colContainer).find('span .mappingColumnList_input').data('kendoDropDownList').enable(false);
+                    }
                 }
             }
         }

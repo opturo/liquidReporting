@@ -376,12 +376,12 @@ var odinLite_uploadFiles = {
                 height = "100px";
                 break;
             case 'TIME_SERIES_MERGE':
-                content = "This allows you to merge static data to already uploaded time series data.";
+                content = "Allows merge of static data to persisted time series data. For instance, merging account-level currency code which is static through time to account time-series return data.";
                 width = "500px";
                 height = "100px";
                 break;
             case 'TIME_SERIES_PORTFOLIO_MERGE':
-                content = "This allows you to merge static data to already uploaded time series data by portfolio.";
+                content = "Allows merge of Non-Portfolio specific Time-Series data to Portfolio time series persisted data. For instance, merging security-level price data to portfolio holdings.";
                 width = "600px";
                 height = "100px";
                 break;
