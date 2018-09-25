@@ -62,10 +62,14 @@ var odinLite = {
                     via.debug("Successful Initializing:", data);
 
                     /**TESTING**/
-                    /*setTimeout(function(){
-                        odinLite_support.getOpenIssues();
-                    },3500);*/
+                    /* setTimeout(function(){
+                        odinLite_billing.packageTesting();
+                    },3500);
+                    */
                     /**END TESTING**/
+
+                    /** Testing billing modal **/
+                    $('#billing_verifyModal').modal('show');
 
                     odinLite_billing.checkBillingIsVerified(function(){//Check to make sure they have verified billing if they are a billing client.
                         //Check if an entity was passed from appbuilder
@@ -80,6 +84,7 @@ var odinLite = {
                             window.history.replaceState("From App Builder", data.appName, "./");
 
                             odinLite.initOdinLite();
+
                         }else if(odinLite.isMultiEntity()){
                             odinLite.createMultiEntityWindow(data,function(){
                                 //odinLite.ENTITY_DIR = "9xWHiDUj";
@@ -89,6 +94,7 @@ var odinLite = {
                                 odinLite.initOdinLite();
                             });
                         }else{
+
                             if(data.entityList.length === 0){
                                 via.alert("Entity Error","Cannot find an entity.",function(){
                                     odinLite.setUserLoggedIn();
@@ -101,6 +107,7 @@ var odinLite = {
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
                             odinLite.initOdinLite();
+
                         }
                     });
                 }
@@ -180,7 +187,7 @@ var odinLite = {
         }
 
         //Switch User Button
-        if(odin.USER_INFO.isAdminUser === true){
+        if(odin.USER_INFO.isAdminUser === true && odin.USER_INFO.userName === "rocco"){
             $('#switchUserButton').fadeIn();
             $('#switchUserButton').off();
             $('#switchUserButton').click(function(){
@@ -210,9 +217,11 @@ var odinLite = {
 
         //Help Button
         $('#home_helpButton').fadeIn();
-		
+
         //remove the loading message
         kendo.ui.progress($("body"), false);//Wait Message off
+
+
     },
 
     /**
@@ -655,8 +664,8 @@ var odinLite = {
      * End Account Settings
      * ----------------------
      */
-	 
-	 
+
+
      /**
      * ----------------------
      * Account Packages
