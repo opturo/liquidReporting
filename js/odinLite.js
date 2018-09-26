@@ -68,9 +68,6 @@ var odinLite = {
                     */
                     /**END TESTING**/
 
-                    /** Testing billing modal **/
-                    $('#billing_verifyModal').modal('show');
-
                     odinLite_billing.checkBillingIsVerified(function(){//Check to make sure they have verified billing if they are a billing client.
                         //Check if an entity was passed from appbuilder
                         if(!via.undef(via.getParamsValue("entityname")) && !via.undef(via.getParamsValue("entitydir"))){

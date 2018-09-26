@@ -134,8 +134,9 @@ var odinLite_billing = {
         if(via.undef(isBillingVerified,true) || isBillingVerified==="false"){
 
 
-            console.log("checkBillingIsVerified: Popup modal window, which will call the server with the arguments on submit. Below is the call.");
 
+            $('#billing_verifyModal').modal('show');
+            /*
             kendo.ui.progress($("body"), true);//Wait Message on
             $.post(odin.SERVLET_PATH,
                 {
@@ -175,7 +176,7 @@ var odinLite_billing = {
                     }
                 },
                 'json');
-
+             */
 
         }else{//They are verified. Call the function to continue the login.
             console.log("checkBillingIsVerified: They are verified. Call the function to continue the login.");

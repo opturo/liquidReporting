@@ -3,7 +3,7 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-      <title>Liquid Reporting</title>
+      <title>Software At Your Service</title>
       <link rel="shortcut icon" href="../../favicon.ico">
       <!-- Bootstrap core CSS -->
       <link title="bootstrap" href="../bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -57,6 +57,7 @@
       <!-- Home Panel -->
       <div id="homePanel" class="container-fluid" style="display:none;">
             <jsp:include page="./html/home.html" />
+            <jsp:include page="./html/billingModal.html" />
       </div>
       <!-- End - Home Panel -->
 
@@ -121,12 +122,6 @@
       </div>
       <!-- End - View Database Panel -->
 
-      <!-- Reporting Panel -->
-      <div id="reportPanel" class="container-fluid" style="display:none;">
-         report
-      </div>
-      <!-- End - Reporting Panel -->
-
       <!-- Powered Panel -->
       <div class="poweredPanel container-fluid" style="display:none;">
          <img style="margin-top:6px;" src="../images/powered_margin.png" alt="">
@@ -149,12 +144,12 @@
       <script src="js/billing.js"></script>
       <script src="js/support.js"></script>
       <script src="js/manageData.js"></script>
-      
-	  <!-- Liquid Reporting Tour -->
+      <script src="js/packageSelection.js"></script>
+
+   <!-- Liquid Reporting Tour -->
 	  <script src="../js/bootstrap-tour.min.js"></script>
       <script src="../js/mustache.min.js"></script>
 	  <script src="js/userTour.js"></script>
-      <script src="js/packageSelection.js"></script>			  
 	  
       <!-- Kendo UI -->
       <script src="../js/kendoui/js/kendo.all.min.js"></script>

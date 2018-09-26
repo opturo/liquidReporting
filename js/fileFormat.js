@@ -160,11 +160,7 @@ var odinLite_fileFormat = {
      */
     advancedSettingsWindow_addColumn: function(){
         //Dropdown box of columns
-        var columnList = [];
-        for(var i=0;i<odinLite_modelCache.currentEntity.mappedColumnDisplay.length;i++){
-            var col = odinLite_modelCache.currentEntity.mappedColumnDisplay[i];
-            columnList.push({ text: col, value: col });
-        }
+        var columnList = odinLite_fileFormat.getColumnListWithAdvancedColumns();
         $('#fileFormat_addColumn_columnList').kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
@@ -547,14 +543,13 @@ var odinLite_fileFormat = {
      * This is for the map column tab
      */
     advancedSettingsWindow_mapColumn: function(){
-
         //Dropdown box of columns
         var columnList = [];
         for(var i=0;i<odinLite_modelCache.currentEntity.mappedColumnDisplay.length;i++){
             var col = odinLite_modelCache.currentEntity.mappedColumnDisplay[i];
             columnList.push({ text: col, value: col });
         }
-        $('#fileFormat_mapColumn_columnList').kendoDropDownList({
+        $('#fileFormat_mapColumn_columnList').kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: columnList,
@@ -589,7 +584,7 @@ var odinLite_fileFormat = {
         $(".fileFormat_mapColumnButton").on("click",function(){
             var colObject = {};
             colObject.dataColumn = $("#fileFormat_mapColumn_headerList").data("kendoDropDownList").value();
-            colObject.templateColumn = $("#fileFormat_mapColumn_columnList").data("kendoDropDownList").value();
+            colObject.templateColumn = $("#fileFormat_mapColumn_columnList").data("kendoComboBox").value();
             colObject.dateFormat = $("#fileFormat_mapColumn_dateFormat").data("kendoComboBox").value();
             colObject.type = getCurrentType();
 
@@ -630,7 +625,7 @@ var odinLite_fileFormat = {
 
             //Reset form
             $("#fileFormat_mapColumn_headerList").data("kendoDropDownList").value(null);
-            $("#fileFormat_mapColumn_columnList").data("kendoDropDownList").value(null);
+            $("#fileFormat_mapColumn_columnList").data("kendoComboBox").value(null);
             $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').value(null);
         });
 
@@ -713,7 +708,7 @@ var odinLite_fileFormat = {
 
         //getCurrentType - get the type of the current column chosen
         function getCurrentType(){
-            var columnName = $("#fileFormat_mapColumn_columnList").data("kendoDropDownList").value();
+            var columnName = $("#fileFormat_mapColumn_columnList").data("kendoComboBox").value();
             var idx = $.inArray(columnName,odinLite_modelCache.currentEntity.mappedColumnDisplay);
             var type = 0;
             if(idx !== -1){
@@ -793,7 +788,7 @@ var odinLite_fileFormat = {
             dataTextField: "text",
             dataValueField: "value",
             dataSource: [{text:'OR',value:'OR'},{text:'AND',value:'AND'}],
-            value: odinLite_fileFormat.dataManagementPlugin,
+            index: 0,
             change: function(e){}
         });
 
@@ -1718,17 +1713,17 @@ var odinLite_fileFormat = {
         var comboArr = [];
         for(var i=0;i<columnHeaders.length;i++){
             var comboObj = null;
-            if(hasHeader){
+            //if(hasHeader){
                 comboObj = {
                     text: columnHeaders[i],
                     value: columnHeaders[i]
                 };
-            }else{
+            /*}else{
                 comboObj = {
                     text: via.toExcelColumnName(i+1),
                     value: i
                 };
-            }
+            }*/
             comboArr.push(comboObj);
         }
 

@@ -109,7 +109,7 @@ var odinLite_uploadFiles = {
             //Setup the upload progress bar
             $('#uploadProgressbar').kendoProgressBar({
                 animation: {
-                    duration: 500
+                    duration: 100
                 },
                 min: 0,
                 max: 100,
