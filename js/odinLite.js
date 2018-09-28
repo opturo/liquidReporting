@@ -34,9 +34,9 @@ var odinLite = {
             odinLite.ENTITY_CODE = data.ODIN_LITE_ENTITY_CODE;
             odinLite.APP_NAME = data.ODIN_LITE_APP_NAME;
             if(via.undef(odinLite.ENTITY_CODE,true)){
-                window.location = '../index.jsp?referrer=./liquidReporting/' + encodeURIComponent(document.location.search);
+                window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(document.location.search);
             }else {
-                window.location = '../index.jsp?referrer=./liquidReporting/' + encodeURIComponent(document.location.search) + "&entity=" + odinLite.ENTITY_CODE + "&appName=" + odinLite.APP_NAME;
+                window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(document.location.search) + "&entity=" + odinLite.ENTITY_CODE + "&appName=" + odinLite.APP_NAME;
             }
         });
     },

@@ -160,13 +160,19 @@ var odinLite_fileFormat = {
      */
     advancedSettingsWindow_addColumn: function(){
         //Dropdown box of columns
-        var columnList = odinLite_fileFormat.getColumnListWithAdvancedColumns();
+        var columnList = [];
+        for(var i=0;i<odinLite_modelCache.currentEntity.mappedColumnDisplay.length;i++){
+            var col = odinLite_modelCache.currentEntity.mappedColumnDisplay[i];
+            columnList.push({ text: col, value: col });
+        }
         $('#fileFormat_addColumn_columnList').kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: columnList,
             value: 0,
             change: function(a){
+                checkTemplateColumn(a.sender.value());
+
                 addInputBox(a.sender.value());
             }
         });
@@ -200,6 +206,22 @@ var odinLite_fileFormat = {
             }
         });
 
+
+        /** Data Type **/
+        var dataTypeList = [];
+        for(var i=0;i<odinLite_modelCache.currentEntity.compareDataTypes.length;i++){
+            var col = odinLite_modelCache.currentEntity.compareDataTypes[i];
+            dataTypeList.push({ text: col, value: col });
+        }
+        $('#fileFormat_addColumn_dataType').kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: dataTypeList,
+            index: 0,
+            change: function(e){
+                addInputBox($('#fileFormat_addColumn_columnList').data('kendoComboBox').value());
+            }
+        });
 
 
         //Extract - Date format combo
@@ -311,6 +333,11 @@ var odinLite_fileFormat = {
             }else{//Assign
                 //Check the value
                 colObject.value = getInputBoxValue();
+                //Add the data type if it is a custom column
+                if($('#fileFormat_addColumn_dataType').prop("disabled") === false) {
+                    colObject.dataType = $('#fileFormat_addColumn_dataType').data('kendoDropDownList').value();
+                }
+
                 //Check for a value
                 if(via.undef(colObject.value,true)){
                     via.kendoAlert("Add Column Error","Set a value for the column you want to add.");
@@ -324,6 +351,7 @@ var odinLite_fileFormat = {
 
             //Reset form
             $("#fileFormat_addColumn_columnList").data("kendoComboBox").value(null);
+            $('#fileFormat_addColumn_dataType').data('kendoDropDownList').select(0);
             $('#fileFormat_addColumn_prefix').val(null);
             $('#fileFormat_addColumn_suffix').val(null);
             $('#fileFormat_addColumn_dateFormat').data('kendoComboBox').value(null);
@@ -344,6 +372,7 @@ var odinLite_fileFormat = {
                         fields: {
                             columnName: { type: "string" },
                             columnType: { type: "string" },
+                            dataType: { type: "string" },
                             value: { type: "string" },
                             prefix: { type: "string" },
                             prefixRegex: { type: "boolean" },
@@ -362,6 +391,7 @@ var odinLite_fileFormat = {
             columns: [
                 { field: "columnName", title: "Column Name", width: "130px" },
                 { field: "columnType", title: "Column Type", width: "100px" },
+                { field: "dataType", title: "Data Type", width: "100px" },
                 { field: "value", title: "Value", width: "100px"},
                 { field: "prefix", title: "Prefix", width: "100px" },
                 { field: "prefixRegex", title: "Regex", width: "60px" },
@@ -395,6 +425,30 @@ var odinLite_fileFormat = {
         /****************/
         /*  Function   */
         /***************/
+        //Check to see if it is a template column
+        function checkTemplateColumn(colName){
+            var isTemplate = false;
+            var cols = odinLite_modelCache.currentEntity.mappedColumnDisplay;
+            for(var i in cols){
+                if(via.undef(cols[i])){ continue; }
+                if(cols[i].toUpperCase() === colName.toUpperCase()){
+                    isTemplate = true;
+                    break;
+                }
+            }
+
+            var dataTypeInput = $('#fileFormat_addColumn_dataType').data('kendoDropDownList');
+            if(isTemplate !== true){
+                dataTypeInput.select(0);
+                $('#fileFormat_addColumn_dataType').prop("disabled",false);
+                $('#fileFormat_addColumn_dataType').data('kendoDropDownList').enable(true);
+            }else{
+                dataTypeInput.select(0);
+                $('#fileFormat_addColumn_dataType').prop("disabled",true);
+                $('#fileFormat_addColumn_dataType').data('kendoDropDownList').enable(false);
+            }
+        }
+
         //Edits a column from the table
         function editColumn(e) {
             e.preventDefault();
@@ -419,7 +473,6 @@ var odinLite_fileFormat = {
 
             //Set the column type
             $("#fileFormat_addColumn_columnType").data('kendoDropDownList').value(dataItem.columnType);
-            $("#fileFormat_addColumn_columnType").data('kendoDropDownList').trigger("change");
             $("#fileFormat_addColumn_columnList").data("kendoComboBox").value(dataItem.columnName);
             if(dataItem.columnType === 'Extract Value from File/Sheet Name'){
                 $('#fileFormat_addColumn_dateFormat').data('kendoComboBox').value(dataItem.dateFormat);
@@ -433,6 +486,18 @@ var odinLite_fileFormat = {
                 if(!via.undef(dataItem.columnList,true)){ arr = dataItem.columnList.split(";");}
                 $('#fileFormat_addColumn_multiColumnColumnList').data('kendoMultiSelect').value(arr);
             }else{
+                if(!via.undef(dataItem.dataType,true)) {
+                    $("#fileFormat_addColumn_dataType").prop("disabled",false);
+                    $("#fileFormat_addColumn_dataType").data('kendoDropDownList').enable();
+                    $("#fileFormat_addColumn_dataType").data('kendoDropDownList').value(dataItem.dataType);
+                    $("#fileFormat_addColumn_dataType").data('kendoDropDownList').trigger("change");
+                }else{
+                    $("#fileFormat_addColumn_dataType").prop("diabled",true);
+                    $("#fileFormat_addColumn_dataType").data('kendoDropDownList').enable(false);
+                    $("#fileFormat_addColumn_dataType").data('kendoDropDownList').select(0);
+                    //$("#fileFormat_addColumn_dataType").data('kendoDropDownList').trigger("change");
+                }
+                addInputBox(dataItem.columnName);
                 getInputBoxValue(dataItem.value);
             }
         }
@@ -470,6 +535,9 @@ var odinLite_fileFormat = {
             var type = 0;
             if(idx !== -1){
                 type = odinLite_modelCache.currentEntity.mappedColumnDataType[idx];
+            }else if($('#fileFormat_addColumn_dataType').prop("disabled") === false){
+                var textType = $('#fileFormat_addColumn_dataType').data('kendoDropDownList').value();
+                type = odinLite_modelCache.currentEntity.compareDataTypeCodes[textType];
             }
             switch(type){
                 case 1:
@@ -496,7 +564,11 @@ var odinLite_fileFormat = {
             var type = 0;
             if(idx !== -1){
                 type = odinLite_modelCache.currentEntity.mappedColumnDataType[idx];
+            }else if($('#fileFormat_addColumn_dataType').prop("disabled") === false){
+                var textType = $('#fileFormat_addColumn_dataType').data('kendoDropDownList').value();
+                type = odinLite_modelCache.currentEntity.compareDataTypeCodes[textType];
             }
+
             var value = null;
             switch(type){
                 case 1:
@@ -509,7 +581,7 @@ var odinLite_fileFormat = {
                 case 3:
                     var date = $("#fileFormat_addColumn_value").data("kendoDatePicker").value();
                     if(!via.undef(setValue,true)){
-                        $('#fileFormat_addColumn_value').data("kendoDatePicker").value(setValue);
+                        $('#fileFormat_addColumn_value').data("kendoDatePicker").value(kendo.parseDate(setValue, "yyyyMMdd"));
                     }
                     if(date===null){return null;}
                     value = (date.getFullYear() +
@@ -543,6 +615,10 @@ var odinLite_fileFormat = {
      * This is for the map column tab
      */
     advancedSettingsWindow_mapColumn: function(){
+        //Header List
+        var headers = odinLite_modelMapping.getColumnListFromTableSet();
+        headers.splice(0,1);
+
         //Dropdown box of columns
         var columnList = [];
         for(var i=0;i<odinLite_modelCache.currentEntity.mappedColumnDisplay.length;i++){
@@ -555,6 +631,10 @@ var odinLite_fileFormat = {
             dataSource: columnList,
             value: null,
             change: function(e){
+                //Check the template Column
+                checkTemplateColumn(e.sender.value());
+
+                //Set the date format
                 setDateFormat();
             }
         });
@@ -570,8 +650,6 @@ var odinLite_fileFormat = {
         setDateFormat();
 
         //Header List
-        var headers = odinLite_modelMapping.getColumnListFromTableSet();
-        headers.splice(0,1);
         $('#fileFormat_mapColumn_headerList').kendoDropDownList({
             dataTextField: "text",
             dataValueField: "text",
@@ -580,11 +658,32 @@ var odinLite_fileFormat = {
             value: null
         });
 
+
+        /** Data Type **/
+        var dataTypeList = [];
+        for(var i=0;i<odinLite_modelCache.currentEntity.compareDataTypes.length;i++){
+            var col = odinLite_modelCache.currentEntity.compareDataTypes[i];
+            dataTypeList.push({ text: col, value: col });
+        }
+        $('#fileFormat_mapColumn_dataType').kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: dataTypeList,
+            value: null,
+            change: function(e){
+                //Set the date format
+                setDateFormat();
+            }
+        });
+
         //Add Column to Grid - Button Click
         $(".fileFormat_mapColumnButton").on("click",function(){
             var colObject = {};
             colObject.dataColumn = $("#fileFormat_mapColumn_headerList").data("kendoDropDownList").value();
             colObject.templateColumn = $("#fileFormat_mapColumn_columnList").data("kendoComboBox").value();
+            if($("#fileFormat_mapColumn_dataType").prop("disabled") === false) {
+                colObject.dataType = $("#fileFormat_mapColumn_dataType").data("kendoDropDownList").value();
+            }
             colObject.dateFormat = $("#fileFormat_mapColumn_dateFormat").data("kendoComboBox").value();
             colObject.type = getCurrentType();
 
@@ -602,7 +701,11 @@ var odinLite_fileFormat = {
 
             //Date Format Check
             if(via.undef(colObject.dateFormat,true) && colObject.type === 3){
-                via.kendoAlert("Map Column Error","Choose a data format.");
+                via.kendoAlert("Map Column Error","Choose a date format.");
+                return;
+            }
+            if(colObject.dataType === "Date" && via.undef(colObject.dateFormat,true)){
+                via.kendoAlert("Map Column Error","Choose a date format.");
                 return;
             }
 
@@ -625,6 +728,7 @@ var odinLite_fileFormat = {
 
             //Reset form
             $("#fileFormat_mapColumn_headerList").data("kendoDropDownList").value(null);
+            $("#fileFormat_mapColumn_dataType").data("kendoDropDownList").value(null);
             $("#fileFormat_mapColumn_columnList").data("kendoComboBox").value(null);
             $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').value(null);
         });
@@ -639,6 +743,7 @@ var odinLite_fileFormat = {
                         fields: {
                             dataColumn: { type: "string" },
                             templateColumn: { type: "string" },
+                            dataType: { type: "string" },
                             dateFormat: { type: "string" }
                         }
                     }
@@ -650,6 +755,7 @@ var odinLite_fileFormat = {
             columns: [
                 { field: "dataColumn", title: "Data Column", width: "130px" },
                 { field: "templateColumn", title: "Template Column", width: "100px" },
+                { field: "dataType", title: "Data Type", width: "100px"},
                 { field: "dateFormat", title: "Date Format", width: "100px"},
                 { title: "Delete", width: "85px",
                     command: {
@@ -669,6 +775,31 @@ var odinLite_fileFormat = {
         /****************/
         /*  Function   */
         /***************/
+
+        //Check to see if it is a template column
+        function checkTemplateColumn(colName){
+            var isTemplate = false;
+            var cols = odinLite_modelCache.currentEntity.mappedColumnDisplay;
+            for(var i in cols){
+                if(via.undef(cols[i])){ continue; }
+                if(cols[i].toUpperCase() === colName.toUpperCase()){
+                    isTemplate = true;
+                    break;
+                }
+            }
+
+            var dataTypeInput = $('#fileFormat_mapColumn_dataType').data('kendoDropDownList');
+            if(isTemplate !== true){
+                dataTypeInput.select(0);
+                $('#fileFormat_mapColumn_dataType').prop("disabled",false);
+                $('#fileFormat_mapColumn_dataType').data('kendoDropDownList').enable(true);
+            }else{
+                dataTypeInput.select(0);
+                $('#fileFormat_mapColumn_dataType').prop("disabled",true);
+                $('#fileFormat_mapColumn_dataType').data('kendoDropDownList').enable(false);
+            }
+        }
+
         //Delete a column from the table
         function deleteColumn(e){
             e.preventDefault();
@@ -703,6 +834,14 @@ var odinLite_fileFormat = {
                 $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').value(null);
                 $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').enable(false);
             }
+
+            //This is for a custom column / not a template
+            if($('#fileFormat_mapColumn_dataType').prop("disabled") === false &&
+                $('#fileFormat_mapColumn_dataType').data("kendoDropDownList").value() === "Date"){
+                $('#fileFormat_mapColumn_dateFormat').prop("disabled",false);
+                $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').enable(true);
+            }
+
             return type;
         }
 
@@ -879,7 +1018,7 @@ var odinLite_fileFormat = {
         $('#fileFormat_filterData_comparisonType').kendoDropDownList({
             dataTextField: "text",
             dataValueField: "value",
-            dataSource: [{text:'Column',value:'Column'},{text:'Value',value:'Value'}],
+            dataSource: [{text:'Value',value:'Value'},{text:'Column',value:'Column'}],
             change: function(e){
                 updateComparisonType();
             }
@@ -1249,7 +1388,7 @@ var odinLite_fileFormat = {
         $('#fileFormat_validateData_comparisonType').kendoDropDownList({
             dataTextField: "text",
             dataValueField: "value",
-            dataSource: [{text:'Column',value:'Column'},{text:'Value',value:'Value'}],
+            dataSource: [{text:'Value',value:'Value'},{text:'Column',value:'Column'}],
             change: function(e){
                 updateComparisonType();
             }
@@ -1680,7 +1819,7 @@ var odinLite_fileFormat = {
                     return;
                 }
             }else{
-                colObj.validationColumn = "";
+                colObj.validationFetchColumn = "";
                 if(via.undef(colObj.validationValue,true)){
                     via.kendoAlert("Add Validation Error","Select a validation value.");
                     return;
@@ -1876,6 +2015,9 @@ var odinLite_fileFormat = {
                 //Operation Type
                 addString += (via.undef(col.columnType)?"":col.columnType) + ";";
 
+                //Data Type
+                addString += (via.undef(col.dataType)?"":col.dataType) + ";";
+
                 //Assign Value
                 addString += (via.undef(col.value)?"":col.value) + ";";
 
@@ -1903,10 +2045,12 @@ var odinLite_fileFormat = {
             advancedSettingsOptions.staticColumns = addString;
         }
 
+
+
         /** Mapped Columns **/
         advancedSettingsOptions.mappedColumns = null;
         if(!via.undef(odinLite_fileFormat.mappedColumns,true)){
-            //Data Column 1;Template Column 1;Date Format 1|||Data Column 2;Template Column 2;Date Format 2
+            //Data Column 1;Template Column 1;Data Type 1;Date Format 1|||Data Column 2;Template Column 2;Data Type 2;Date Format 2
             var mapString = "";
             for(var i in odinLite_fileFormat.mappedColumns){
                 var col = odinLite_fileFormat.mappedColumns[i];
@@ -1915,6 +2059,9 @@ var odinLite_fileFormat = {
                 }
                 //Column and template col
                 mapString += col.dataColumn +";"+ col.templateColumn;
+                //Data Type
+                mapString += ";";
+                mapString += ((via.undef(col.dataType,true))?"":col.dataType);
                 //Date Format
                 mapString += ";";
                 mapString += ((via.undef(col.dateFormat,true))?"":col.dateFormat);
@@ -1942,6 +2089,10 @@ var odinLite_fileFormat = {
             //[Where Clause Type 1; Data Column 1;  Date Type 1; Operation 1; Comparison Type 1; Comparison Value 1; Comparison Column 1][Where Clause Type 2; Data Column 2; ; Date Type 2; Operation 2; Comparison Type 2; Comparison Value 2; Comparison Column 2]
             var filterString = "";
             for(var i in odinLite_fileFormat.filterRules){
+                //Seperate
+                if(i>0){
+                    filterString += "|||";
+                }
                 filterString += odinLite_fileFormat.filterRules[i].whereClause;
             }
             advancedSettingsOptions.filterRules = filterString;
@@ -1969,7 +2120,6 @@ var odinLite_fileFormat = {
             advancedSettingsOptions.validationRules = validationString;
         }
 
-        //console.log("advancedSettingsOptions",advancedSettingsOptions);
         return advancedSettingsOptions;
     },
 
@@ -2195,6 +2345,9 @@ var odinLite_fileFormat = {
             sheetNames = JSON.stringify(odinLite_fileFormat.FILE_DATA.sheetNames);
         }
 
+        //Clear the total rows
+        $('#import_fileFormat_totalRows').empty();
+
         //Get the file preview from the server based on the settings.
         $.post(odin.SERVLET_PATH,
             $.extend({
@@ -2251,6 +2404,10 @@ var odinLite_fileFormat = {
                     var maxRows = $("#import_fileFormat_rows").data('kendoDropDownList').value();
                     if(maxRows === "All"){
                         maxRows = null;
+                    }
+                    //Add the total rows
+                    if(!via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded)) {
+                        $('#import_fileFormat_totalRows').html(" of " + kendo.toString(odinLite_fileFormat.FILE_DATA.tsEncoded.data.length,"#,##0"));
                     }
                     var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_fileFormat.FILE_DATA.tsEncoded,false,false,maxRows);
                     //Insert the sheet preview.

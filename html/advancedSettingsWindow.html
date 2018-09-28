@@ -14,18 +14,25 @@
         <!-- Map Column -->
         <div style="overflow:hidden;">
             <ul class="fieldlist row">
-                <li class="col-md-5">
+                <li class="col-md-3">
                     <label for="fileFormat_mapColumn_headerList" class="tr" >Data Column: </label>
-                    <input style="width:300px;" id="fileFormat_mapColumn_headerList"/>
+                    <input style="width:225px;" id="fileFormat_mapColumn_headerList"/>
                 </li>
 
-                <li class="col-md-6">
+                <li class="col-md-3">
                     <label for="fileFormat_mapColumn_columnList" class="tr" >Template Column: </label>
-                    <input style="width:300px;" id="fileFormat_mapColumn_columnList"/>
+                    <input style="width:225px;" id="fileFormat_mapColumn_columnList"/>
                 </li>
+
+                <li class="col-md-3">
+                    <label for="fileFormat_mapColumn_dataType" class="tr" >Data Type: </label>
+                    <input disabled style="width:225px;" id="fileFormat_mapColumn_dataType"/>
+                </li>
+
+                <!-- Next Row - Date Format -->
                 <li class="col-md-6">
                     <label for="fileFormat_mapColumn_dateFormat" class="tr" >Date Format: </label>
-                    <input id="fileFormat_mapColumn_dateFormat" style="width:200px;"/>
+                    <input id="fileFormat_mapColumn_dateFormat" style="width:225px;"/>
                 </li>
             </ul>
             <p style="margin-top:10px;">
@@ -41,13 +48,13 @@
 		<div>
 			<form class="form-inline" >
                 <ul class="fieldlist row">
-                    <li class="col-md-5">
+                    <li class="col-md-3">
                         <label for="fileFormat_addColumn_columnType" class="tr" >Column Type: </label>
-                        <input style="width:300px;" id="fileFormat_addColumn_columnType"/>
+                        <input style="width:225px;" id="fileFormat_addColumn_columnType"/>
                     </li>
-                    <li class="col-md-6">
+                    <li class="col-md-3">
                         <label for="fileFormat_addColumn_columnList" class="tr" >Mapping Column: </label>
-                        <input style="width:300px;" id="fileFormat_addColumn_columnList"/>
+                        <input style="width:225px;" id="fileFormat_addColumn_columnList"/>
                     </li>
 				</ul>
 
@@ -56,7 +63,11 @@
                 <!-- assign -->
 				<div class="fileFormat_addColumn_assignContainer">
                     <ul class="fieldlist row">
-                        <li class="col-md-11">
+                        <li class="col-md-3">
+                            <label for="fileFormat_addColumn_dataType" class="tr" >Data Type: </label>
+                            <input disabled style="width:225px;" id="fileFormat_addColumn_dataType"/>
+                        </li>
+                        <li class="col-md-3">
                             <label>Value: </label>
                             <span class="fileFormat_addColumn_columnValue"></span>
                         </li>

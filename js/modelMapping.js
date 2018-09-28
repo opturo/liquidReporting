@@ -230,6 +230,9 @@ var odinLite_modelMapping = {
             sheetNames = JSON.stringify(odinLite_fileFormat.FILE_DATA.sheetNames);
         }
 
+        //Clear the total rows
+        $('#modelMapping_totalRows').empty();
+
         //Get the advanced settings options
         var advancedSettingsOptions = odinLite_fileFormat.getAdvancedSettingsOptions();
 
@@ -257,6 +260,10 @@ var odinLite_modelMapping = {
                     var maxRows = $("#modelMapping_rows").data('kendoDropDownList').value();
                     if(maxRows === "All"){
                         maxRows = null;
+                    }
+                    //Add the total rows
+                    if(!via.undef(data.tsEncoded)) {
+                        $('#modelMapping_totalRows').html(" of " +  kendo.toString(data.tsEncoded.data.length,"#,##0"));
                     }
                     var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(data.tsEncoded,false,false,maxRows);
                     //Color the headers.
