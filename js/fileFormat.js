@@ -1052,7 +1052,7 @@ var odinLite_fileFormat = {
                 case "Number":
                     $('#fileFormat_filterData_comparisonValue').addClass("k-textbox");
                     $('#fileFormat_filterData_comparisonValue').keyup(function () {
-                        this.value = this.value.replace(/[^0-9\.]/g,'');
+                        this.value = this.value.replace(/[^0-9\.-]/g,'');
                     });
                     break;
                 case "Date":
@@ -1427,7 +1427,7 @@ var odinLite_fileFormat = {
                 case "Number":
                     $('#fileFormat_validateData_comparisonValue').addClass("k-textbox");
                     $('#fileFormat_validateData_comparisonValue').keyup(function () {
-                        this.value = this.value.replace(/[^0-9\.]/g,'');
+                        this.value = this.value.replace(/[^0-9\.-]/g,'');
                     });
                     break;
                 case "Date":
@@ -1549,7 +1549,7 @@ var odinLite_fileFormat = {
                 case 1:
                     $('#fileFormat_validateData_validationValue').addClass("k-textbox");
                     $('#fileFormat_validateData_validationValue').keyup(function () {
-                        this.value = this.value.replace(/[^0-9\.]/g,'');
+                        this.value = this.value.replace(/[^0-9\.-]/g,'');
                     });
                     break;
                 case 3:
