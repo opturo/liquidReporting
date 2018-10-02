@@ -21,7 +21,8 @@ var odinLite_modelCache = {
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.cacheModel.init',
-                overrideUser: odinLite.OVERRIDE_USER
+                overrideUser: odinLite.OVERRIDE_USER,
+                isDataManagerUser: odinLite.isDataManagerUser
             },
             function(data, status){
                 kendo.ui.progress($("body"), false);//Wait Message off
@@ -45,21 +46,23 @@ var odinLite_modelCache = {
                     }
 
                     //Required and Optional Models
-                    if(via.undef(data.requiredModels) && via.undef(data.optionalModels)){
-                        via.alert("Load Failure", "Required and optional models not found.");
-                        return;
-                    }
-                    var requiredModelsLength = 0;
-                    if(!via.undef(data.requiredModels)){
-                        requiredModelsLength = Object.keys(data.requiredModels).length;
-                    }
-                    var optionalModelsLength = 0;
-                    if(!via.undef(data.optionalModels)) {
-                        optionalModelsLength = Object.keys(data.optionalModels).length;
-                    }
-                    if(optionalModelsLength === 0 && requiredModelsLength === 0){
-                        via.alert("Load Failure", "Processes do not contain Required or optional models.");
-                        return;
+                    if(via.undef(odinLite.isDataManagerUser) || odinLite.isDataManagerUser !== true) {
+                        if (via.undef(data.requiredModels) && via.undef(data.optionalModels)) {
+                            via.alert("Load Failure", "Required and optional models not found.");
+                            return;
+                        }
+                        var requiredModelsLength = 0;
+                        if (!via.undef(data.requiredModels)) {
+                            requiredModelsLength = Object.keys(data.requiredModels).length;
+                        }
+                        var optionalModelsLength = 0;
+                        if (!via.undef(data.optionalModels)) {
+                            optionalModelsLength = Object.keys(data.optionalModels).length;
+                        }
+                        if (optionalModelsLength === 0 && requiredModelsLength === 0) {
+                            via.alert("Load Failure", "Processes do not contain Required or optional models.");
+                            return;
+                        }
                     }
 
 
@@ -69,11 +72,126 @@ var odinLite_modelCache = {
                     $('#modelDefinition_existingModel').hide();
                     $('#modelDefinition_editModel').hide();
 
-                    odinLite_modelCache.createModelTree(data.modelList,data.requiredModels,data.optionalModels);
+                    if(via.undef(odinLite.isDataManagerUser) || odinLite.isDataManagerUser !== true) {
+                        odinLite_modelCache.createModelTree(data.modelList, data.requiredModels, data.optionalModels);
+                    }else{
+                        odinLite_modelCache.createDataManagerModelTree(data);
+                    }
                     $('#modelCachePanel').fadeIn();
                 }
             },
             'json');
+    },
+
+    /**
+     * createDataManagerModelTree
+     * This will create the tree to allow model selection for a data manager user
+     */
+    createDataManagerModelTree: function(data){
+        //Get the data in the correct format.
+        var treeData = JSON.parse(JSON.stringify(data.modelList));
+        var kendoTreeData = [];
+        for(var i=0;i<treeData.length;i++) {
+            var node = treeData[i];
+            kendoTreeData = renameChildren(kendoTreeData,node,true);
+        }
+        function renameChildren(kendoTreeData,node,isRoot){//Recursive function. All it does it rename children to items.
+            //Recursive - If it has children call this method again.
+            if(!via.undef(node.children) && node.children.length > 0 ){
+                for(var i=0;i<node.children.length;i++){
+                    var childNode = node.children[i];
+                    kendoTreeData = renameChildren(kendoTreeData,childNode,false);
+                }
+                node.items = node.children;
+                node.children = null;
+                delete node.children;
+            }
+            if(isRoot === true){
+                kendoTreeData.push(node);
+            }
+            return kendoTreeData;
+        }
+        //End - Get data
+
+        //Create the Data Source
+        var processDataSource = new kendo.data.HierarchicalDataSource({
+            sort: { field: "text", dir: "asc" },
+            data: kendoTreeData
+        });
+
+        //Make the tree
+        //$("#modelCacheSelection_treeview").empty();
+        if(!via.undef($("#modelCacheSelection_treeview").data('kendoTreeView'))){
+            $("#modelCacheSelection_treeview").data('kendoTreeView').destroy();
+            $("#modelCacheSelection_treeview").empty();
+        }
+        $("#modelCacheSelection_treeview").kendoTreeView({
+            dataSource: processDataSource,
+            dataSpriteCssClassField: "iconCls",
+            expand: function(e){
+                if ($("#modelCacheSelection_filterText").val() == "") {
+                    $(e.node).find("li").show();
+                }
+            },
+            change: function(e) {
+                var selected = this.select();
+                if(via.undef(selected)){return false;}
+                var item = this.dataItem(selected);
+                if(via.undef(item)){return false;}
+                if(item.hasChildren){return false;}
+                if(via.undef(item.value)){return false;}
+
+                //get application
+                var parent = this.parent(selected);
+                while(!via.undef(this.dataItem(this.parent(parent)))){
+                    parent = this.parent(parent);
+                }
+
+                //Get the current model
+                odinLite_modelCache.currentModel = {
+                    value: item.value,
+                    text: item.text,
+                    description: item.description,
+                    application: this.dataItem(parent).text
+                };
+                odinLite_modelCache.getModelInfo(item.value);
+            }
+        });
+
+        //Expand and Collapse Tree
+        $('#modelCacheSelection_expandButton').click(function(){
+            var treeview = $("#modelCacheSelection_treeview").data("kendoTreeView");
+            treeview.expand(".k-item");
+        });
+        $('#modelCacheSelection_collapseButton').click(function(){
+            var treeview = $("#modelCacheSelection_treeview").data("kendoTreeView");
+            treeview.collapse(".k-item");
+        });
+
+        $("#modelCacheSelection_filterText").keyup(function (e) {
+            var changeReport_filterText = $(this).val();
+            if (changeReport_filterText !== "") {
+                $("#modelCacheSelection_treeview .k-group .k-group .k-in").closest("li").hide();
+                $("#modelCacheSelection_treeview .k-group").closest("li").hide();
+                $("#modelCacheSelection_treeview .k-group .k-group .k-in:containsi(" + changeReport_filterText + ")").each(function () {
+                    $(this).parents("ul, li").each(function () {
+                        var treeView = $("#modelCacheSelection_treeview").data("kendoTreeView");
+                        treeView.expand($(this).parents("li"));
+                        $(this).show();
+                    });
+                });
+            }
+            else {
+                $("#modelCacheSelection_treeview .k-group").find("li").show();
+                var nodes = $("#modelCacheSelection_treeview > .k-group > li");
+
+                $.each(nodes, function (i, val) {
+                    if (nodes[i].getAttribute("data-expanded") === null) {
+                        $(nodes[i]).find("li").hide();
+                    }
+                });
+            }
+        });
     },
 
     /**

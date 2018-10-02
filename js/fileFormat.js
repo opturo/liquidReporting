@@ -38,6 +38,7 @@ var odinLite_fileFormat = {
         odinLite_fileFormat.FILE_DATA = null;
         odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings
         odinLite_uploadFiles.hideUploadFiles();
+        $('.fileFormat_reportName').empty();//Clear the saved report.
 
         //Assign the uploaded files. That way we know what files we are working with.
         odinLite_fileFormat.FILE_DATA = data;
@@ -830,6 +831,7 @@ var odinLite_fileFormat = {
             if(type === 3){
                 $('#fileFormat_mapColumn_dateFormat').prop("disabled",false);
                 $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').enable(true);
+                $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').select(0);
             }else{
                 $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').value(null);
                 $('#fileFormat_mapColumn_dateFormat').data('kendoComboBox').enable(false);
@@ -937,7 +939,10 @@ var odinLite_fileFormat = {
             dataValueField: "text",
             dataSource: odinLite_fileFormat.getColumnListWithAdvancedColumns(),
             index: 0,
-            change: function(e){}
+            change: function(e){
+                $('#fileFormat_filterData_dataType').data('kendoDropDownList').value(null);
+                enableComparisonValueInputBox(false);
+            }
         });
 
         /** Data Type **/
@@ -1071,6 +1076,7 @@ var odinLite_fileFormat = {
                     $('#fileFormat_filterData_comparisonValue').prop("disabled",!enable);
             }
         }
+
         //getInputBoxValue - can get or set the value of the input box
         function getComparisonValueInputBoxValue(setValue){
             var type = $("#fileFormat_filterData_dataType").data("kendoDropDownList").value();
@@ -1307,7 +1313,10 @@ var odinLite_fileFormat = {
             dataValueField: "text",
             dataSource: odinLite_fileFormat.getColumnListWithAdvancedColumns(),
             index: 0,
-            change: function(e){}
+            change: function(e){
+                $('#fileFormat_validateData_dataType').data('kendoDropDownList').value(null);
+                enableComparisonValueInputBox(false);
+            }
         });
 
         /** Data Type **/
@@ -1866,6 +1875,7 @@ var odinLite_fileFormat = {
             comboArr.push(comboObj);
         }
 
+        /*
         //Add Column Columns
         if(!via.undef(odinLite_fileFormat.staticColumns,true)){
             for (var i in odinLite_fileFormat.staticColumns) {
@@ -1891,6 +1901,7 @@ var odinLite_fileFormat = {
                 comboArr[idx].value = mapColumn.templateColumn;
             }
         }
+        */
         return comboArr;
 
         /** Functions **/
@@ -2174,6 +2185,7 @@ var odinLite_fileFormat = {
             return;
         }
 
+        //Display the name of the report.
         odinLite_fileFormat.loadedReport = null;
         $('.fileFormat_reportName').empty();
         if(!via.undef(loadJson.reportName)){
@@ -2377,12 +2389,17 @@ var odinLite_fileFormat = {
 
                             //Update the preview for the first time.
                             odinLite_fileFormat.updateFilePreview(null, overrideInitialValues);
+                            $('#fileFormat_nextButton').prop("disabled",false);
+                            $('#fileFormat_downloadButton').prop("disabled",false);
                         });
                     }else {
                         via.alert("Failure generating preview", data.message, function () {
                             if (via.undef(data.tsEncoded)) {
-                                odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings.
+                                //odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings.
                                 $("#import_fileFormat_spreadsheet").empty();
+                                $("#import_fileFormat_spreadsheet").html("<p style=\"margin:10px;\"><b>Error found:</b> Please review Advanced Settings.</p>");
+                                $('#fileFormat_nextButton').prop("disabled",true);
+                                $('#fileFormat_downloadButton').prop("disabled",true);
                             }
                         });
                     }

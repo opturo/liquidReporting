@@ -13,6 +13,7 @@ var odinLite = {
     OVERRIDE_USER:null,//Override user for admin functionality.
 
     systemNotifications:null,//holds the list of current system notifications
+    isDataManagerUser: false,
 
     /**
      * init
@@ -42,10 +43,31 @@ var odinLite = {
     },
 
     /**
+     * setupDataManagerUser
+     * This will check and setup the initial data manager user
+     */
+    setupDataManagerUser: function(){
+        var dmUser = via.getParamsValue("isdm");
+        if(via.undef(dmUser,true) || dmUser.toLowerCase() !== "true"){
+            return;
+        }
+        odinLite.isDataManagerUser = true;
+
+        /*Initialize the screen for the DM user.*/
+        //Hide certain elements
+        $('.hideDMUser').hide();
+
+        //Fix home page spacing
+        $('.home_sideSpacers').removeClass("col-md-3");
+        $('.home_sideSpacers').addClass("col-md-4");
+    },
+
+    /**
      * setUserLoggedIn
      * This will setup ODIN Lite and will get called only if a user is logged into ODIN.
      */
     setUserLoggedIn: function () {
+
         //Make the call to initialize the application
         $.post(odin.SERVLET_PATH,
             {
@@ -64,8 +86,11 @@ var odinLite = {
                     /**TESTING**/
                     /* setTimeout(function(){
                         odinLite_billing.packageTesting();
+
                     },3500);
                     */
+                    //var localTs = '{"tableLabel":"10312008.txt","columnHeaders":["Currency Code","FX Rate"],"columnDataTypes":[0,0],"totalRows":4,"data":[["CAD","0.79760718"],["EUR","1.18889948"],["GBP","1.28855020"],["USD","1.00000000"]],"lockedColumns":0}';
+                    //via.downloadLocalTableSet(JSON.parse(localTs));
                     /**END TESTING**/
 
                     odinLite_billing.checkBillingIsVerified(function(){//Check to make sure they have verified billing if they are a billing client.
@@ -167,7 +192,7 @@ var odinLite = {
             odin.initAccountSettings();
         }
 
-        //Account Button
+        //System Notifications Button
         if (via.undef(params['hidenotifications'], true) || params['hidenotifications'].toLowerCase() !== 'true') {
             if(via.undef(odinLite.systemNotifications,true)){
                 $('#home_systemNotificationButton').prop("disabled",true);
@@ -214,6 +239,10 @@ var odinLite = {
 
         //Help Button
         $('#home_helpButton').fadeIn();
+
+
+        //Check for Data Manager mode
+        odinLite.setupDataManagerUser();
 
         //remove the loading message
         kendo.ui.progress($("body"), false);//Wait Message off

@@ -33,11 +33,11 @@
             </div>
             <a style="margin-left: 5px;" class="appTitle navbar-brand" href="#"></a>
             <div class="navbar-header navbar-right">
-                <a title="Packages" id="home_yourPackagesButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-4" href="#"><i
+                <a title="Packages" id="home_yourPackagesButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-4 hideDMUser" href="#"><i
                class="fa fa-list-alt"></i></a>
-               <a title="Help" id="home_helpButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-5" href="./help/index.html" target="_blank"><i
+               <a title="Help" id="home_helpButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-5 hideDMUser" href="./help/index.html" target="_blank"><i
               class="fa fa-question"></i></a>
-               <button id="home_systemNotificationButton" title="System Notifications" style="display:none;" class="btn navbar-btn btn-default tour-step home-tour-step-6">
+               <button id="home_systemNotificationButton" title="System Notifications" style="display:none;" class="btn navbar-btn btn-default tour-step home-tour-step-6 hideDMUser">
                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                <span class="badge" id="home_systemNotificationBadge"></span>
                </button>

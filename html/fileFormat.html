@@ -93,7 +93,6 @@
 		<div class="bs-callout bs-callout-info row">
 		   <div class="col-md-3" >
 			  <h4 class="tr">Data Preview <button title="Update Preview" onclick="odinLite_fileFormat.updateFilePreview();" id="fileFormat_updatePreviewButton" style="margin:0;" type="button" class="tr btn btn-success btn-xs"><i class="fa fa-refresh"></i></button></h4>
-
 		   </div>
 
 			<!-- Adding a static Column -->
@@ -107,7 +106,8 @@
 			</div>
 
 		   <div class="col-md-4" >
-			  <input style="float:right;width:300px;" id="fileFormat_fileList"/>
+			   <button id="fileFormat_downloadButton" title="Download File" onclick="via.downloadLocalTableSet(odinLite_fileFormat.FILE_DATA.tsEncoded);" style="float:right;margin-left:4px;position:relative;top:5px;" type="button" class="tr btn btn-success btn-xs"><i class="fa fa-file-excel-o"></i></button>
+			   <input style="float:right;width:300px;" id="fileFormat_fileList"/>
 		   </div>
 		   <div class="col-md-12" style="margin-top:10px;">
 			  <div id="import_fileFormat_spreadsheet" style="height:300px;width:100%;"></div>

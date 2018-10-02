@@ -53,17 +53,21 @@
    <div id="manageData_tableSelection" style="display:none;" class="col-md-3 well">
       <div >
          <div class="dialogContent">
-            <h4 class="tr">Select a Data Item</h4>
+            <h4 class="tr">Select a Data Item for Review</h4>
 			<span class="form-inline manageData_zeroTablesFound" style="display:none;">
 			</span>
             <span class="form-inline manageData_tablesFound" style="display:none;">
             <br/>
-            <input id="manageData_tableFilterText" type="text" class="tr form-control" placeholder="Data Item Filter" style="width:150px"/>
-            <a style="margin-left:8px;" title="Expand All"  id="manageData_tableExpandButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-plus"></i></a>
-            <a style="margin-right:5px;" title="Collapse All"  id="manageData_tableCollapseButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-minus"></i></a>
+            <input id="manageData_folderFilterText" type="text" class="tr form-control" placeholder="Folder Filter" style="display:none;width:250px"/><br/>
+            <input id="manageData_tableFilterText" type="text" class="tr form-control" placeholder="Search for Data Items to Review" style="width:250px"/>
+            <a style="margin-left:8px;" title="Filter Data Items"  id="manageData_tableSearchButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-search"></i></a>
             | <a style="margin-right:5px;" title="Delete Data Item Chooser"  onclick="odinLite_manageData.deleteTablesWindow();" id="manageData_deleteTableButton" class="tr btn navbar-btn btn-danger" href="#"><i class="fa fa-minus-circle"></i></a>
+            <p id="manageData_totalRows"></p>
+            <hr/>
+            <a style="float:right;margin-left:8px;" title="Collapse All"  id="manageData_tableCollapseButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-minus"></i></a>
+            <a style="float:right;" title="Expand All"  id="manageData_tableExpandButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-plus"></i></a>
 
-            <div id="manageData_tableTreeview" style="height:500px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
+            <div id="manageData_tableTreeview" style="clear:both;height:500px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
             </span>
          </div>
       </div>

@@ -9,6 +9,7 @@ var odinLite_manageData = {
     tableIndexType: -1, //Table Index Type for the currently selected model.
     currentDataItem: null,//Will hold the last loaded data item
     currentTableData: null, //Will hold the current table
+    currentTotalItems: 0, //Will hold the total number of items of the current table
     parentVal: null, //holds the parent val of the last selected node
     currentDataItemList: null,
 
@@ -37,7 +38,8 @@ var odinLite_manageData = {
             {
                 action: 'odinLite.manageData.init',
                 entityDir: odinLite.ENTITY_DIR,
-                overrideUser: odinLite.OVERRIDE_USER
+                overrideUser: odinLite.OVERRIDE_USER,
+                isDataManagerUser: odinLite.isDataManagerUser
             },
             function(data, status){
                 odinLite_manageData.hasBeenLoaded = true;//Set the loaded variable after first load.
@@ -69,7 +71,11 @@ var odinLite_manageData = {
                         $(".manageData_entitySize").html(" <i><small>(size: "+formattedSize+") </small></i>");
                     }
 
-                    odinLite_manageData.createModelTree(data.modelList,data.requiredModels,data.optionalModels);
+                    if(!via.undef(odinLite.isDataManagerUser) && odinLite.isDataManagerUser === true){
+                        odinLite_manageData.createDataManagerModelTree(data);
+                    }else {
+                        odinLite_manageData.createModelTree(data.modelList, data.requiredModels, data.optionalModels);
+                    }
                     $('#viewPanel').fadeIn();
                 }
             },
@@ -82,6 +88,7 @@ var odinLite_manageData = {
      * This will allow choosing of the tables for deletion.
      */
     deleteTablesWindow: function(){
+        if(via.undef(odinLite_manageData.currentDataItemList) || odinLite_manageData.currentDataItemList.length === 0){ return; }
         /** Window Setup **/
         kendo.ui.progress($("body"), true);//Wait Message
         $.get("./html/deleteTablesWindow.html", function (deleteTablesWindowTemplate) {
@@ -213,9 +220,19 @@ var odinLite_manageData = {
             });
 
             $("#manageData_deleteFilterText").keyup(function (e) {
-                deselectAll();
+                if(e.keyCode == 13) {
+                    var changeReport_filterText = $(this).val();
+                    filterTableList(changeReport_filterText);
+                }
+            });
+            $("#manageData_deleteFilterButton").click(function(){
+                var changeReport_filterText = $("#manageData_deleteFilterText").val();
+                filterTableList(changeReport_filterText);
+            });
 
-                var changeReport_filterText = $(this).val();
+            //function that filters the table.
+            function filterTableList(changeReport_filterText){
+                deselectAll();
 
                 if (changeReport_filterText !== "") {
                     $("#manageData_deleteTreeview .k-group .k-group .k-in").closest("li").hide();
@@ -243,7 +260,8 @@ var odinLite_manageData = {
                         }
                     });
                 }
-            });
+
+            }
 
             // function that gathers IDs of checked nodes
             function checkedNodeIds(nodes, checkedNodes, parentNodes) {
@@ -270,14 +288,127 @@ var odinLite_manageData = {
             }
             /******/
 
-
-
-
-
         });
 
 
         kendo.ui.progress($("body"), false);//Wait Message
+    },
+
+    /**
+     * createDataManagerModelTree
+     * This will create the tree to allow model selection for Data Manager Users
+     */
+    createDataManagerModelTree: function(data){
+        odinLite_manageData.currentDataItem = null;
+        odinLite_manageData.currentTableData = null;
+
+        //Get the data in the correct format.
+        var treeData = JSON.parse(JSON.stringify(data.modelList));
+        var kendoTreeData = [];
+        for(var i=0;i<treeData.length;i++) {
+            var node = treeData[i];
+            kendoTreeData = renameChildren(kendoTreeData,node,true);
+        }
+        function renameChildren(kendoTreeData,node,isRoot){//Recursive function. All it does it rename children to items.
+            //Recursive - If it has children call this method again.
+            if(!via.undef(node.children) && node.children.length > 0 ){
+                for(var i=0;i<node.children.length;i++){
+                    var childNode = node.children[i];
+                    kendoTreeData = renameChildren(kendoTreeData,childNode,false);
+                }
+                node.items = node.children;
+                node.children = null;
+                delete node.children;
+            }
+            if(isRoot === true){
+                kendoTreeData.push(node);
+            }
+            return kendoTreeData;
+        }
+        //End - Get data
+
+        //Create the Data Source
+        var processDataSource = new kendo.data.HierarchicalDataSource({
+            sort: { field: "text", dir: "asc" },
+            data: kendoTreeData
+        });
+
+        //Make the tree
+        //$("#modelCacheSelection_treeview").empty();
+        if(!via.undef($("#manageData_modelTreeview").data('kendoTreeView'))){
+            $("#manageData_modelTreeview").data('kendoTreeView').destroy();
+            $("#manageData_modelTreeview").empty();
+        }
+        $("#manageData_modelTreeview").kendoTreeView({
+            dataSource: processDataSource,
+            dataSpriteCssClassField: "iconCls",
+            expand: function(e){
+                if ($("#modelCacheSelection_filterText").val() == "") {
+                    $(e.node).find("li").show();
+                }
+            },
+            change: function(e) {
+                var selected = this.select();
+                if(via.undef(selected)){return false;}
+                var item = this.dataItem(selected);
+                if(via.undef(item)){return false;}
+                if(item.hasChildren){return false;}
+                if(via.undef(item.value)){return false;}
+
+                //Get the current model selected
+                odinLite_manageData.currentModel = {
+                    value: item.value,
+                    text: item.text,
+                    description: item.description
+                };
+
+                $(".manageData_tableSpreadhseetContainer").hide();
+                odinLite_manageData.getItemTreeList();
+                //(item.value,true);
+
+                //Check for Demo Account
+                if(item.value.startsWith("DEMO_")){
+                    $(".demoButton").prop("disabled",true);
+                }else{
+                    $(".demoButton").prop("disabled",false);
+                }
+            }
+        });
+
+        //Expand and Collapse Tree
+        $('#manageData_modelExpandButton').click(function(){
+            var treeview = $("#manageData_modelTreeview").data("kendoTreeView");
+            treeview.expand(".k-item");
+        });
+        $('#manageData_modelCollapseButton').click(function(){
+            var treeview = $("#manageData_modelTreeview").data("kendoTreeView");
+            treeview.collapse(".k-item");
+        });
+
+        $("#manageData_modelFilterText").keyup(function (e) {
+            var changeReport_filterText = $(this).val();
+            if (changeReport_filterText !== "") {
+                $("#manageData_modelTreeview .k-group .k-group .k-in").closest("li").hide();
+                $("#manageData_modelTreeview .k-group").closest("li").hide();
+                $("#manageData_modelTreeview .k-group .k-group .k-in:containsi(" + changeReport_filterText + ")").each(function () {
+                    $(this).parents("ul, li").each(function () {
+                        var treeView = $("#manageData_modelTreeview").data("kendoTreeView");
+                        treeView.expand($(this).parents("li"));
+                        $(this).show();
+                    });
+                });
+            }
+            else {
+                $("#manageData_modelTreeview .k-group").find("li").show();
+                var nodes = $("#manageData_modelTreeview > .k-group > li");
+
+                $.each(nodes, function (i, val) {
+                    if (nodes[i].getAttribute("data-expanded") === null) {
+                        $(nodes[i]).find("li").hide();
+                    }
+                });
+            }
+        });
     },
 
     /**
@@ -380,6 +511,8 @@ var odinLite_manageData = {
                     description: item.description
                 };
 
+                $("#manageData_tableFilterText").val(null);
+                $("#manageData_folderFilterText").val(null);
                 $(".manageData_tableSpreadhseetContainer").hide();
                 odinLite_manageData.getItemTreeList();
                 //(item.value,true);
@@ -433,8 +566,12 @@ var odinLite_manageData = {
      * getItemTreeList
      * This will return the tree list of items/tables for the selected model.
      */
-    getItemTreeList: function(){
-        kendo.ui.progress($("body"), true);//Wait Message
+    getItemTreeList: function(isFilter){
+        if(isFilter){
+            kendo.ui.progress($('#manageData_tableSelection'), true);//Wait Message
+        }else {
+            kendo.ui.progress($("body"), true);//Wait Message
+        }
 
         var entityDir = odinLite.ENTITY_DIR;
         var modelId = odinLite_manageData.currentModel.value;
@@ -449,8 +586,12 @@ var odinLite_manageData = {
         }
 
 
-        $('#manageData_tableSelection').hide();
+        if(!isFilter) {
+            $('#manageData_tableSelection').hide();
+        }
         $(".manageData_tableSpreadhseetContainer").hide();
+        $('#manageData_totalRows').empty();
+        $('#manageData_deleteTableButton').attr("disabled",true);
 
         //Make the call to get the initial values for Model Cache
         $.post(odin.SERVLET_PATH,
@@ -458,10 +599,17 @@ var odinLite_manageData = {
                 action: 'odinLite.manageData.getItemTreeList',
                 entityDir: entityDir,
                 modelId: modelId,
-                overrideUser: odinLite.OVERRIDE_USER
+                itemFilter: $("#manageData_tableFilterText").val(),
+                portFilter: $("#manageData_folderFilterText").val(),
+                overrideUser: odinLite.OVERRIDE_USER,
+                isRefresh: isFilter
             },
             function(data, status){
-                kendo.ui.progress($("body"), false);//Wait Message off
+                if(isFilter){
+                    kendo.ui.progress($('#manageData_tableSelection'), false);//Wait Message
+                }else {
+                    kendo.ui.progress($("body"), false);//Wait Message
+                }
 
                 //Model Size
                 if(!via.undef(data.modelSize)) {
@@ -475,8 +623,13 @@ var odinLite_manageData = {
                 $(".manageData_zeroTablesFound").hide();
                 $(".manageData_tablesFound").hide();
                 $(".manageData_zeroTablesFound").empty();
+                if(odinLite_manageData.tableIndexType === 3){
+                    $("#manageData_folderFilterText").show();
+                }else{
+                    $("#manageData_folderFilterText").hide();
+                }
 
-                if(!via.undef(data,true) && data.success === false){
+                if(!via.undef(data,true) && data.success === false && !isFilter && data.totalItems === 0){
                     via.debug("Failure getting model items:", data.message);
                     //via.alert("Load Failure", data.message);
                     $(".manageData_zeroTablesFound").html(data.message);
@@ -487,15 +640,37 @@ var odinLite_manageData = {
                     return;
                 }
 
+                //Update Total Rows
+                if(via.undef(isFilter) || isFilter !== true){
+                    odinLite_manageData.currentTotalItems = data.totalItems;
+                }
+
                 //Found tables
                 via.debug("Successful getting model items:", data);
                 $(".manageData_tablesFound").show();
 
+                //Show rows
+                if(data.totalItems > data.MAX_ELEMENTS){
+                    $('#manageData_totalRows').html("<i>Displaying only "+ kendo.toString(data.MAX_ELEMENTS,"#,###") +" of "+ kendo.toString(data.totalItems,"#,###") +" items. Please apply Data Item Filter.</i>")
+                }else if(!via.undef(isFilter) && isFilter === true){
+                    $('#manageData_totalRows').html("<b>Filter:</b> Displaying "+ kendo.toString(data.totalItems,"#,###") +" of "+ kendo.toString(odinLite_manageData.currentTotalItems,"#,###") +" items.")
+                }
+                console.log(data.totalItems);
+                if(data.totalItems === 0){
+                    console.log("disabling");
+                    $('#manageData_deleteTableButton').attr("disabled",true);
+                }else{
+                    console.log("en disabling");
+                    $('#manageData_deleteTableButton').attr("disabled",false);
+                }
 
                 /*******/
                 //Populate data item tree
                 //Get the data in the correct format.
-                var treeData = JSON.parse(JSON.stringify(data.itemList));
+                var treeData = [];
+                if(!via.undef(data) && !via.undef(data.itemList) && data.itemList.length > 0) {
+                    treeData = JSON.parse(JSON.stringify(data.itemList));
+                }
                 var kendoTreeData = [];
                 for(var i=0;i<treeData.length;i++) {
                     var node = treeData[i];
@@ -557,48 +732,102 @@ var odinLite_manageData = {
 
 
                 //Expand and Collapse Tree
+                $('#manageData_tableExpandButton').off();
                 $('#manageData_tableExpandButton').click(function(){
                     var treeview = $("#manageData_tableTreeview").data("kendoTreeView");
                     treeview.expand(".k-item");
                 });
+                $('#manageData_tableCollapseButton').off();
                 $('#manageData_tableCollapseButton').click(function(){
                     var treeview = $("#manageData_tableTreeview").data("kendoTreeView");
                     treeview.collapse(".k-item");
                 });
-
+                $('#manageData_tableFilterText').off();
                 $("#manageData_tableFilterText").keyup(function (e) {
-                    var changeReport_filterText = $(this).val();
-
-                    if (changeReport_filterText !== "") {
-                        $("#manageData_tableTreeview .k-group .k-group .k-in").closest("li").hide();
-                        $("#manageData_tableTreeview .k-group").closest("li").hide();
-                        $("#manageData_tableTreeview .k-group .k-group .k-in:containsi(" + changeReport_filterText + ")").each(function () {
-                            $(this).parents("ul, li").each(function () {
-                                var treeView = $("#manageData_tableTreeview").data("kendoTreeView");
-                                treeView.expand($(this).parents("li"));
-                                $(this).show();
-                            });
-                        });
-                        $("#manageData_tableTreeview .k-group .k-in:contains(" + changeReport_filterText + ")").each(function () {
-                            $(this).parents("ul, li").each(function () {
-                                $(this).show();
-                            });
-                        });
-                    }
-                    else {
-                        $("#manageData_tableTreeview .k-group").find("li").show();
-                        var nodes = $("#manageData_tableTreeview > .k-group > li");
-
-                        $.each(nodes, function (i, val) {
-                            if (nodes[i].getAttribute("data-expanded") == null) {
-                                $(nodes[i]).find("li").hide();
-                            }
-                        });
+                     if(e.keyCode == 13){
+                         //var changeReport_filterText = $(this).val();
+                         //filterTableList(changeReport_filterText);
+                         odinLite_manageData.getItemTreeList(true);
+                     }
+                });
+                $('#manageData_folderFilterText').off();
+                $("#manageData_folderFilterText").keyup(function (e) {
+                    if(e.keyCode == 13){
+                        //var changeReport_filterText = $(this).val();
+                        //filterTableList(changeReport_filterText);
+                        odinLite_manageData.getItemTreeList(true);
                     }
                 });
+                $('#manageData_tableSearchButton').off();
+                $("#manageData_tableSearchButton").click(function(){
+                    //var changeReport_filterText = $("#manageData_tableFilterText").val();
+                    //filterTableList(changeReport_filterText);
+                    odinLite_manageData.getItemTreeList(true);
+                });
+
                 /******/
 
                 $('#manageData_tableSelection').fadeIn();
+            },
+            'json');
+
+        function filterTableList(changeReport_filterText){
+            if (changeReport_filterText !== "") {
+                $("#manageData_tableTreeview .k-group .k-group .k-in").closest("li").hide();
+                $("#manageData_tableTreeview .k-group").closest("li").hide();
+                $("#manageData_tableTreeview .k-group .k-group .k-in:containsi(" + changeReport_filterText + ")").each(function () {
+                    $(this).parents("ul, li").each(function () {
+                        var treeView = $("#manageData_tableTreeview").data("kendoTreeView");
+                        treeView.expand($(this).parents("li"));
+                        $(this).show();
+                    });
+                });
+                $("#manageData_tableTreeview .k-group .k-in:contains(" + changeReport_filterText + ")").each(function () {
+                    $(this).parents("ul, li").each(function () {
+                        $(this).show();
+                    });
+                });
+            }
+            else {
+                $("#manageData_tableTreeview .k-group").find("li").show();
+                var nodes = $("#manageData_tableTreeview > .k-group > li");
+
+                $.each(nodes, function (i, val) {
+                    if (nodes[i].getAttribute("data-expanded") == null) {
+                        $(nodes[i]).find("li").hide();
+                    }
+                });
+            }
+        }
+    },
+
+    filterDataItemTable: function(portId,item){
+        kendo.ui.progress($("body"), true);//Wait Message off
+
+        //Make the call to get the table selected for this model
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.manageData.getDataItemTable',
+                modelId: modelId,
+                entityDir: entityDir,
+                dataItem: dataItem,
+                portDir: odinLite_manageData.parentVal,
+                overrideUser: odinLite.OVERRIDE_USER
+            },
+            function(data, status){
+                kendo.ui.progress($("body"), false);//Wait Message off
+                $("html, body").animate({
+                    scrollTop: 0
+                }, 250);
+
+                if(!via.undef(data,true) && data.success === false){
+                    via.debug("Failure getting data items:", data.message);
+                    via.alert("Get Data Items Failure", data.message);
+                }else{
+                    via.debug("Successful getting data item:", data);
+
+
+                }
             },
             'json');
     },

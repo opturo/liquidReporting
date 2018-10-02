@@ -12,6 +12,10 @@ var odinLite_uploadFiles = {
     fileSavedReport: null,
     initialValues: null, //This holds the initial guessed values for fileFormat in case it fails.
 
+    //Max file Settings
+    maxSingleFile: null,
+    maxTotalFiles: null,
+
     /**
      * init
      * This will initialize ODIN Lite Upload Files and set it up
@@ -34,6 +38,10 @@ var odinLite_uploadFiles = {
                     via.alert("Platform Settings Failure", data.message);
                 } else {
                     via.debug("Successful getting Platform Settings:", data);
+
+                    //Max Settings
+                    odinLite_uploadFiles.maxSingleFile = via.getReadableFileSizeString(data.maxSingleFile);
+                    odinLite_uploadFiles.maxTotalFiles = via.getReadableFileSizeString(data.maxTotalFiles);
 
                     //Extension
                     if (!via.undef(data.fileSelectionCriteria, true)) {
@@ -192,6 +200,9 @@ var odinLite_uploadFiles = {
             var fileNames = JSON.stringify(files.map(function (o) {
                 return o.name;
             }));
+            var fileSizes = JSON.stringify(files.map(function (o) {
+                return o.size;
+            }));
 
             $.post(odin.SERVLET_PATH,
                 {
@@ -200,7 +211,8 @@ var odinLite_uploadFiles = {
                     modelId: odinLite_modelCache.currentModel.value,
                     platform: odinLite_modelCache.currentPlatform.platform,
                     uploadSpec: odinLite_modelCache.currentPlatform.specification,
-                    fileNames: fileNames
+                    fileNames: fileNames,
+                    fileSizes: fileSizes
                 },
                 function (data, status) {
                     if (!via.undef(data, true) && data.success === false) {
@@ -331,7 +343,7 @@ var odinLite_uploadFiles = {
         var height = "50%";
         switch (helpName) {
             case 'UPLOAD_FILES':
-                content = "You can upload one or more files. The files must be of the same type and format if you wish to upload multiple files at once.";
+                content = "You can upload one or more files. The files must be of the same type and format if you wish to upload multiple files at once. Max size for a single file is " + odinLite_uploadFiles.maxSingleFile + ". Max upload size for all files combined is " +  odinLite_uploadFiles.maxTotalFiles + ".";
                 width = "500px";
                 height = "100px";
                 break;
@@ -385,6 +397,12 @@ var odinLite_uploadFiles = {
                 width = "600px";
                 height = "100px";
                 break;
+            case 'ADVANCED_SETTINGS_COLUMNS':
+                content = "If newly Mapped and Added Columns are not in this list, please click 'Apply Settings' before continuing.";
+                width = "600px";
+                height = "100px";
+                break;
+
             default:
                 content = "";
         }
