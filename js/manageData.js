@@ -655,12 +655,10 @@ var odinLite_manageData = {
                 }else if(!via.undef(isFilter) && isFilter === true){
                     $('#manageData_totalRows').html("<b>Filter:</b> Displaying "+ kendo.toString(data.totalItems,"#,###") +" of "+ kendo.toString(odinLite_manageData.currentTotalItems,"#,###") +" items.")
                 }
-                console.log(data.totalItems);
+
                 if(data.totalItems === 0){
-                    console.log("disabling");
                     $('#manageData_deleteTableButton').attr("disabled",true);
                 }else{
-                    console.log("en disabling");
                     $('#manageData_deleteTableButton').attr("disabled",false);
                 }
 
@@ -863,6 +861,11 @@ var odinLite_manageData = {
                     scrollTop: 0
                 }, 250);
 
+                //JSON parse does not like NaN
+                if(!via.undef(data,true)){
+                    data = JSON.parse(data.replace(/\bNaN\b/g, "null"));
+                }
+
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure getting data item:", data.message);
                     via.alert("Get Data Item Failure", data.message);
@@ -901,7 +904,7 @@ var odinLite_manageData = {
                     $('.manageData_tableSpreadhseetContainer').fadeIn();
                 }
             },
-            'json');
+            'text');
     },
 
     /**

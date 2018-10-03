@@ -251,6 +251,11 @@ var odinLite_modelMapping = {
             function(data, status){
                 kendo.ui.progress($("#modelMapping_spreadsheet"), false);//Wait Message off
 
+                //JSON parse does not like NaN
+                if(!via.undef(data,true)){
+                    data = JSON.parse(data.replace(/\bNaN\b/g, "null"));
+                }
+
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure generating Model Mapping preview:", data.message);
                     via.alert("Failure generating preview", data.message);
@@ -298,7 +303,7 @@ var odinLite_modelMapping = {
                     $("#modelMapping_spreadsheet .k-link").prop( "disabled", true );
                 }
             },
-            'json');
+            'text');
     },
 
     /**

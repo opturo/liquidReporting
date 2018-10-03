@@ -2375,6 +2375,11 @@ var odinLite_fileFormat = {
             function(data, status){
                 kendo.ui.progress($("#import_fileFormat_spreadsheet"), false);//Wait Message off
 
+                //JSON parse does not like NaN
+                if(!via.undef(data,true)){
+                    data = JSON.parse(data.replace(/\bNaN\b/g, "null"));
+                }
+
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure generating preview:", data.message);
                     if(!via.undef(odinLite_fileFormat.loadedReport,true)){
@@ -2404,6 +2409,10 @@ var odinLite_fileFormat = {
                         });
                     }
                 }else{
+                    //Re-enable the next button and the download button.
+                    $('#fileFormat_nextButton').prop("disabled",false);
+                    $('#fileFormat_downloadButton').prop("disabled",false);
+
                     via.debug("Successful generating preview:", data);
                     odinLite_fileFormat.FILE_DATA.tsEncoded = data.tsEncoded;
                     //if(via.undef(data.tsEncoded)){//Clear the advanced settings if the tableset is null
@@ -2447,7 +2456,7 @@ var odinLite_fileFormat = {
                     callbackFn();
                 }
             },
-            'json');
+            'text');
     },
 
     /**
