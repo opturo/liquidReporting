@@ -37,7 +37,19 @@ var odinLite = {
             if(via.undef(odinLite.ENTITY_CODE,true)){
                 window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(document.location.search);
             }else {
-                window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(document.location.search) + "&entity=" + odinLite.ENTITY_CODE + "&appName=" + odinLite.APP_NAME;
+                var params = via.getQueryParams();
+                var isFirst = true;
+                var queryString = "";
+                $.each(params,function(key,value){
+                    if(key==="appname")return;
+                    if(isFirst){
+                        queryString = "?" + key + "=" + value;
+                    }else{
+                        queryString += "&" + key + "=" + value;
+                    }
+                    isFirst = false;
+                });
+                window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(queryString) + "&entity=" + odinLite.ENTITY_CODE + "&appName=" + odinLite.APP_NAME;
             }
         });
     },

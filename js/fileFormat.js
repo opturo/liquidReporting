@@ -2349,9 +2349,6 @@ var odinLite_fileFormat = {
             return 0;
         });
 
-        console.log(fileData);
-        console.log(odinLite_fileFormat.FILE_DATA);
-
         return fileData;
     },
 
