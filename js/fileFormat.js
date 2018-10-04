@@ -34,6 +34,7 @@ var odinLite_fileFormat = {
     init: function(data){
         $('body').scrollTop(0);
 
+
         kendo.ui.progress($("body"), true);//Wait Message
         odinLite_fileFormat.FILE_DATA = null;
         odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings
@@ -1922,6 +1923,10 @@ var odinLite_fileFormat = {
      * This will a user to add a static column
      */
     advancedSettingsWindow: function(){
+        if(via.undef(odinLite_fileFormat.FILE_DATA) || via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded) ||
+            via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded.columnHeaders)){
+           return;
+        }
 
         //Get the window template
         $.get("./html/advancedSettingsWindow.html", function (entityWindowTemplate) {
@@ -2334,6 +2339,19 @@ var odinLite_fileFormat = {
             fileData.push({ text: dropDownList[i], value: i });
         }
 
+        //Sort the object.
+        fileData.sort(function(a, b){
+            var textA=a.text.toLowerCase(), textB=b.text.toLowerCase();
+            if (textA < textB) //sort string ascending
+                return -1;
+            if (textA > textB)
+                return 1;
+            return 0;
+        });
+
+        console.log(fileData);
+        console.log(odinLite_fileFormat.FILE_DATA);
+
         return fileData;
     },
 
@@ -2424,7 +2442,7 @@ var odinLite_fileFormat = {
                         odinLite_fileFormat.FILE_DATA.endColumn = data.tsEncoded.columnHeaders.length;
                     }
 
-                    $('#fileFormat_advancedSettingsButton').prop("disabled",false);//Enable the advanced setting button
+                    $('#fileFormat_advancedSettingsButton').prop("disabled",false);//Enable the advanced settings button
 
                     //Get the # of rows to display
                     var maxRows = $("#import_fileFormat_rows").data('kendoDropDownList').value();
@@ -2435,6 +2453,7 @@ var odinLite_fileFormat = {
                     if(!via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded)) {
                         $('#import_fileFormat_totalRows').html(" of " + kendo.toString(odinLite_fileFormat.FILE_DATA.tsEncoded.data.length,"#,##0"));
                     }
+
                     var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_fileFormat.FILE_DATA.tsEncoded,false,false,maxRows);
                     //Insert the sheet preview.
                     $("#import_fileFormat_spreadsheet").empty();

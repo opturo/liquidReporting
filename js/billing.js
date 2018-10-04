@@ -132,10 +132,30 @@ var odinLite_billing = {
 
         //Check if they have been verified.
         if(via.undef(isBillingVerified,true) || isBillingVerified==="false"){
+            console.log("checkBillingIsVerified: Not verified. Make them enter credit card info.");
 
 
+        //Get the window template
+        $.get("./html/billingModal.html", function (billingWindowTemplate) {
+            $('#billing_verifyModal').remove();
+            console.log('billingWindowTemplate', billingWindowTemplate);
+            $('body').append(billingWindowTemplate);
 
-            $('#billing_verifyModal').modal('show');
+            //Check for first time user and update.
+            if(via.undef(isBillingVerified,true)) {
+                //$('#billing_verifyModal .modal-title').append(" - First Time User");
+                $('#billing_verifyModal .panel-heading-color').removeClass('panel-danger');
+                $('#billing_verifyModal .panel-heading-color').addClass('panel-warning');
+                $('#billing_verifyModal .panel-heading-title').html("First Time User: Billing Information");
+            }
+
+            $('#billing_verifyModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        });
+
+
             /*
             kendo.ui.progress($("body"), true);//Wait Message on
             $.post(odin.SERVLET_PATH,

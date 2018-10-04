@@ -67,7 +67,6 @@ var odinLite = {
      * This will setup ODIN Lite and will get called only if a user is logged into ODIN.
      */
     setUserLoggedIn: function () {
-
         //Make the call to initialize the application
         $.post(odin.SERVLET_PATH,
             {
@@ -129,7 +128,6 @@ var odinLite = {
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
                             odinLite.initOdinLite();
-
                         }
                     });
                 }

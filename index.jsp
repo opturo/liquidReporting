@@ -57,7 +57,6 @@
       <!-- Home Panel -->
       <div id="homePanel" class="container-fluid" style="display:none;">
             <jsp:include page="./html/home.html" />
-            <jsp:include page="./html/billingModal.html" />
       </div>
       <!-- End - Home Panel -->
 
@@ -134,7 +133,6 @@
       <script src="../bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
       <script src="../js/via.js"></script>
       <script src="../js/odin.js"></script>
-      <script src="../js/odinKendoCharts.js"></script>
       <script src="../js/odinKendoTable.js"></script>
       <script src="js/odinLite.js"></script>
       <script src="js/modelCache.js"></script>
