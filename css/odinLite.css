@@ -38,6 +38,11 @@
     color: #444;
 }
 
+.formError{
+    border:1px solid red;
+}
+
+
 /* Badge for notifications */
 .nav-badge-blur{
     background: #6c6c6c;

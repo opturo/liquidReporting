@@ -9,11 +9,11 @@ var odinLite_billing = {
      * packageTesting
      * FOR TESTING ONLY
      */
-    packageTesting: function(){
+    packageTesting: function () {
         var addPackageList = ["VICAP_REPORTING_STANDARD_USER_GROUP"];
         var deletePackageList = ["VICAP_REPORTING_ADVANCED_USER_GROUP"];
 
-        odinLite_billing.updateUserPackage(addPackageList,deletePackageList,true);
+        odinLite_billing.updateUserPackage(addPackageList, deletePackageList, true);
         //odinLite_billing.checkBillingIsVerified(addPackageList);
         //odinLite_billing.doInitialSignupBillingByPackage(addPackageList);
     },
@@ -22,30 +22,29 @@ var odinLite_billing = {
      * signupPackagePricing
      * This method gets the initial signup pricing.
      */
-    signupPackagePricing: function(packageList,discountCode){
-        if(via.undef(packageList,true)){
-            via.alert("Missing Arguments","Specify a Package List.");
+    signupPackagePricing: function (packageList, discountCode, callbackFn) {
+        if (via.undef(packageList, true)) {
+            via.alert("Missing Arguments", "Specify a Package List.");
             return;
         }
 
-        kendo.ui.progress($("body"), true);//Wait Message on
         $.post(odin.SERVLET_PATH,
             {
-                action: 'odinLite.billing.getSignupPricing',
-                packageList: JSON.stringify(packageList),
+                action: 'odinLite.billing.getSignupPackagePricing',
+                addPackageList: JSON.stringify(packageList),
                 discountCode: discountCode
             },
-            function(data, status){
-                kendo.ui.progress($("body"), false);//Wait Message off
-
-                if(!via.undef(data,true) && data.success === false){
+            function (data, status) {
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting pricing info:", data.message);
-                    via.alert("Failure getting pricing info", data.message,function(){
+                    via.alert("Failure getting pricing info", data.message, function () {
                     });
                     return;
-                }else{//Success
+                } else {//Success
                     via.debug("Pricing Success Info", data);
-                    console.log("signupPackagePricing",data);//Testing
+                    if(!via.undef(callbackFn)){
+                        callbackFn(data);
+                    }
                 }
             },
             'json');
@@ -55,9 +54,9 @@ var odinLite_billing = {
      * reoccurringPackagePricing
      * This method gets the reoccurring monthly package pricing.
      */
-    reoccurringPackagePricing: function(packageList){
-        if(via.undef(packageList,true)){
-            via.alert("Missing Arguments","Specify a Package List.");
+    reoccurringPackagePricing: function (packageList) {
+        if (via.undef(packageList, true)) {
+            via.alert("Missing Arguments", "Specify a Package List.");
             return;
         }
 
@@ -67,17 +66,17 @@ var odinLite_billing = {
                 action: 'odinLite.billing.getReoccurringPricing',
                 packageList: JSON.stringify(packageList)
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting pricing info:", data.message);
-                    via.alert("Failure getting pricing info", data.message,function(){
+                    via.alert("Failure getting pricing info", data.message, function () {
                     });
                     return;
-                }else{//Success
+                } else {//Success
                     via.debug("Pricing Success Info", data);
-                    console.log("reoccurringPackagePricing",data);//Testing
+                    console.log("reoccurringPackagePricing", data);//Testing
                 }
             },
             'json');
@@ -87,9 +86,9 @@ var odinLite_billing = {
      * getAutoApplyDiscountCode
      * This method gets the auto apply discount code for the packages sent
      */
-    getAutoApplyDiscountCode: function(packageList){
-        if(via.undef(packageList,true)){
-            via.alert("Missing Arguments","Specify a Package List.");
+    getAutoApplyDiscountCode: function (packageList) {
+        if (via.undef(packageList, true)) {
+            via.alert("Missing Arguments", "Specify a Package List.");
             return;
         }
 
@@ -99,17 +98,17 @@ var odinLite_billing = {
                 action: 'odinLite.billing.getAutoApplyDiscountCode',
                 packageList: JSON.stringify(packageList)
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting discount code:", data.message);
-                    via.alert("Failure getting discount code", data.message,function(){
+                    via.alert("Failure getting discount code", data.message, function () {
                     });
                     return;
-                }else{//Success
+                } else {//Success
                     via.debug("Discount code success", data);
-                    console.log("getAutoApplyDiscountCode",data);//Testing
+                    console.log("getAutoApplyDiscountCode", data);//Testing
                 }
             },
             'json');
@@ -120,10 +119,10 @@ var odinLite_billing = {
      * This checks to make sure their billing information has been verified. If not it would popup the modal window for credit card entry
      * If they have been verified it will continue to the application.
      */
-    checkBillingIsVerified: function(callbackFn){
+    checkBillingIsVerified: function (callbackFn) {
         var isBillingVerified = odin.getUserSpecificSetting("isBillingVerified");
         var isOdinLiteUser = odin.getUserSpecificSetting("isOdinLiteUser");
-        if(via.undef(isOdinLiteUser,true) || isOdinLiteUser !== "true"){//They are not a billable client
+        if (via.undef(isOdinLiteUser, true) || isOdinLiteUser !== "true") {//They are not a billable client
             via.debug("Skipping billing, not a billing customer.");
             console.log("checkBillingIsVerified: Skipping billing, not a billing customer.");
             callbackFn();//Call the function to continue the login.
@@ -131,74 +130,20 @@ var odinLite_billing = {
         }
 
         //Check if they have been verified.
-        if(via.undef(isBillingVerified,true) || isBillingVerified==="false"){
-            console.log("checkBillingIsVerified: Not verified. Make them enter credit card info.");
-
-
-        //Get the window template
-        $.get("./html/billingModal.html", function (billingWindowTemplate) {
-            $('#billing_verifyModal').remove();
-            console.log('billingWindowTemplate', billingWindowTemplate);
-            $('body').append(billingWindowTemplate);
-
-            //Check for first time user and update.
-            if(via.undef(isBillingVerified,true)) {
-                //$('#billing_verifyModal .modal-title').append(" - First Time User");
-                $('#billing_verifyModal .panel-heading-color').removeClass('panel-danger');
-                $('#billing_verifyModal .panel-heading-color').addClass('panel-warning');
-                $('#billing_verifyModal .panel-heading-title').html("First Time User: Billing Information");
+        if (via.undef(isBillingVerified, true) || isBillingVerified === "false") {//Not Verified
+            /*For the text in the header of the popup window.*/
+            var popupType = -1;
+            if(via.undef(isBillingVerified, true)){
+                //New user
+                popupType = 1;
+            }else{
+                //Existing user
+                popupType = 2;
             }
-
-            $('#billing_verifyModal').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-        });
-
-
-            /*
-            kendo.ui.progress($("body"), true);//Wait Message on
-            $.post(odin.SERVLET_PATH,
-                {
-                    action: 'odinLite.billing.authorizeCard',
-                    name: "Chris Fallon",
-                    email: "cfallon@opturo.com",
-                    ipAddress: "127.0.0.1",
-                    streetHouse: "108 Test Road",
-                    city: "Rochester",
-                    state: "NY",
-                    zip: "14580",
-                    countryCode: "US",
-                    cardNumber: "4111111ss111111111",
-                    expirationMonth: "04",
-                    expirationYear: "2020",
-                    nameOnCard: "Christopher R Fallon",
-                    cardCode: "123"
-                },
-                function(data, status){
-                    kendo.ui.progress($("body"), false);//Wait Message off
-
-                    if(!via.undef(data,true) && data.success === false){
-                        via.debug("Failure authorizing user:", data.message);
-                        via.alert("Failure authorizing user", data.message,function(){
-                            console.log("Popup modal window, again. User failed to authorize for whatever reason. Hopefully the error should show.");
-                        });
-                        return;
-                    }else{//Success
-                        via.alert("Authorization Success", data.message,function() {
-                            console.log("They just got verified. Call the function to continue the login.");
-                            odin.USER_INFO.userSettings.isBillingVerified = "true";
-                            if (!via.undef(callbackFn)) {
-                                callbackFn();//Continue with the login
-                            }
-                        });
-                        return;
-                    }
-                },
-                'json');
-             */
-
-        }else{//They are verified. Call the function to continue the login.
+            /** Not verified popup billing window. **/
+            console.log("checkBillingIsVerified: Not verified. Make them enter credit card info.");
+            odinLite_billing.billingWindowPopup(popupType,callbackFn);
+        } else {//They are verified. Call the function to continue the login.
             console.log("checkBillingIsVerified: They are verified. Call the function to continue the login.");
             if (!via.undef(callbackFn)) {
                 callbackFn();//Call the function to continue the login.
@@ -206,36 +151,234 @@ var odinLite_billing = {
         }
     },
 
+    /**
+     * billingWindowPopup
+     * This is used for initial billing, expired or failed billing as well as updating a payment type.
+     */
+    billingWindowPopup: function (popupType,callbackFn,allowClosing) {
+
+        kendo.ui.progress($("body"), true);//Wait Message on
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.billing.init'
+            },
+            function (data, status) {
+                //console.log('odinLite.billing.init', data);
+                kendo.ui.progress($("body"), false);//Wait Message off
+
+                if (!via.undef(data, true) && data.success === false) {//Failure
+                    via.debug("Failure getting billing info:", data.message);
+                    via.alert("Failure getting billing info", data.message);
+                    return;
+                } else {//Success
+                    //Get the window template
+                    $.get("./html/ccBillingWindow.html", function (billingWindowTemplate) {
+                        $('#odinLite_ccBillingWindow').remove();
+                        $('body').append(billingWindowTemplate);
+
+                        //Populate known values
+                        $("#cc-billing-form input[name='name']").val(odin.USER_INFO.firstName + " " + odin.USER_INFO.lastName);
+                        $("#cc-billing-form input[name='email']").val(odin.USER_INFO.userName);
+
+                        //Add Country Box
+                        $("#cc-billing-form input[name='countryCode']").kendoDropDownList({
+                            dataTextField: "text",
+                            dataValueField: "value",
+                            dataSource: data.countryCombo,
+                            index: 0
+                        });
+
+                        //Add State Box
+                        $("#cc-billing-form input[name='state']").kendoDropDownList({
+                            dataTextField: "text",
+                            dataValueField: "value",
+                            dataSource: data.states,
+                            index: 1
+                        });
+
+                        //Add Months
+                        $("#cc-billing-form input[name='expirationMonth']").kendoDropDownList({
+                            dataTextField: "text",
+                            dataValueField: "value",
+                            dataSource: data.expirationMonths,
+                            index: 0
+                        });
+
+                        //Add Months
+                        $("#cc-billing-form input[name='expirationYear']").kendoDropDownList({
+                            dataTextField: "text",
+                            dataValueField: "value",
+                            dataSource: data.expirationYears,
+                            index: 0
+                        });
+
+                        //Validation zip code
+                        $("#cc-billing-form input[name='zip']").keyup(function () {
+                            this.value = this.value.replace(/[^0-9-]/g, '');
+                        });
+                        //Validation Credit Card
+                        $("#cc-billing-form input[name='cardNumber']").keyup(function () {
+                            this.value = this.value.replace(/[^0-9-]/g, '');
+                        });
+                        //Validation CVV
+                        $("#cc-billing-form input[name='cardCode']").keyup(function () {
+                            this.value = this.value.replace(/[^0-9]/g, '');
+                        });
+
+                        //Check for first time user and update.
+                        var isFirstTimeUser = false;
+                        if (popupType === 1) {
+                            isFirstTimeUser = true;
+                            //$('#billing_verifyModal .modal-title').append(" - First Time User");
+                            $('#odinLite_ccBillingWindow .panel-heading-color').removeClass('panel-danger');
+                            $('#odinLite_ccBillingWindow .panel-heading-color').addClass('panel-warning');
+                            $('#odinLite_ccBillingWindow .panel-heading-title').html("First Time User: Billing Information");
+                        }else if(popupType === 3){
+                            $('#odinLite_ccBillingWindow .panel-heading-color').removeClass('panel-danger');
+                            $('#odinLite_ccBillingWindow .panel-heading-color').addClass('panel-warning');
+                            $('#odinLite_ccBillingWindow .panel-heading-title').html("Update Billing Information");
+                        }
+
+                        //Launch the modal and make it non-dismiss
+                        /*$('#billing_verifyModal').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });*/
+                        //Make the window.
+                        var actions = [];
+                        if(allowClosing===true){
+                            actions.push("Close");
+                        }
+
+                        var billingWindow = $('#odinLite_ccBillingWindow').kendoWindow({
+                            title: "Credit Card Authorization",
+                            draggable: false,
+                            resizable: false,
+                            width: "850px",
+                            height: "500px",
+                            modal: true,
+                            close: (allowClosing===true)?true:false,
+                            actions: actions,
+                            close: function () {
+                                billingWindow = null;
+                                $('#odinLite_ccBillingWindow').remove();
+                            }
+                        }).data("kendoWindow");
+
+                        billingWindow.center();
+                        billingWindow.open();
+
+                        /** Button Events **/
+                        $('#cc-billing-form').submit(function (e) {
+                            //Don't submit
+                            e.preventDefault();
+
+                            //Get everything into form values
+                            var formValues = {};
+                            $.each($('#cc-billing-form').serializeArray(), function (i, field) {
+                                formValues[field.name] = field.value;
+                            });
+                            console.log('formValues',formValues);
+
+                            /* Validate */
+
+                            //Zip Code
+                            $("#cc-billing-form input[name='zip']").removeClass("formError");//Clear error
+                            if (formValues.countryCode === "US") {
+                                var isValidZip = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(formValues.zip);
+                                if (isValidZip === false) {
+                                    via.kendoAlert("Invalid Zip Code", "Please Enter a valid zip code.");
+                                    $("#cc-billing-form input[name='zip']").addClass("formError");
+                                    return;
+                                }
+                            }
+
+                            //CVV
+                            $("#cc-billing-form input[name='cardCode']").removeClass("formError");//Clear error
+                            var isValidCVV = /(^\d{3}$)|(^\d{4}$)/.test(formValues.cardCode);
+                            if (isValidCVV === false) {
+                                via.kendoAlert("Invalid CVV", "Please Enter a valid Card Verification Value.");
+                                $("#cc-billing-form input[name='cardCode']").addClass("formError");
+                                return;
+                            }
+                            /* End - Validate */
+
+                            /* Authorize card on server. */
+                            odinLite_billing.authorizeCard(formValues,callbackFn,isFirstTimeUser);
+                        });
+                    });
+                }
+            },
+            'json');
+    },
 
     /**
-     * doInitialSignupBillingByPackage
-     * Use this for first time billing.
+     * authorizeCard
+     * This will make a call to the server to authorize the card.
+     */
+    authorizeCard: function (formValues,callbackFn,isFirstTimeUser) {
+        kendo.ui.progress($("#odinLite_ccBillingWindow"), true);//Wait Message on
+        $.post(odin.SERVLET_PATH,
+            $.extend(formValues, {
+                action: 'odinLite.billing.authorizeCard'
+            }),
+            function (data, status) {
+                kendo.ui.progress($("#odinLite_ccBillingWindow"), false);//Wait Message off
+
+                if (!via.undef(data, true) && data.success === false) {
+                    via.debug("Failure authorizing user:", data.message);
+                    via.kendoAlert("Failure authorizing", data.message, function () {
+                        console.log("Popup modal window, again. User failed to authorize for whatever reason.");
+                    });
+                    return;
+                } else {//Success
+                    //Hide the billing screen.
+                    $('#odinLite_ccBillingWindow').data('kendoWindow').close();
+
+                    via.alert("Credit Card Authorization Successful", data.message, function () {
+                        console.log("They just got verified. Call the function to continue the login.");
+                        odin.USER_INFO.userSettings = data.userSettings;//Update user settings with the new values.
+                        if (!via.undef(callbackFn)) {
+                            callbackFn(isFirstTimeUser);//Continue with the login
+                        }
+                    });
+                    return;
+                }
+            },
+            'json');
+    },
+
+    /**
+     * chargeBillingByPackage
+     * Use this for billing packages.
      * This will bill the current user based on the packages selected.
      */
-    doInitialSignupBillingByPackage: function(packageList,discountCode){
-        if(via.undef(packageList,true)){
-            via.alert("Missing Arguments","Specify a Package List.");
+    chargeBillingByPackage: function (addPackageList,removePackageList,discountCode,countryCode) {
+        if (via.undef(addPackageList, true) && via.undef(removePackageList, true)) {
+            via.alert("Missing Arguments", "No packages specified..");
             return;
         }
 
         kendo.ui.progress($("body"), true);//Wait Message on
         $.post(odin.SERVLET_PATH,
             {
-                action: 'odinLite.billing.doInitialSignupBillingByPackage',
-                packageList: JSON.stringify(packageList),
-                discountCode: discountCode
+                action: 'odinLite.billing.chargeBillingByPackage',
+                addPackageList: addPackageList, //The packages to be added
+                removePackageList: removePackageList, //This is the list of packages to be removed and deleted.
+                discountCode: discountCode,
+                countryCode: countryCode
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure billing for sign-up:", data.message);
-                    via.alert("Failure Billing for Sign-up", data.message,function(){
+                    via.alert("Failure Billing for Sign-up", data.message, function () {
                     });
                     return;
-                }else{//Success
+                } else {//Success
                     via.debug("Signup Billing Success Info", data);
-                    console.log("doInitialSignupBillingByPackage",data);//Testing
+                    console.log("doInitialSignupBillingByPackage", data);//Testing
                 }
             },
             'json');
@@ -246,14 +389,15 @@ var odinLite_billing = {
      * updateUserPackage
      * This will update/delete packages and optionally delete the data models associated with the packages that are being deleted.
      */
-    updateUserPackage: function(addPackageList,deletePackageList,isDeleteData){
-        if(via.undef(addPackageList,true) && via.undef(deletePackageList,true)){
-            via.alert("Missing Arguments","Specify an add package list or a delete package List.");
+    updateUserPackage: function (addPackageList, deletePackageList, isDeleteData) {
+        if (via.undef(addPackageList, true) && via.undef(deletePackageList, true)) {
+            via.alert("Missing Arguments", "Specify an add package list or a delete package List.");
             return;
         }
-        if(via.undef(isDeleteData,true)){ isDeleteData = false; }
+        if (via.undef(isDeleteData, true)) {
+            isDeleteData = false;
+        }
 
-        kendo.ui.progress($("body"), true);//Wait Message on
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.billing.updateUserPackage',
@@ -262,31 +406,31 @@ var odinLite_billing = {
                 isDeleteData: isDeleteData,
                 entityDir: odinLite.ENTITY_DIR
             },
-            function(data, status){
-                kendo.ui.progress($("body"), false);//Wait Message off
-
-                if(!via.undef(data,true) && data.success === false){
+            function (data, status) {
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure updating package:", data.message);
-                    via.alert("Failure Updating Package", data.message,function(){
+                    via.alert("Failure Updating Package", data.message, function () {
                     });
                     return;
-                }else{//Success
+                } else {//Success
                     via.debug("Success updating package", data);
-                    console.log("updateUserPackage",data);//Testing
+                    console.log("updateUserPackage", data);//Testing
                 }
             },
             'json');
     },
 
     /* Converts modal form with credit card information into JSON data
-    that will be sent to Paylane for authorization */
-    getBillingInfo: function(){
+     that will be sent to Paylane for authorization */
+    getBillingInfo: function () {
 
-      var data = {};
-      
-      $("#billing-form").serializeArray().map(function(x){data[x.name] = x.value;});
+        var data = {};
 
-      return data;
+        $("#billing-form").serializeArray().map(function (x) {
+            data[x.name] = x.value;
+        });
+
+        return data;
 
     }
 };

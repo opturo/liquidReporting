@@ -1,6 +1,6 @@
 <div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4 col-sm-12">
+  <div class="col-md-3"></div>
+  <div class="col-md-6 col-sm-12">
     <h2>Package Update Confirmation</h2>
     <br></br>
 
@@ -9,7 +9,7 @@
     <p>Your billing information has been verified.</p>
     <div class="well">
       <div id="billing-info-display"></div>
-      <a href="#">Edit billing information</a>
+      <a href="#" onclick="packageSelection.editPaymentInformation();">Edit billing information</a>
     </div>
     <br></br>
 
@@ -26,9 +26,11 @@
         <table id="package-update-table" class="table table-striped">
           <thead>
             <tr>
+              <th>Application</th>
               <th>Package Name</th>
-              <th>Description</th>
-              <th>Cost (USD)</th>
+              <th>Onetime Setup Fee</th>
+              <th>**Monthly Subscription Cost</th>
+              <th>Package Total</th>
             </tr>
          </thead>
          <tbody></tbody>
@@ -44,8 +46,8 @@
         <table id="package-cancel-table" class="table table-striped">
           <thead>
             <tr>
+              <th>Application</th>
               <th>Package Name</th>
-              <th>Description</th>
             </tr>
          </thead>
          <tbody></tbody>
@@ -64,22 +66,23 @@
      <tbody></tbody>
     </table>
     <p>Note: Data storage costs, discount codes, and package costs subject to change</p>
-    <br></br>
+    <br>
 
     <h4><b>Step 3:</b> Apply any discount codes or promotional offers</h4>
-    <hr></hr>
+    <hr>
     <div id="discount-code-box" style="width:100%">
-      <input id="discount-code" name="discount-code" style="display:inline-block;" value=""/>
+      <input id="discount-code" name="discount-code" class="k-textbox" style="display:inline-block;" value=""/>
       <button id="discount-code-button" class="btn btn-primary btn-block" style="display:inline-block;width:100px;" onclick="packageSelection.applyDiscountCode();">Apply Code</button>
-      <div id="discount-code-response"></div>
+      <div id="discount-code-response" class="label label-success"></div>
     </div>
+    <br>
+    <br>
 
-    <br></br>
-
-    <h4><b>Step 4:</b> Submit to update your packages</h4>
-    <hr></hr>
-    <button class="btn btn-primary btn-block" style="width:120px;display:block;margin:0 auto;">Submit</button>
+    <h4><b>Step 4:</b> Make payment to update your packages</h4>
+    <hr>
+    <button id="payment-back-button" type="button" class="tr btn btn-success pull-left" onclick="packageSelection.isBackButton=true;odinLite.loadAccountPackages();">< Back</button>
+    <button id="payment-makePayment-button" class="btn btn-primary btn-block" onclick="packageSelection.submitPayment();" style="width:140px;display:block;margin:0 auto;">Submit Payment</button>
 
   </div>
-  <div class="col-md-4"></div>
+  <div class="col-md-3"></div>
 </div>

@@ -1,0 +1,56 @@
+<div id="odinLite_ccBillingWindow" style="overflow-y: auto;overflow-x:hidden;">
+    <div class="panel-heading-color panel panel-danger">
+        <div class="panel-heading">
+            <p class="panel-heading-title">Expired Billing Information: Please Update</p>
+        </div>
+        <div class="panel-body">
+            <p>Please enter your credit card information to access demo reports. This is for verification purposes only. You will not be charged until you choose to sign up for a reporting package.</p>
+            <form id="cc-billing-form" action="" type=""  onsubmit="odinLite_billing.getBillingInfo();">
+                <!-- merchant's input elements, as many as required -->
+                <div class="form-group">
+                    <b>Full Name</b></br>
+                    <input type="text" name="name" class="k-textbox" style="width:100%;margin-bottom:5px;" required>
+                    <b>Email</b></br>
+                    <input type="text" name="email" class="k-textbox" style="width:100%;margin-bottom:5px;" disabled required>
+                </div>
+                <div class="form-group">
+                    <b>Address</b></br>
+                    <input type="text" name="address" class="k-textbox" style="width:100%;margin-bottom:5px;" required>
+                    <b>City</b></br>
+                    <input type="text" name="city" class="k-textbox" style="width:100%;margin-bottom:5px;" required>
+                    <b>State</b></br>
+                    <input name="state" style="width:100%" required>
+                    <b>Zip Code</b></br>
+                    <input type="text" name="zip" class="k-textbox" style="width:100%;margin-bottom:5px;">
+                    <b>Country</b></br>
+                    <input name="countryCode" style="width:100%;margin-bottom:5px;" required>
+                </div>
+                <hr/>
+                <!-- card related input elements: -->
+                <div class="form-group">
+                    <b>Name on Card</b></br>
+                    <input type="text" name="nameOnCard" class="k-textbox" style="width:100%;margin-bottom:5px;" required>
+                    <b>Credit Card Number</b></br>
+                    <input type="text" name="cardNumber" class="k-textbox" style="width:100%;margin-bottom:5px;" value="4111111111111111" required>
+                    <b>CVV</b></br>
+                    <input type="text" name="cardCode" class="k-textbox" style="width:100%;margin-bottom:5px;" value="123" required>
+                </div>
+
+                <!-- please note that the expiry month/year elements can be simple inputs -->
+                <div class="form-group">
+                    <b>Expiration Date</b></br>
+                    <!-- or they can be select nodes -->
+                    <div class="col-md-6" style="padding:0 0 0 0;">
+                        <input name="expirationMonth" style="width:100%" required>
+                    </div>
+                    <div class="col-md-5" >
+                        <input name="expirationYear" style="width:100%" required>
+                    </div>
+                </div>
+                <br/>
+                <hr style="clear:both;"/>
+                <button class="btn btn-primary btn-block cc-billing-button" type="submit" style="width:200px;display:block;margin:0 auto;">Authorize Card</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -10,9 +10,10 @@ var odinLite = {
     ENTITY_NAME: null,//Holds the current entity being worked with
     LOGIN_SETTINGS: null,
 
-    OVERRIDE_USER:null,//Override user for admin functionality.
+    OVERRIDE_USER: null,//Override user for admin functionality.
 
-    systemNotifications:null,//holds the list of current system notifications
+    systemNotifications: null,//holds the list of current system notifications
+    subscribedPackageList: null,//holds the list of subscribed packages.
     isDataManagerUser: false,
 
     /**
@@ -34,22 +35,22 @@ var odinLite = {
         odin.userIsLoggedIn(odinLite.setUserLoggedIn, function (data) {
             odinLite.ENTITY_CODE = data.ODIN_LITE_ENTITY_CODE;
             odinLite.APP_NAME = data.ODIN_LITE_APP_NAME;
-            if(via.undef(odinLite.ENTITY_CODE,true)){
-                window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(document.location.search);
-            }else {
+            if (via.undef(odinLite.ENTITY_CODE, true)) {
+                window.location = '../index.jsp?referrer=./' + odin.ODIN_LITE_DIR + '/' + encodeURIComponent(document.location.search);
+            } else {
                 var params = via.getQueryParams();
                 var isFirst = true;
                 var queryString = "";
-                $.each(params,function(key,value){
-                    if(key==="appname")return;
-                    if(isFirst){
+                $.each(params, function (key, value) {
+                    if (key === "appname")return;
+                    if (isFirst) {
                         queryString = "?" + key + "=" + value;
-                    }else{
+                    } else {
                         queryString += "&" + key + "=" + value;
                     }
                     isFirst = false;
                 });
-                window.location = '../index.jsp?referrer=./'+odin.ODIN_LITE_DIR+'/' + encodeURIComponent(queryString) + "&entity=" + odinLite.ENTITY_CODE + "&appName=" + odinLite.APP_NAME;
+                window.location = '../index.jsp?referrer=./' + odin.ODIN_LITE_DIR + '/' + encodeURIComponent(queryString) + "&entity=" + odinLite.ENTITY_CODE + "&appName=" + odinLite.APP_NAME;
             }
         });
     },
@@ -58,9 +59,9 @@ var odinLite = {
      * setupDataManagerUser
      * This will check and setup the initial data manager user
      */
-    setupDataManagerUser: function(){
+    setupDataManagerUser: function () {
         var dmUser = via.getParamsValue("isdm");
-        if(via.undef(dmUser,true) || dmUser.toLowerCase() !== "true"){
+        if (via.undef(dmUser, true) || dmUser.toLowerCase() !== "true") {
             return;
         }
         odinLite.isDataManagerUser = true;
@@ -85,51 +86,55 @@ var odinLite = {
                 action: 'odinLite.init',
                 overrideUser: odinLite.OVERRIDE_USER
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure Initializing:", data.message);
                     via.alert("Failure Initializing", data.message);
-                }else{
+                } else {
                     via.debug("Successful Initializing:", data);
 
                     /**TESTING**/
                     /* setTimeout(function(){
-                        odinLite_billing.packageTesting();
+                     odinLite_billing.packageTesting();
 
-                    },3500);
-                    */
+                     },3500);
+                     */
                     //var localTs = '{"tableLabel":"10312008.txt","columnHeaders":["Currency Code","FX Rate"],"columnDataTypes":[0,0],"totalRows":4,"data":[["CAD","0.79760718"],["EUR","1.18889948"],["GBP","1.28855020"],["USD","1.00000000"]],"lockedColumns":0}';
                     //via.downloadLocalTableSet(JSON.parse(localTs));
                     /**END TESTING**/
 
-                    odinLite_billing.checkBillingIsVerified(function(){//Check to make sure they have verified billing if they are a billing client.
+                    odinLite_billing.checkBillingIsVerified(function () {//Check to make sure they have verified billing if they are a billing client.
                         //Check if an entity was passed from appbuilder
-                        if(!via.undef(via.getParamsValue("entityname")) && !via.undef(via.getParamsValue("entitydir"))){
+                        if (!via.undef(via.getParamsValue("entityname")) && !via.undef(via.getParamsValue("entitydir"))) {
                             odinLite.ENTITY_DIR = via.getParamsValue("entitydir");
                             odinLite.ENTITY_NAME = via.getParamsValue("entityname");
                             odinLite.OVERRIDE_USER = via.getParamsValue("overrideuser");
                             odinLite.ENTITY_CODE = data.entityCode;
                             odinLite.APP_NAME = data.appName;
+                            odinLite.systemNotifications = data.systemNotifications;
+                            odinLite.subscribedPackageList = data.packageList;
 
                             //Hide the query string
                             window.history.replaceState("From App Builder", data.appName, "./");
 
                             odinLite.initOdinLite();
 
-                        }else if(odinLite.isMultiEntity()){
-                            odinLite.createMultiEntityWindow(data,function(){
-                                //odinLite.ENTITY_DIR = "9xWHiDUj";
-                                //odinLite.ENTITY_NAME = "Default";
-                                //odinLite.OVERRIDE_USER = "190";
+                        } else if (odinLite.isMultiEntity()) {
+                            odinLite.createMultiEntityWindow(data, function () {
+                                //The entity dir and name is set in the multi entity window
+                                odinLite.ENTITY_CODE = data.entityCode;
+                                odinLite.APP_NAME = data.appName;
+                                odinLite.systemNotifications = data.systemNotifications;
+                                odinLite.subscribedPackageList = data.packageList;
 
                                 odinLite.initOdinLite();
                             });
-                        }else{
+                        } else {
 
-                            if(data.entityList.length === 0){
-                                via.alert("Entity Error","Cannot find an entity.",function(){
+                            if (data.entityList.length === 0) {
+                                via.alert("Entity Error", "Cannot find an entity.", function () {
                                     odinLite.setUserLoggedIn();
                                 });
                                 return;
@@ -139,6 +144,8 @@ var odinLite = {
                             odinLite.ENTITY_CODE = data.entityCode;
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
+                            odinLite.subscribedPackageList = data.packageList;
+
                             odinLite.initOdinLite();
                         }
                     });
@@ -154,9 +161,9 @@ var odinLite = {
      * setOverrideHtml
      * for an override user
      */
-    setOverrideHtml: function(){
+    setOverrideHtml: function () {
         var overrideHtml = "";
-        if(!via.undef(odinLite.OVERRIDE_USER,true)){
+        if (!via.undef(odinLite.OVERRIDE_USER, true)) {
             overrideHtml = ',<span style="color:red;"> Override User:' + odinLite.OVERRIDE_USER + "</span>";
         }
         $('.appTitle').html(odinLite.APP_NAME + " <i><small>(Entity: " + odinLite.ENTITY_NAME + overrideHtml + ")</small></i>");
@@ -167,7 +174,7 @@ var odinLite = {
      * Inits the odin lite user
      * @param data
      */
-    initOdinLite: function (){
+    initOdinLite: function () {
         //For the override user
         odinLite.setOverrideHtml();
 
@@ -204,14 +211,14 @@ var odinLite = {
 
         //System Notifications Button
         if (via.undef(params['hidenotifications'], true) || params['hidenotifications'].toLowerCase() !== 'true') {
-            if(via.undef(odinLite.systemNotifications,true)){
-                $('#home_systemNotificationButton').prop("disabled",true);
+            if (via.undef(odinLite.systemNotifications, true)) {
+                $('#home_systemNotificationButton').prop("disabled", true);
                 $('#home_systemNotificationBadge').html("0");
                 $('#home_systemNotificationButton').fadeIn();
-            }else {
-                $('#home_systemNotificationButton').prop("disabled",false);
+            } else {
+                $('#home_systemNotificationButton').prop("disabled", false);
                 $('#home_systemNotificationBadge').html(odinLite.systemNotifications.length);
-                $('#home_systemNotificationBadge').css("background-color","red");
+                $('#home_systemNotificationBadge').css("background-color", "red");
                 $('#home_systemNotificationButton').click(function () {
                     odinLite.showSystemNotifications();
                 }).fadeIn();
@@ -219,10 +226,10 @@ var odinLite = {
         }
 
         //Switch User Button
-        if(odin.USER_INFO.isAdminUser === true && odin.USER_INFO.userName === "rocco"){
+        if (odin.USER_INFO.isAdminUser === true && odin.USER_INFO.userName === "rocco") {
             $('#switchUserButton').fadeIn();
             $('#switchUserButton').off();
-            $('#switchUserButton').click(function(){
+            $('#switchUserButton').click(function () {
                 odinLite.createSwitchUserWindow();
             });
         }
@@ -239,12 +246,33 @@ var odinLite = {
         //Show the Opturo logo
         $('.poweredPanel').fadeIn();
 
-        //Used for Package sign up
-        if (via.undef(params['hideaccount'], true) || params['hideaccount'].toLowerCase() !== 'true') {
+        //Used for Package sign up - hide if they are not a billing customer.
+        var isOdinLiteUser = odin.getUserSpecificSetting("isOdinLiteUser");
+        if (!via.undef(isOdinLiteUser, true) && isOdinLiteUser === "true") {//They are not a billable client
+            //if (via.undef(params['hideaccount'], true) || params['hideaccount'].toLowerCase() !== 'true') {
             $('#home_yourPackagesButton').off();
             $('#home_yourPackagesButton').click(function () {
                 odinLite.loadAccountPackages();
             }).fadeIn();
+
+            var packageList = odinLite.subscribedPackageList;
+            if (via.undef(packageList, true)) {
+                $('#home_yourPackagesButton').addClass("formError");
+                var packageTooltip = $("#home_yourPackagesButton").kendoTooltip({
+                    autoHide: false,
+                    content: "Start by adding packages to your account.",
+                    width: 200,
+                    height: 50,
+                    position: "top",
+                    animation: {
+                        open: {
+                            effects: "zoom",
+                            duration: 250
+                        }
+                    }
+                }).data("kendoTooltip");
+                packageTooltip.show();
+            }
         }
 
         //Help Button
@@ -264,10 +292,9 @@ var odinLite = {
      * showSystemNotifications
      * Shows the system notifications.
      */
-    showSystemNotifications: function(){
-        console.log('odinLite.systemNotifications',odinLite.systemNotifications);
+    showSystemNotifications: function () {
         var gridData = [];
-        odinLite.systemNotifications.map(function(o){
+        odinLite.systemNotifications.map(function (o) {
             gridData.push({
                 message: o
             })
@@ -306,7 +333,7 @@ var odinLite = {
                     schema: {
                         model: {
                             fields: {
-                                message: { type: "string" }
+                                message: {type: "string"}
                             }
                         }
                     },
@@ -325,12 +352,13 @@ var odinLite = {
                         template: "<img src='../images/24_mail.png'/> #: message #",
                         //template: "<span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> #: message #",
                         field: "message",
-                        title: "System Notification"},
+                        title: "System Notification"
+                    },
                 ]
             });
 
             //Button Events
-            $(".odinLite_systemNotificationCloseButton").click(function(){
+            $(".odinLite_systemNotificationCloseButton").click(function () {
                 switchUserWindow.close();
                 switchUserWindow = null;
                 $('#odinLite_systemNotificationWindow').remove();
@@ -348,19 +376,19 @@ var odinLite = {
             {
                 action: 'odinLite.getODINLiteUserList'
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting users:", data.message);
                     via.alert("Failure getting users", data.message);
-                }else{
+                } else {
                     via.debug("Successful getting users:", data);
 
                     //Get the Entity List
                     var userArr = [];
-                    if(!via.undef(data.userIdList)) {
-                        for(var i=0;i<data.userIdList.length;i++){
+                    if (!via.undef(data.userIdList)) {
+                        for (var i = 0; i < data.userIdList.length; i++) {
                             userArr.push({
                                 text: data.userNameList[i],
                                 value: data.userIdList[i]
@@ -374,9 +402,9 @@ var odinLite = {
                         dataValueField: "value",
                         dataSource: userArr,
                         index: 0,
-                        change: function(e){
+                        change: function (e) {
                             var userId = e.sender.value();
-                            var ds = updateEntityList(data,userId);
+                            var ds = updateEntityList(data, userId);
                             $("#odinLite_switchUserEntity").data('kendoDropDownList').setDataSource(ds);
                             $("#odinLite_switchUserEntity").data('kendoDropDownList').select(0);
                         }
@@ -391,7 +419,7 @@ var odinLite = {
                     });
 
                     //Set the initial value
-                    var ds = updateEntityList(data,data.userIdList[0]);
+                    var ds = updateEntityList(data, data.userIdList[0]);
                     $("#odinLite_switchUserEntity").data('kendoDropDownList').setDataSource(ds);
                     $("#odinLite_switchUserEntity").data('kendoDropDownList').select(0);
                 }
@@ -410,13 +438,13 @@ var odinLite = {
                 resizable: false,
                 width: "450px",
                 height: "165px",
-                modal:true,
-                close:true,
+                modal: true,
+                close: true,
                 actions: [
                     //"Maximize"
                     "Close"
                 ],
-                close: function() {
+                close: function () {
                     switchUserWindow = null;
                     $('#odinLite_switchUserWindow').remove();
                 }
@@ -425,7 +453,7 @@ var odinLite = {
             switchUserWindow.center();
 
             //Button Events
-            $(".odinLite_selectSwitchUser").on("click",function(){
+            $(".odinLite_selectSwitchUser").on("click", function () {
                 var userDD = $("#odinLite_switchUserName").data('kendoDropDownList');
                 var entityDD = $("#odinLite_switchUserEntity").data('kendoDropDownList');
 
@@ -440,32 +468,32 @@ var odinLite = {
                 switchUserWindow = null;
             });
 
-            $(".odinLite_deleteSwitchUser").on("click",function() {
+            $(".odinLite_deleteSwitchUser").on("click", function () {
                 /*
-                odinLite.OVERRIDE_USER = null;
-                odinLite.ENTITY_DIR = null;
-                odinLite.ENTITY_NAME = null;
+                 odinLite.OVERRIDE_USER = null;
+                 odinLite.ENTITY_DIR = null;
+                 odinLite.ENTITY_NAME = null;
 
-                odinLite.setOverrideHtml();
+                 odinLite.setOverrideHtml();
 
-                switchUserWindow.close();
-                $('#odinLite_switchUserWindow').remove();
-                switchUserWindow = null;
-                */
+                 switchUserWindow.close();
+                 $('#odinLite_switchUserWindow').remove();
+                 switchUserWindow = null;
+                 */
                 location.reload();
             });
         });
 
 
         //To update the entity list
-        function updateEntityList(data,userId){
+        function updateEntityList(data, userId) {
             var entityArr = data.entityHash[userId];
-            if(via.undef(entityArr) || entityArr.length === 0){
+            if (via.undef(entityArr) || entityArr.length === 0) {
                 return [];
             }
 
             var entityDsArr = [];
-            for(var i=0;i<entityArr.length;i++){
+            for (var i = 0; i < entityArr.length; i++) {
                 entityDsArr.push({
                     text: entityArr[i][1],
                     value: entityArr[i][0]
@@ -481,7 +509,7 @@ var odinLite = {
      * Creates the window for multi entity
      * @param data
      */
-    createMultiEntityWindow: function (data,selectFn) {
+    createMultiEntityWindow: function (data, selectFn) {
 
         //Get the window template
         $.get("./html/entityWindow.html", function (entityWindowTemplate) {
@@ -495,12 +523,12 @@ var odinLite = {
                 resizable: false,
                 width: "450px",
                 height: "90px",
-                modal:false,
-                close:false,
+                modal: false,
+                close: false,
                 actions: [
                     //"Maximize"
                 ],
-                close: function() {
+                close: function () {
                     entityWindow = null;
                     $('#odinLite_entityWindow').remove();
                 }
@@ -510,7 +538,7 @@ var odinLite = {
 
             //Get the Entity List
             var entityArr = [];
-            if(!via.undef(data.entityList)) {
+            if (!via.undef(data.entityList)) {
                 entityArr = data.entityList.map(function (item) {
                     return {
                         text: item[1],
@@ -527,28 +555,30 @@ var odinLite = {
             });
 
             //Button Events
-            $(".odinLite_selectEntity").on("click",function(){
+            $(".odinLite_selectEntity").on("click", function () {
                 var dataItem = $("#odinLite_multiEntityName").data("kendoDropDownList").dataItem();
-                if(via.undef(dataItem,true) || via.undef(dataItem.value,true)){ return; }
+                if (via.undef(dataItem, true) || via.undef(dataItem.value, true)) {
+                    return;
+                }
                 odinLite.ENTITY_DIR = dataItem.value;
                 odinLite.ENTITY_NAME = dataItem.text;
-                odinLite.ENTITY_CODE = data.entityCode;
-                odinLite.APP_NAME = data.appName;
                 entityWindow.close();
-                if(!via.undef(selectFn)){
+                if (!via.undef(selectFn)) {
                     selectFn();
                 }
             });
-            $(".odinLite_createEntity").on("click",function(){
-                odinLite_modelCache.createNewEntity(function(data){
+            $(".odinLite_createEntity").on("click", function () {
+                odinLite_modelCache.createNewEntity(function (data) {
                     entityWindow.close();
                     odinLite.setUserLoggedIn();
                 });
             });
-            $(".odinLite_deleteEntity").on("click",function(){
+            $(".odinLite_deleteEntity").on("click", function () {
                 var dataItem = $("#odinLite_multiEntityName").data("kendoDropDownList").dataItem();
-                if(via.undef(dataItem,true) || via.undef(dataItem.value,true)){ return; }
-                odinLite_modelCache.deleteEntity(dataItem.value,dataItem.text,function(data){
+                if (via.undef(dataItem, true) || via.undef(dataItem.value, true)) {
+                    return;
+                }
+                odinLite_modelCache.deleteEntity(dataItem.value, dataItem.text, function (data) {
                     entityWindow.close();
                     odinLite.setUserLoggedIn();
                 });
@@ -666,8 +696,8 @@ var odinLite = {
      * Reporting Application
      */
     loadReportingApplication: function () {
-        $('body').fadeOut(function(){
-            window.location = "../appBuilder/?entityDir="+odinLite.ENTITY_DIR+"&entityName="+odinLite.ENTITY_NAME+"&appName="+odinLite.APP_NAME+"&overrideUser="+(via.undef(odinLite.OVERRIDE_USER,true)?"":odinLite.OVERRIDE_USER);
+        $('body').fadeOut(function () {
+            window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME + "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER);
         });
     },
 
@@ -702,7 +732,7 @@ var odinLite = {
      */
 
 
-     /**
+    /**
      * ----------------------
      * Account Packages
      */
@@ -713,37 +743,45 @@ var odinLite = {
         $('#packages').fadeIn();
         packageSelection.init();
 
+        var tooltip = $("#home_yourPackagesButton").data('kendoTooltip');
+        if (!via.undef(tooltip)) {
+            tooltip.hide();
+        }
+
+        window.scrollTo(0, 0);
     },
 
     hideAccountPackages: function () {
         $('#packages').hide();
     },
     /**
-    * End Account Packages
-    * ----------------------
-    */
+     * End Account Packages
+     * ----------------------
+     */
 
     /**
-    * ----------------------
-    * Payment Confirmation Page
-    */
-   loadPaymentPage: function (packageUpdates) {
-       //Hide the other panels
-       odinLite.hideAllApplications();
+     * ----------------------
+     * Payment Confirmation Page
+     */
+    loadPaymentPage: function (packageUpdates) {
+        //Hide the other panels
+        odinLite.hideAllApplications();
 
-       $('#payment').fadeIn();
+        $('#payment').fadeIn();
 
-       packageSelection.getPackageUpdateDetails(packageUpdates);
-   },
+        packageSelection.getPackageUpdateDetails(packageUpdates);
 
-   hidePaymentPage: function () {
-       $('#payment').hide();
-   },
+        window.scrollTo(0, 0);
+    },
 
-   /**
-   * End Payment Confirmation Page
-   * ----------------------
-   */
+    hidePaymentPage: function () {
+        $('#payment').hide();
+    },
+
+    /**
+     * End Payment Confirmation Page
+     * ----------------------
+     */
 
     /**
      * isMultiEntity
@@ -751,11 +789,11 @@ var odinLite = {
      */
     isMultiEntity: function () {
         var isMultiEntity = odin.getUserSpecificSetting("isMultiEntity");
-        if(via.undef(isMultiEntity,true)){
+        if (via.undef(isMultiEntity, true)) {
             return false;
-        }else if(isMultiEntity === "true" || isMultiEntity === true){
+        } else if (isMultiEntity === "true" || isMultiEntity === true) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
