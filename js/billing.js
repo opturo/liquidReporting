@@ -23,11 +23,6 @@ var odinLite_billing = {
      * This method gets the initial signup pricing.
      */
     signupPackagePricing: function (packageList, discountCode, callbackFn) {
-        if (via.undef(packageList, true)) {
-            via.alert("Missing Arguments", "Specify a Package List.");
-            return;
-        }
-
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.billing.getSignupPackagePricing',
@@ -35,6 +30,8 @@ var odinLite_billing = {
                 discountCode: discountCode
             },
             function (data, status) {
+                console.log('signupPackagePricing',data);
+
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting pricing info:", data.message);
                     via.alert("Failure getting pricing info", data.message, function () {
@@ -267,6 +264,8 @@ var odinLite_billing = {
 
                         billingWindow.center();
                         billingWindow.open();
+                        //Set the HTML title
+                        billingWindow.wrapper.find('.k-window-title').html("<div class='creditCardIcon'></div> Credit Card Authorization");
 
                         /** Button Events **/
                         $('#cc-billing-form').submit(function (e) {
@@ -353,7 +352,7 @@ var odinLite_billing = {
      * Use this for billing packages.
      * This will bill the current user based on the packages selected.
      */
-    chargeBillingByPackage: function (addPackageList,removePackageList,discountCode,countryCode) {
+    chargeBillingByPackage: function (addPackageList,removePackageList,discountCode,countryCode,successCallbackFn,failCallbackFn) {
         if (via.undef(addPackageList, true) && via.undef(removePackageList, true)) {
             via.alert("Missing Arguments", "No packages specified..");
             return;
@@ -374,11 +373,16 @@ var odinLite_billing = {
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure billing for sign-up:", data.message);
                     via.alert("Failure Billing for Sign-up", data.message, function () {
+                        if(!via.undef(failCallbackFn)){
+                            failCallbackFn(data);
+                        }
                     });
                     return;
                 } else {//Success
                     via.debug("Signup Billing Success Info", data);
-                    console.log("doInitialSignupBillingByPackage", data);//Testing
+                    if(!via.undef(successCallbackFn)){
+                        successCallbackFn(data);
+                    }
                 }
             },
             'json');

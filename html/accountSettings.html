@@ -12,6 +12,8 @@
    </div>
    <div class="col-md-6 well">
        <div class="tab-content">
+
+           <!-- Home -->
            <div id="accountSettings_home" class="tab-pane active" style="height:200px">
                <h4 class="tr">Account Information</h4>
                <table style="width:400px;margin:5px;">
@@ -29,10 +31,15 @@
                <span class="tr">Placeholder for report packages</span>
            </div>
            -->
+
+            <!-- Billing -->
             <div id="accountSettings_billing" class="tab-pane" style="height:200px">
-                <h4 class="tr">Billing</h4>
-                <span class="tr">Placeholder for billing information</span>
+                <h4 class="tr">Past Transactions</h4>
+                <span class="tr"></span>
+                <button id="accountSettings_transactionsDetails" style="margin:10px;" type="button" class="tr btn btn-primary pull-right">See Details</button>
             </div>
+
+            <!-- Account Settings -->
             <div id="accountSettings_settings" class="tab-pane" style="height:200px">
                 <h4 class="tr">User Specific Settings</h4>
                 <div id="accountSettings_languages" style="display:none;">
@@ -60,6 +67,8 @@
                 </select>
                 <button id="accountSettings_saveButton" style="position:absolute;right:0;bottom:0;margin:10px;" type="button" class="tr btn btn-primary">Save</button>
             </div>
+
+            <!-- Password -->
             <div id="accountSettings_password" class="tab-pane" style="height:275px">
                 <h4 class="tr">Password Settings</h4>
                 <form>
@@ -84,7 +93,7 @@
                 </form>
             </div>
 
-           <!-- Support Tab -->
+            <!-- Support Tab -->
             <div id="accountSettings_support" class="tab-pane" style="height:500px">
             <div>
               <h4>Before you submit your ticket...</h4>

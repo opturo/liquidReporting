@@ -257,7 +257,7 @@ var odinLite = {
 
             var packageList = odinLite.subscribedPackageList;
             if (via.undef(packageList, true)) {
-                $('#home_yourPackagesButton').addClass("formError");
+                //$('#home_yourPackagesButton').addClass("formError");
                 var packageTooltip = $("#home_yourPackagesButton").kendoTooltip({
                     autoHide: false,
                     content: "Start by adding packages to your account.",
@@ -461,11 +461,52 @@ var odinLite = {
                 odinLite.ENTITY_DIR = entityDD.value();
                 odinLite.ENTITY_NAME = entityDD.text();
 
+                odinLite.init();
                 odinLite.setOverrideHtml();
 
                 switchUserWindow.close();
                 $('#odinLite_switchUserWindow').remove();
                 switchUserWindow = null;
+            });
+
+
+            $(".odinLite_becomeUser").on("click", function () {
+                kendo.ui.progress($("body"), true);
+                var userDD = $("#odinLite_switchUserName").data('kendoDropDownList');
+                $.post(odin.SERVLET_PATH,
+                    {
+                        action: 'admin.becomeAnotherUser',
+                        userName: userDD.text(),
+                        entity: odinLite.ENTITY_CODE
+                    },
+                    function (data, status) {
+                        kendo.ui.progress($("body"), false);//Wait Message off
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.debug("Failure getting users:", data.message);
+                            via.kendoAlert("Failure getting users", data.message);
+                        } else {
+                            via.debug("Successful getting users:", data);
+
+                            var loginString = "&user="+data.userName +
+                                "&entity="+data.entity +
+                                "&apiKey="+encodeURIComponent(data.apiKey) +
+                                "&encKey="+encodeURIComponent(data.encKey);
+
+                            if(!via.undef(data.lastAccessTime,true)) {
+                                via.kendoConfirm("User Logged In", "User may be logged in. Last access time was: " + data.lastAccessTime, function () {
+                                     odin.logoutUser(function(){
+                                     window.location = '../index.jsp?referrer=./' + odin.ODIN_LITE_DIR + '/' + loginString;
+                                     },true);
+                                });
+                            }else {
+                                 odin.logoutUser(function(){
+                                 window.location = '../index.jsp?referrer=./' + odin.ODIN_LITE_DIR + '/' + loginString;
+                                 },true);
+                            }
+                        }
+                    },
+                    'json');
             });
 
             $(".odinLite_deleteSwitchUser").on("click", function () {
@@ -767,11 +808,11 @@ var odinLite = {
         //Hide the other panels
         odinLite.hideAllApplications();
 
-        $('#payment').fadeIn();
+        $('#payment').fadeIn(function(){
+            window.scrollTo(0, 0);
+        });
 
         packageSelection.getPackageUpdateDetails(packageUpdates);
-
-        window.scrollTo(0, 0);
     },
 
     hidePaymentPage: function () {

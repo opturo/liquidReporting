@@ -115,3 +115,15 @@
     color: #5bc0de;
 }
 /* End - Callouts */
+
+
+.creditCardIcon
+{
+    background: url('../../images/16_creditCard.png');
+    background-size: 16px;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    line-height: 16px;
+    vertical-align: top;
+}

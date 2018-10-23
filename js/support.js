@@ -14,6 +14,7 @@ var odinLite_support = {
     },
 
     init: function(){
+        $('#li_accountSettings_support').show();
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.support.initSupport'

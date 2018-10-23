@@ -15,7 +15,6 @@ var packageSelection = {
 
         packageSelection.getDataUsageCosts();
         packageSelection.getPackageList();
-        packageSelection.getCurrentPackages();
 
         packageSelection.checkList();
     },
@@ -57,15 +56,18 @@ var packageSelection = {
                 selectedPackageList.find("ul").empty();
                 selectedPackageList.find("p").empty();
             }
+            selectedPackageList.find(".label").show();
 
             var deletePackageList = $("#delete-package-list");
             if (deletePackageList.find("ul").find("li")) {
                 deletePackageList.find("ul").empty();
                 deletePackageList.find("p").empty();
             }
+            deletePackageList.find(".label").show();
 
             packageSelection.newPackages.length = 0;
             packageSelection.cancelPackages.length = 0;
+            packageSelection.systemCancelPackages = null;
         }
         packageSelection.isBackButton = false;
     },
@@ -109,7 +111,9 @@ var packageSelection = {
     getPackageList: function () {
         $.get(packageSelection.PACKAGES_URL,
             function (data) {
-                packageSelection.displayPackages(jQuery.parseJSON(data));
+                packageSelection.packagePricing = jQuery.parseJSON(data).packagePricing;
+                packageSelection.displayPackages(packageSelection);
+                packageSelection.getCurrentPackages();
             }
         );
     },
@@ -174,8 +178,10 @@ var packageSelection = {
 
                 var packagePanel = packageSelection.getPackageDescriptionHtml(packageInfo);
                 applicationPanel.append(packagePanel);
-
             });
+
+            //Remove the last bottom margin for each application.
+            applicationPanel.find(".package-description").last().css("margin-bottom","0px");
 
             i++;
 
@@ -208,8 +214,13 @@ var packageSelection = {
 
     /* Append package list for each application */
     getPackageDescriptionHtml: function (packageView) {
+        var disabled = "";
+        if($.inArray(packageView.packageId,odinLite.subscribedPackageList) !== -1){
+            disabled = "disabled ";
+        }
+
         var html = "<div class='well package-description'>" +
-            "<input type='radio' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> {{packageName}}" +
+            "<input "+disabled+"type='radio' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> {{packageName}}" +
             "<br>" +
             "<p>{{description}}</p>" +
             "<a href='http://opturo.com/" + odin.ODIN_LITE_DIR + "/analytics.php?package_id={{packageId}}' target='_blank'>See More Details</a>" +
@@ -229,14 +240,24 @@ var packageSelection = {
         var currentPackageList = $("#current-package-list");
 
         //Get the packages
-        var packageList = odin.getUserSpecificSetting("packageList");
-        if (!via.undef(packageList, true)) {
-            packageSelection.userPackages = JSON.parse(packageList);
-        }
+        var packages = odinLite.subscribedPackageList;
 
         //Loop through the packages.
-        if (!via.undef(packageSelection.userPackages) && packageSelection.userPackages.length > 0) {
-            $.each(packageSelection.userPackages, function (index, packageData) {
+        if (!via.undef(packages) && packages.length > 0) {
+            $.each(packages, function (index, packageId) {
+                var packageData = {
+                    packageId: packageId,
+                    packageName: packageId
+                };
+                //Get the name from the id.
+                if(!via.undef(packageSelection.packagePricing.rowHeaders)){
+                    var idx = $.inArray(packageId,packageSelection.packagePricing.rowHeaders);
+                    var row = packageSelection.packagePricing.data[idx];
+                    if(idx !== -1 && !via.undef(row)){
+                        packageData.packageName = row[1];
+                    }
+                }
+
                 var packageListItem = "<li>" +
                     "<div class='alert alert-info alert-dismissible'>" +
                     "<a onclick='packageSelection.cancelCurrentPackageModal(\"{{packageId}}\", \"{{packageName}}\")' class='close'><i class='tr fa fa-trash fa-fw'></i></a>" +
@@ -267,7 +288,7 @@ var packageSelection = {
             selectedPackageList.find("p").empty();
         }
 
-        if (packageSelection.newPackages.length > 0) {
+        if (!via.undef(packageSelection.newPackages) && packageSelection.newPackages.length > 0) {
             $.each(packageSelection.newPackages, function (index, val) {
                 // Only display the selected items that aren't none
                 var selectedListItem = "<li>" +
@@ -279,13 +300,30 @@ var packageSelection = {
                 var output = Mustache.render(selectedListItem, val);
                 selectedPackageList.find("ul").append(output);
             });
+            selectedPackageList.find(".label").hide();
         }
     },
 
-    /* When a package is removed from list of package updates, clear the radio button */
+    /* When a package is removed from list of package updates, clear the radio button, remove it from array, and possibly show label */
     clearFormInput: function (packageName) {
+
         var formInput = $("input[value=" + "\"" + packageName + "\"" + "]");
         formInput.removeAttr("checked");
+
+        var idx = -1;
+        $.each(packageSelection.newPackages,function(i,package){
+            if(package.id === packageName){
+                idx = i;
+                return;
+            }
+        });
+        if(idx!==-1) {
+            packageSelection.newPackages.splice(idx, 1);
+        }
+
+        if (via.undef(packageSelection.newPackages) || packageSelection.newPackages.length == 0) {
+            $("#selected-package-list").find(".label").show();
+        }
     },
 
 
@@ -343,6 +381,7 @@ var packageSelection = {
         if ($.inArray(packageId, packageSelection.cancelPackages) == -1) {
             packageSelection.cancelPackages.push(packageId);
             deletePackageList.find("ul").append(deleteListItem);
+            deletePackageList.find(".label").hide();
         }
     },
 
@@ -350,23 +389,64 @@ var packageSelection = {
     removeCancelItem: function (packageId) {
         var cancelItems = $("#delete-package-list").find("li");
         packageSelection.cancelPackages.splice($.inArray(packageId, packageSelection.cancelPackages), 1);
+        if(via.undef(packageSelection.cancelPackages) || packageSelection.cancelPackages.length === 0){
+            $("#delete-package-list").find(".label").show();
+        }
     },
 
-    /* Send selected package list to odin server to get pricing information */
+    /**
+     * submitPackageUpdate
+     * Send selected package list to odin server to get pricing information
+     **/
     submitPackageUpdate: function () {
+        getCancelsFromApplication();
+
         var packageUpdates = {
             "updates": packageSelection.newPackages,
             "cancellations": packageSelection.cancelPackages
         };
 
-        /* If no packages are selected for addition or deletion then do nothing. */
+        // If no packages are selected for addition or deletion then do nothing. //
         if(via.undef(packageUpdates) || via.undef(packageUpdates.updates) || via.undef(packageUpdates.cancellations) ||
             (packageUpdates.updates.length===0 && packageUpdates.cancellations.length===0)){
             via.kendoAlert("Select a Package","Select at least one package to update.");
             return;
         }
 
+        // Load the payment page //
         odinLite.loadPaymentPage(packageUpdates);
+
+        /*This function will update the cancel packages
+        * based on the packages that are being ordered.
+        * You can only have one package from each application. */
+        function getCancelsFromApplication(){
+            //Check if packages are being added.
+            if(via.undef(packageSelection.newPackages) || packageSelection.newPackages.length === 0){ return; }
+
+            //Loop through the current subscribed packages.
+            var subscribedAppMap = {};
+            for(var i in odinLite.subscribedPackageList){
+                var packageId = odinLite.subscribedPackageList[i]
+                var app = packageSelection.getApplicationFromPackageId(packageId);
+                subscribedAppMap[app] = packageId;
+            }
+
+            //Loop through the packages being added.
+            packageSelection.systemCancelPackages = null;
+            for(var j in packageSelection.newPackages){
+                var packageId = packageSelection.newPackages[j].id;
+                var app = packageSelection.getApplicationFromPackageId(packageId);
+                if(subscribedAppMap.hasOwnProperty(app)){
+                    var packageId = subscribedAppMap[app];
+                    if($.inArray(packageId,packageSelection.cancelPackages) === -1){
+                        if(via.undef(packageSelection.systemCancelPackages)){ packageSelection.systemCancelPackages = []; }
+                        if($.inArray(packageId,packageSelection.systemCancelPackages) === -1) {
+                            packageSelection.systemCancelPackages.push(packageId);
+                        }
+                    }
+                }
+            }
+        }
     },
 
     /**
@@ -388,8 +468,11 @@ var packageSelection = {
      */
     submitPayment: function(){
         var total = $("#package-update-table tbody").data("total");
-
-        via.kendoConfirm("Submit Payment Info","You credit card will be charged: " + kendo.toString(total, "c"),function(){
+        var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for this package update. Click OK to continue.";
+        if(via.undef(total,true) || total === 0){
+            submitText = "Your credit card will <b>NOT</b> be charged for this package update. Click OK to continue.";
+        }
+        via.kendoConfirm("Submit Payment Info",submitText,function(){
             var updateTable = $("#package-update-table tbody");
 
             /* Gather all the variables */
@@ -398,17 +481,53 @@ var packageSelection = {
 
             var countryCode = description.country_code;
             var addPackageList = $(updateTable).data('addPackageIds');
-            var removePackageList = $(updateTable).data('removePackageIds');
             var discountCode = $(updateTable).data('discountCode');
-            console.log('wooo',addPackageList,removePackageList,discountCode,countryCode);
+            //Get the cancellations//
+            var cancellations = packageSelection.cancelPackages;
+            if(!via.undef(packageSelection.systemCancelPackages)){
+                if(via.undef(cancellations)){
+                    cancellations = packageSelection.systemCancelPackages;
+                }else{
+                    cancellations =  $.merge(cancellations,packageSelection.systemCancelPackages);
+                }
+            }
+            var removePackageList = JSON.stringify(cancellations);
 
-            odinLite_billing.chargeBillingByPackage(addPackageList,removePackageList,discountCode,countryCode);
+            odin.progressBar("Performing Transaction",100,"Please Wait...");
+            odinLite_billing.chargeBillingByPackage(addPackageList,removePackageList,discountCode,countryCode,
+                //Function to call after successful billing.
+                function(data){
+                    //Hide progress
+                    odin.progressBar(null,100,null,true);
+
+                    //Reset total
+                    $("#package-update-table tbody").data("total",null);
+
+                    //Popup
+                    if(!via.undef(addPackageList)) {
+                        via.kendoAlert("Transaction Successful", "You have been successfully subscribed to the package(s).");
+                        var tooltip = $("#home_yourPackagesButton").data('kendoTooltip');
+                        if(!via.undef(tooltip)) {
+                            tooltip.destroy();
+                        }
+                    }else{
+                        via.kendoAlert("Successfully Unsubscribed", "You have been successfully unsubscribed from the package(s).");
+                    }
+
+                    //Update packages and load home
+                    odinLite.subscribedPackageList = data.packageList;
+                    odinLite.loadHome();
+                }
+            );
         });
     },
 
     /* Once payment page is loaded and get pricing information from server. list
      details of package updates or cancellations */
     getPackageUpdateDetails: function (packageUpdates) {
+        //Show the progress bar
+        odin.progressBar("Fetching Data",100,"Please Wait...");
+
         //Disable things
         kendo.ui.progress($("#payment"), true);//Wait Message on
         $('#discount-code').attr("disabled","disabled");
@@ -429,72 +548,110 @@ var packageSelection = {
 
         /*Get the package ids to get the price.*/
         var packageIds = [];
-        $.each(packageUpdates.updates,function(i,obj){
-            packageIds.push(obj.id);
-        });
+        if(!via.undef(packageUpdates.updates,true)) {
+            $.each(packageUpdates.updates, function (i, obj) {
+                packageIds.push(obj.id);
+            });
+            $(updateTable).data('addPackageIds',JSON.stringify(packageIds));
+        }
 
         /*Grab the discount code.*/
         var discountCode = $('#discount-code').val();
 
         /*Make call to server to get the billing and $ info*/
         odinLite_billing.signupPackagePricing(packageIds, discountCode, function(data){
-            console.log('getPackageUpdateDetails,signupPackagePricing',data);
-
-            /* Update billing */
+            /* Update billing and store the information */
             packageSelection.displayBillingInfo(data.billingInfo);
 
-            /* Update Add Packages */
-            var updates = [];
-            for(var i=0;i<data.signupPricing[0].data.length;i++){
-                var row = data.signupPricing[0].data[i];
-                updates.push({
-                    application: row[0],
-                    name: row[1],
-                    setupFee: kendo.toString(row[2], "c"),
-                    monthlyCost: kendo.toString(row[3], "c"),
-                    packageTotal: kendo.toString(row[4], "c"),
-                });
-            }
-            $.each(updates, function (index, row) {
-                var html = null;
-                if(via.undef(row.packageTotal,true) && via.undef(row.setupFee,true) && via.undef(row.monthlyCost,true) && via.undef(row.name,true)){
-                    html = "<tr><td colspan='5'>{{application}}</td></tr>";
-                }else{
-                    html = "<tr><td>{{application}}</td><td>{{name}}</td><td align='right'>{{setupFee}}</td><td align='right'>{{monthlyCost}}</td><td align='right'>{{packageTotal}}</td></tr>";
-                }
-                var output = Mustache.render(html, row);
-
-                updateTable.append(output);
-            });
-
-            /* Gather variables to be used later */
-            var total = data.signupPricing[1].data[0][0];
-            $(updateTable).data('total',total);
+            //Store some variables for use duting payment submit.
             $(updateTable).data('billingInfodescription',data.billingInfo.description);
-            $(updateTable).data('addPackageIds',JSON.stringify(packageIds));
-            $(updateTable).data('removePackageIds',"[]");
             $(updateTable).data('discountCode',data.discountCode);
 
-            /* Check discount code and update. */
-            if(!via.undef(data.isDiscountCodeValid)){
-                $('#discount-code-response').removeClass('label-danger');
-                $('#discount-code-response').addClass('label-success');
-                $('#discount-code').val(data.isDiscountCodeValid[0]);
-                $('#discount-code-response').html(data.isDiscountCodeValid[1]);
-            }else if(!via.undef(data.discountCode) && via.undef(data.isDiscountCodeValid)){
-                $('#discount-code-response').removeClass('label-success');
-                $('#discount-code-response').addClass('label-danger');
-                $('#discount-code-response').html("Discount code is invalid.");
+            /* Update Add Packages */
+            if(!via.undef(data.signupPricing)) {
+                var updates = [];
+                for (var i = 0; i < data.signupPricing[0].data.length; i++) {
+                    var row = data.signupPricing[0].data[i];
+                    updates.push({
+                        application: row[0],
+                        name: row[1],
+                        setupFee: kendo.toString(row[2], "c"),
+                        monthlyCost: kendo.toString(row[3], "c"),
+                        packageTotal: kendo.toString(row[4], "c"),
+                    });
+                }
+                $.each(updates, function (index, row) {
+                    var html = null;
+                    if (via.undef(row.packageTotal, true) && via.undef(row.setupFee, true) && via.undef(row.monthlyCost, true) && via.undef(row.name, true)) {
+                        html = "<tr><td colspan='5'>{{application}}</td></tr>";
+                    } else if (!via.undef(row.application, true) && row.application.toLowerCase() === 'total') {
+                        html = "<tr><td><b>{{application}}</b></td><td>{{name}}</td><td align='right'>{{setupFee}}</td><td align='right'>{{monthlyCost}}</td><td align='right' style='color:red;font-weight:bold;'>{{packageTotal}}</td></tr>";
+                    } else {
+                        html = "<tr><td>{{application}}</td><td>{{name}}</td><td align='right'>{{setupFee}}</td><td align='right'>{{monthlyCost}}</td><td align='right'>{{packageTotal}}</td></tr>";
+                    }
+                    var output = Mustache.render(html, row);
+
+                    updateTable.append(output);
+                });
+
+                /* Gather variables to be used later */
+                if(!via.undef(data.signupPricing) && !via.undef(data.signupPricing[1]) && !via.undef(data.signupPricing[1].data)){
+                    var total = data.signupPricing[1].data[0][0];
+                    $(updateTable).data('total', total);
+                }
+
+                /* Check discount code and update. */
+                if(!via.undef(data.isDiscountCodeValid)){
+                    $('#discount-code-response').removeClass('label-danger');
+                    $('#discount-code-response').addClass('label-success');
+                    $('#discount-code').val(data.isDiscountCodeValid[0]);
+                    $('#discount-code-response').html(data.isDiscountCodeValid[1]);
+                }else if(!via.undef(data.discountCode) && via.undef(data.isDiscountCodeValid)){
+                    $('#discount-code-response').removeClass('label-success');
+                    $('#discount-code-response').addClass('label-danger');
+                    $('#discount-code-response').html("Discount code is invalid.");
+                }
+            }else{
+                updateTable.append('<tr><td colspan="5"><span class="label label-warning">No Updates. There will be no charge for this change.</span></td></tr>');
             }
 
             /* Populate Cancellations */
-            //TODO this is not done - cancellations
-            var cancellations = packageUpdates["cancellations"];
+            var cancellations = packageSelection.cancelPackages;
+            if(!via.undef(packageSelection.systemCancelPackages)){
+                if(via.undef(cancellations)){
+                    cancellations = packageSelection.systemCancelPackages;
+                }else{
+                    cancellations =  $.merge(cancellations,packageSelection.systemCancelPackages);
+                }
+            }
             if(via.undef(cancellations) || cancellations.length === 0){
                 cancelTable.append('<tr><td colspan="5"><span class="label label-info">No Cancellations</span></td></tr>');
+            }else{
+                $.each(cancellations, function (index, packageId) {
+                    var packageData = {
+                        applicationName: packageId,
+                        packageId: packageId,
+                        packageName: packageId
+                    };
+                    //Get the name from the id.
+                    if(!via.undef(packageSelection.packagePricing.rowHeaders)){
+                        var idx = $.inArray(packageId,packageSelection.packagePricing.rowHeaders);
+                        var row = packageSelection.packagePricing.data[idx];
+                        if(idx !== -1 && !via.undef(row)){
+                            packageData.applicationName = row[0];
+                            packageData.packageName = row[1];
+                        }
+                    }
+
+                    var html = "<tr><td>{{applicationName}}</td><td>{{packageName}}</td></tr>";
+                    var output = Mustache.render(html, packageData);
+                    cancelTable.append(output);
+
+                });
             }
 
             /*Re-enable buttons*/
+            odin.progressBar(null,100,null,true);
             kendo.ui.progress($("#payment"), false);//Wait Message on
             $('#discount-code').attr("disabled",false);
             $('#discount-code-button').attr("disabled",false);
@@ -530,5 +687,15 @@ var packageSelection = {
         });
     },
 
-
+    //Helper function to get the app id for a package//
+    getApplicationFromPackageId: function(packageId){
+        if(!via.undef(packageSelection.packagePricing.rowHeaders)){
+            var idx = $.inArray(packageId,packageSelection.packagePricing.rowHeaders);
+            var row = packageSelection.packagePricing.data[idx];
+            if(idx !== -1 && !via.undef(row)){
+                return row[0];
+            }
+        }
+        return null;
+    }
 };

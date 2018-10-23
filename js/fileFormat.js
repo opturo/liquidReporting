@@ -189,7 +189,8 @@ var odinLite_fileFormat = {
             dataSource: [
                 {text:"Assign Value",value:"Assign Value"},
                 {text:"Extract Value from File/Sheet Name",value:"Extract Value from File/Sheet Name"},
-                {text:"Multi-Column Operation",value:"Multi-Column Operation"}
+                {text:"Multi-Column Operation",value:"Multi-Column Operation"},
+                {text:"Create Index",value:"Create Index"}
             ],
             change: function(e){
                 if(e.sender.value() === 'Extract Value from File/Sheet Name') {
@@ -200,6 +201,11 @@ var odinLite_fileFormat = {
                     $('.fileFormat_addColumn_extractContainer').hide();
                     $('.fileFormat_addColumn_assignContainer').hide();
                     $('.fileFormat_addColumn_multiContainer').show();
+                }else if(e.sender.value() === 'Create Index') {
+                    $('.fileFormat_addColumn_extractContainer').hide();
+                    $('.fileFormat_addColumn_assignContainer').hide();
+                    $('.fileFormat_addColumn_multiContainer').hide();
+                    $("#fileFormat_addColumn_columnList").data("kendoComboBox").value(null);
                 }else{;
                     $('.fileFormat_addColumn_extractContainer').hide();
                     $('.fileFormat_addColumn_multiContainer').hide();
@@ -332,6 +338,8 @@ var odinLite_fileFormat = {
 
                 colObject.operationType = operationType;
                 colObject.columnList = columnList.join("::");
+            }else if(colObject.columnType === 'Create Index'){//Create Index
+
             }else{//Assign
                 //Check the value
                 colObject.value = getInputBoxValue();
@@ -2341,7 +2349,14 @@ var odinLite_fileFormat = {
 
         //Sort the object.
         fileData.sort(function(a, b){
-            var textA=a.text.toLowerCase(), textB=b.text.toLowerCase();
+            var textA=null;
+            if(!via.undef(a) && !via.undef(a.text,true)){
+                textA=(a.text+"").toLowerCase();
+            }
+            var textB=null;
+            if(!via.undef(b) && !via.undef(b.text,true)){
+                textB=(b.text+"").toLowerCase();
+            }
             if (textA < textB) //sort string ascending
                 return -1;
             if (textA > textB)
@@ -2452,6 +2467,10 @@ var odinLite_fileFormat = {
                     }
 
                     var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_fileFormat.FILE_DATA.tsEncoded,false,false,maxRows);
+
+                    //Freeze the top Row.
+                    sheetData.frozenRows = 1;
+
                     //Insert the sheet preview.
                     $("#import_fileFormat_spreadsheet").empty();
                     $("#import_fileFormat_spreadsheet").kendoSpreadsheet({

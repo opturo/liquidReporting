@@ -287,6 +287,9 @@ var odinLite_modelMapping = {
                         }
                     }
 
+                    //Freeze the top Row.
+                    sheetData.frozenRows = 1;
+
                     //Insert the sheet preview.
                     $("#modelMapping_spreadsheet").empty();
                     $("#modelMapping_spreadsheet").kendoSpreadsheet({
@@ -433,11 +436,11 @@ var odinLite_modelMapping = {
 
         /**************************************/
         /* Call to the server for persisting */
-        kendo.ui.progress($("body"), true);//Wait Message on
+        odin.progressBar("Persisting Data",100,"Please wait...");
         $.post(odin.SERVLET_PATH,
             serverParams,
             function(data, status){
-                kendo.ui.progress($("body"), false);//Wait Message off
+                odin.progressBar(null,100,null,true);
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Persist Failure:", data);

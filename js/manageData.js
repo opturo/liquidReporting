@@ -17,7 +17,7 @@ var odinLite_manageData = {
      * init
      * This will initialize ODIN Lite Upload Files and set it up
      */
-    init: function(){
+    init: function () {
         kendo.ui.progress($("body"), true);//Wait Message
         //Reset the items
         odinLite_manageData.currentDataItem = null;
@@ -25,7 +25,7 @@ var odinLite_manageData = {
         $('#manageData_tableSelection').hide();
         $("#manageData_existingEntity").removeClass("col-md-12");
         $("#manageData_existingEntity").addClass("col-md-6");
-        $(".manageData_tableSpreadhseetContainer").find(".maximizeButton").attr("title","Maximize");
+        $(".manageData_tableSpreadhseetContainer").find(".maximizeButton").attr("title", "Maximize");
         $(".manageData_tableSpreadhseetContainer").find(".maximizeButtonIcon").removeClass("fa-compress");
         $(".manageData_tableSpreadhseetContainer").find(".maximizeButtonIcon").addClass("fa-expand");
         $('.manageData_entityInfo').show();
@@ -41,21 +41,21 @@ var odinLite_manageData = {
                 overrideUser: odinLite.OVERRIDE_USER,
                 isDataManagerUser: odinLite.isDataManagerUser
             },
-            function(data, status){
+            function (data, status) {
                 odinLite_manageData.hasBeenLoaded = true;//Set the loaded variable after first load.
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting model data:", data.message);
                     via.alert("Load Failure", data.message);
-                }else{
+                } else {
                     via.debug("Successful getting model data:", data);
 
                     //Show the panels.
                     $('#viewPanel').fadeIn();
 
                     var modelListLength = Object.keys(data.modelList).length;
-                    if(modelListLength === 0){
+                    if (modelListLength === 0) {
                         via.alert("Load Failure", "User not permissioned for any models.");
                         return;
                     }
@@ -66,14 +66,14 @@ var odinLite_manageData = {
 
                     //Display the size of the entity
                     //Model Size
-                    if(!via.undef(data.entitySize)) {
+                    if (!via.undef(data.entitySize)) {
                         var formattedSize = via.getReadableFileSizeString(data.entitySize);
-                        $(".manageData_entitySize").html(" <i><small>(size: "+formattedSize+") </small></i>");
+                        $(".manageData_entitySize").html(" <i><small>(size: " + formattedSize + ") </small></i>");
                     }
 
-                    if(!via.undef(odinLite.isDataManagerUser) && odinLite.isDataManagerUser === true){
+                    if (!via.undef(odinLite.isDataManagerUser) && odinLite.isDataManagerUser === true) {
                         odinLite_manageData.createDataManagerModelTree(data);
-                    }else {
+                    } else {
                         odinLite_manageData.createModelTree(data.modelList, data.requiredModels, data.optionalModels);
                     }
                     $('#viewPanel').fadeIn();
@@ -87,8 +87,10 @@ var odinLite_manageData = {
      * deleteTablesWindow
      * This will allow choosing of the tables for deletion.
      */
-    deleteTablesWindow: function(){
-        if(via.undef(odinLite_manageData.currentDataItemList) || odinLite_manageData.currentDataItemList.length === 0){ return; }
+    deleteTablesWindow: function () {
+        if (via.undef(odinLite_manageData.currentDataItemList) || odinLite_manageData.currentDataItemList.length === 0) {
+            return;
+        }
         /** Window Setup **/
         kendo.ui.progress($("body"), true);//Wait Message
         $.get("./html/deleteTablesWindow.html", function (deleteTablesWindowTemplate) {
@@ -119,57 +121,59 @@ var odinLite_manageData = {
 
 
             //Check for Demo Account
-            if(odinLite_manageData.currentModel.value.startsWith("DEMO_")){
-                $(".fileFormat_deleteDataItemButton").prop("disabled",true);
-            }else{
-                $(".fileFormat_deleteDataItemButton").prop("disabled",false);
+            if (odinLite_manageData.currentModel.value.startsWith("DEMO_")) {
+                $(".fileFormat_deleteDataItemButton").prop("disabled", true);
+            } else {
+                $(".fileFormat_deleteDataItemButton").prop("disabled", false);
             }
 
 
             /** Window Setup **/
-            $('.fileFormat_deleteDataItemButton').click(function(){
+            $('.fileFormat_deleteDataItemButton').click(function () {
                 var checkedNodes = [];
                 var parentNodes = [];
                 var treeView = $("#manageData_deleteTreeview").data('kendoTreeView');
                 checkedNodeIds(treeView.dataSource.view(), checkedNodes, parentNodes);
 
                 //We need to null out port dir.
-                if(odinLite_manageData.tableIndexType !== 3){
+                if (odinLite_manageData.tableIndexType !== 3) {
                     parentNodes = null;
                 }
 
-                if(checkedNodes.length === 0){ return; }//Don't delete if zero selected.
+                if (checkedNodes.length === 0) {
+                    return;
+                }//Don't delete if zero selected.
 
                 //Close the window.
                 deleteTablesWindow.close();
-                via.confirm("Delete Data Items","Are you sure you want to delete " + checkedNodes.length + " data item(s)? This action cannot be undone.",function(){
+                via.confirm("Delete Data Items", "Are you sure you want to delete " + checkedNodes.length + " data item(s)? This action cannot be undone.", function () {
                     deleteFromServer();
                 });
 
                 //Delete form the server.
                 function deleteFromServer() {
                     kendo.ui.progress($("#odinLite_deleteTablesWindow"), true);//Wait Message
-                     $.post(odin.SERVLET_PATH,
-                     {
-                         action: 'odinLite.manageData.deleteTableFromCache',
-                         modelId: odinLite_manageData.currentModel.value,
-                         portDir: (parentNodes===null)?null:JSON.stringify(parentNodes),
-                         dataItems: JSON.stringify(checkedNodes),
-                         entityDir: odinLite.ENTITY_DIR,
-                         overrideUser: odinLite.OVERRIDE_USER
-                     },
-                     function(data, status){
-                         kendo.ui.progress($("#odinLite_deleteTablesWindow"), false);//Wait Message off
+                    $.post(odin.SERVLET_PATH,
+                        {
+                            action: 'odinLite.manageData.deleteTableFromCache',
+                            modelId: odinLite_manageData.currentModel.value,
+                            portDir: (parentNodes === null) ? null : JSON.stringify(parentNodes),
+                            dataItems: JSON.stringify(checkedNodes),
+                            entityDir: odinLite.ENTITY_DIR,
+                            overrideUser: odinLite.OVERRIDE_USER
+                        },
+                        function (data, status) {
+                            kendo.ui.progress($("#odinLite_deleteTablesWindow"), false);//Wait Message off
 
-                         if(!via.undef(data,true) && data.success === false){
-                             via.debug("Failure deleting table:", data.message);
-                             via.alert("Delete Failure", data.message);
-                         }else{
-                             via.debug("Successful delete:", data);
-                             odinLite_manageData.getItemTreeList();
-                         }
-                     },
-                     'json');
+                            if (!via.undef(data, true) && data.success === false) {
+                                via.debug("Failure deleting table:", data.message);
+                                via.alert("Delete Failure", data.message);
+                            } else {
+                                via.debug("Successful delete:", data);
+                                odinLite_manageData.getItemTreeList();
+                            }
+                        },
+                        'json');
                 }
 
             });
@@ -177,12 +181,12 @@ var odinLite_manageData = {
             /** For the data item tree **/
             //Create the Data Source
             var processDataSource = new kendo.data.HierarchicalDataSource({
-                sort: { field: "text", dir: "asc" },
+                sort: {field: "text", dir: "asc"},
                 data: odinLite_manageData.currentDataItemList
             });
 
             //Make the tree and get rid of old tree.
-            if(!via.undef($("#manageData_deleteTreeview").data('kendoTreeView'))){
+            if (!via.undef($("#manageData_deleteTreeview").data('kendoTreeView'))) {
                 $("#manageData_tableTreeview").data('kendoTreeView').destroy();
             }
             $("#manageData_deleteTreeview").empty();
@@ -190,11 +194,11 @@ var odinLite_manageData = {
                 checkboxes: {
                     checkChildren: true,
                     //template: "<input style='position:relative;top:3px;left:3px;' type='checkbox' name='checkedFiles[#= item.id #]' value='true' />"
-                    template:"# if(!item.hasChildren){# <input style='position:relative;top:3px;left:3px;' type='checkbox'  name='checkedFiles[#= item.id #]' value='true' />#}#"
+                    template: "# if(!item.hasChildren){# <input style='position:relative;top:3px;left:3px;' type='checkbox'  name='checkedFiles[#= item.id #]' value='true' />#}#"
                 },
                 dataSource: processDataSource,
                 //dataSpriteCssClassField: "iconCls",
-                expand: function(e){
+                expand: function (e) {
                     if ($("#manageData_deleteFilterText").val() == "") {
                         $(e.node).find("li").show();
                     }
@@ -202,36 +206,36 @@ var odinLite_manageData = {
             });
 
             //Check and unchck all nodes
-            $('#manageData_selectAllButton').click(function(){
+            $('#manageData_selectAllButton').click(function () {
                 selectAll();
             });
-            $('#manageData_deselectAllButton').click(function(){
+            $('#manageData_deselectAllButton').click(function () {
                 deselectAll();
             });
 
             //Expand and Collapse Tree
-            $('#manageData_deleteExpandButton').click(function(){
+            $('#manageData_deleteExpandButton').click(function () {
                 var treeview = $("#manageData_deleteTreeview").data("kendoTreeView");
                 treeview.expand(".k-item");
             });
-            $('#manageData_deleteCollapseButton').click(function(){
+            $('#manageData_deleteCollapseButton').click(function () {
                 var treeview = $("#manageData_deleteTreeview").data("kendoTreeView");
                 treeview.collapse(".k-item");
             });
 
             $("#manageData_deleteFilterText").keyup(function (e) {
-                if(e.keyCode == 13) {
+                if (e.keyCode == 13) {
                     var changeReport_filterText = $(this).val();
                     filterTableList(changeReport_filterText);
                 }
             });
-            $("#manageData_deleteFilterButton").click(function(){
+            $("#manageData_deleteFilterButton").click(function () {
                 var changeReport_filterText = $("#manageData_deleteFilterText").val();
                 filterTableList(changeReport_filterText);
             });
 
             //function that filters the table.
-            function filterTableList(changeReport_filterText){
+            function filterTableList(changeReport_filterText) {
                 deselectAll();
 
                 if (changeReport_filterText !== "") {
@@ -268,7 +272,7 @@ var odinLite_manageData = {
                 for (var i = 0; i < nodes.length; i++) {
                     if (nodes[i].checked) {
                         checkedNodes.push(nodes[i].text);
-                        if(!via.undef(nodes[i].parentNode()) && odinLite_manageData.tableIndexType === 3){
+                        if (!via.undef(nodes[i].parentNode()) && odinLite_manageData.tableIndexType === 3) {
                             parentNodes.push(nodes[i].parentNode().text);
                         }
                     }
@@ -282,10 +286,12 @@ var odinLite_manageData = {
             function deselectAll() {
                 $("#manageData_deleteTreeview input").prop("checked", false).trigger("change");
             }
+
             // function that checks all nodes that are visible
             function selectAll() {
                 $("#manageData_deleteTreeview input:visible").prop("checked", true).trigger("change");
             }
+
             /******/
 
         });
@@ -298,62 +304,71 @@ var odinLite_manageData = {
      * createDataManagerModelTree
      * This will create the tree to allow model selection for Data Manager Users
      */
-    createDataManagerModelTree: function(data){
+    createDataManagerModelTree: function (data) {
         odinLite_manageData.currentDataItem = null;
         odinLite_manageData.currentTableData = null;
 
         //Get the data in the correct format.
         var treeData = JSON.parse(JSON.stringify(data.modelList));
         var kendoTreeData = [];
-        for(var i=0;i<treeData.length;i++) {
+        for (var i = 0; i < treeData.length; i++) {
             var node = treeData[i];
-            kendoTreeData = renameChildren(kendoTreeData,node,true);
+            kendoTreeData = renameChildren(kendoTreeData, node, true);
         }
-        function renameChildren(kendoTreeData,node,isRoot){//Recursive function. All it does it rename children to items.
+        function renameChildren(kendoTreeData, node, isRoot) {//Recursive function. All it does it rename children to items.
             //Recursive - If it has children call this method again.
-            if(!via.undef(node.children) && node.children.length > 0 ){
-                for(var i=0;i<node.children.length;i++){
+            if (!via.undef(node.children) && node.children.length > 0) {
+                for (var i = 0; i < node.children.length; i++) {
                     var childNode = node.children[i];
-                    kendoTreeData = renameChildren(kendoTreeData,childNode,false);
+                    kendoTreeData = renameChildren(kendoTreeData, childNode, false);
                 }
                 node.items = node.children;
                 node.children = null;
                 delete node.children;
             }
-            if(isRoot === true){
+            if (isRoot === true) {
                 kendoTreeData.push(node);
             }
             return kendoTreeData;
         }
+
         //End - Get data
 
         //Create the Data Source
         var processDataSource = new kendo.data.HierarchicalDataSource({
-            sort: { field: "text", dir: "asc" },
+            sort: {field: "text", dir: "asc"},
             data: kendoTreeData
         });
 
         //Make the tree
         //$("#modelCacheSelection_treeview").empty();
-        if(!via.undef($("#manageData_modelTreeview").data('kendoTreeView'))){
+        if (!via.undef($("#manageData_modelTreeview").data('kendoTreeView'))) {
             $("#manageData_modelTreeview").data('kendoTreeView').destroy();
             $("#manageData_modelTreeview").empty();
         }
         $("#manageData_modelTreeview").kendoTreeView({
             dataSource: processDataSource,
             dataSpriteCssClassField: "iconCls",
-            expand: function(e){
+            expand: function (e) {
                 if ($("#modelCacheSelection_filterText").val() == "") {
                     $(e.node).find("li").show();
                 }
             },
-            change: function(e) {
+            change: function (e) {
                 var selected = this.select();
-                if(via.undef(selected)){return false;}
+                if (via.undef(selected)) {
+                    return false;
+                }
                 var item = this.dataItem(selected);
-                if(via.undef(item)){return false;}
-                if(item.hasChildren){return false;}
-                if(via.undef(item.value)){return false;}
+                if (via.undef(item)) {
+                    return false;
+                }
+                if (item.hasChildren) {
+                    return false;
+                }
+                if (via.undef(item.value)) {
+                    return false;
+                }
 
                 //Get the current model selected
                 odinLite_manageData.currentModel = {
@@ -367,20 +382,20 @@ var odinLite_manageData = {
                 //(item.value,true);
 
                 //Check for Demo Account
-                if(item.value.startsWith("DEMO_")){
-                    $(".demoButton").prop("disabled",true);
-                }else{
-                    $(".demoButton").prop("disabled",false);
+                if (item.value.startsWith("DEMO_")) {
+                    $(".demoButton").prop("disabled", true);
+                } else {
+                    $(".demoButton").prop("disabled", false);
                 }
             }
         });
 
         //Expand and Collapse Tree
-        $('#manageData_modelExpandButton').click(function(){
+        $('#manageData_modelExpandButton').click(function () {
             var treeview = $("#manageData_modelTreeview").data("kendoTreeView");
             treeview.expand(".k-item");
         });
-        $('#manageData_modelCollapseButton').click(function(){
+        $('#manageData_modelCollapseButton').click(function () {
             var treeview = $("#manageData_modelTreeview").data("kendoTreeView");
             treeview.collapse(".k-item");
         });
@@ -415,14 +430,16 @@ var odinLite_manageData = {
      * createModelTree
      * This will create the tree to allow model selection.
      */
-    createModelTree: function(modelList,requiredModels,optionalModels){
+    createModelTree: function (modelList, requiredModels, optionalModels) {
         odinLite_manageData.currentDataItem = null;
         odinLite_manageData.currentTableData = null;
 
         //Build the Tree Data
         var kendoTreeData = [];
-        $.each( modelList, function( key, modelArr ) {
-            if(via.undef(modelArr)){return;}
+        $.each(modelList, function (key, modelArr) {
+            if (via.undef(modelArr)) {
+                return;
+            }
 
             var applicationObj = {};
             applicationObj.text = key;
@@ -445,32 +462,32 @@ var odinLite_manageData = {
             optionalObj.items = [];
             optionalObj.iconCls = "folderCls";
 
-            for(var i=0;i<modelArr.length;i++){
+            for (var i = 0; i < modelArr.length; i++) {
                 var modelObj = {};
                 modelObj.text = modelArr[i][1];
                 modelObj.value = modelArr[i][0];
-                if(modelArr[i].length > 2) {
+                if (modelArr[i].length > 2) {
                     modelObj.description = modelArr[i][2];
                 }
                 modelObj.iconCls = "leafArrowCls";
 
                 //Optional / Required
-                if(!via.undef(requiredModels) && $.inArray(modelObj.value,requiredModels)!==-1){
+                if (!via.undef(requiredModels) && $.inArray(modelObj.value, requiredModels) !== -1) {
                     requiredObj.items.push(modelObj);
-                }else if(!via.undef(optionalModels) && $.inArray(modelObj.value,optionalModels)!==-1){
+                } else if (!via.undef(optionalModels) && $.inArray(modelObj.value, optionalModels) !== -1) {
                     optionalObj.items.push(modelObj);
-                }else{
+                } else {
                     continue;
                 }
             }
 
-            if(requiredObj.items.length > 0){
+            if (requiredObj.items.length > 0) {
                 applicationObj.items.push(requiredObj);
             }
-            if(optionalObj.items.length > 0){
+            if (optionalObj.items.length > 0) {
                 applicationObj.items.push(optionalObj);
             }
-            if(applicationObj.items.length > 0) {
+            if (applicationObj.items.length > 0) {
                 kendoTreeData.push(applicationObj);
             }
         });
@@ -478,31 +495,39 @@ var odinLite_manageData = {
 
         //Create the Data Source
         var processDataSource = new kendo.data.HierarchicalDataSource({
-            sort: { field: "text", dir: "asc" },
+            sort: {field: "text", dir: "asc"},
             data: kendoTreeData
         });
 
         //Make the tree
         //$("#modelCacheSelection_treeview").empty();
-        if(!via.undef($("#manageData_modelTreeview").data('kendoTreeView'))){
+        if (!via.undef($("#manageData_modelTreeview").data('kendoTreeView'))) {
             $("#manageData_modelTreeview").data('kendoTreeView').destroy();
             $("#manageData_modelTreeview").empty();
         }
         $("#manageData_modelTreeview").kendoTreeView({
             dataSource: processDataSource,
             dataSpriteCssClassField: "iconCls",
-            expand: function(e){
+            expand: function (e) {
                 if ($("#modelCacheSelection_filterText").val() == "") {
                     $(e.node).find("li").show();
                 }
             },
-            change: function(e) {
+            change: function (e) {
                 var selected = this.select();
-                if(via.undef(selected)){return false;}
+                if (via.undef(selected)) {
+                    return false;
+                }
                 var item = this.dataItem(selected);
-                if(via.undef(item)){return false;}
-                if(item.hasChildren){return false;}
-                if(via.undef(item.value)){return false;}
+                if (via.undef(item)) {
+                    return false;
+                }
+                if (item.hasChildren) {
+                    return false;
+                }
+                if (via.undef(item.value)) {
+                    return false;
+                }
 
                 //Get the current model selected
                 odinLite_manageData.currentModel = {
@@ -518,20 +543,20 @@ var odinLite_manageData = {
                 //(item.value,true);
 
                 //Check for Demo Account
-                if(item.value.startsWith("DEMO_")){
-                    $(".demoButton").prop("disabled",true);
-                }else{
-                    $(".demoButton").prop("disabled",false);
+                if (item.value.startsWith("DEMO_")) {
+                    $(".demoButton").prop("disabled", true);
+                } else {
+                    $(".demoButton").prop("disabled", false);
                 }
             }
         });
 
         //Expand and Collapse Tree
-        $('#manageData_modelExpandButton').click(function(){
+        $('#manageData_modelExpandButton').click(function () {
             var treeview = $("#manageData_modelTreeview").data("kendoTreeView");
             treeview.expand(".k-item");
         });
-        $('#manageData_modelCollapseButton').click(function(){
+        $('#manageData_modelCollapseButton').click(function () {
             var treeview = $("#manageData_modelTreeview").data("kendoTreeView");
             treeview.collapse(".k-item");
         });
@@ -566,10 +591,10 @@ var odinLite_manageData = {
      * getItemTreeList
      * This will return the tree list of items/tables for the selected model.
      */
-    getItemTreeList: function(isFilter){
-        if(isFilter){
+    getItemTreeList: function (isFilter,maxElements) {
+        if (isFilter) {
             kendo.ui.progress($('#manageData_tableSelection'), true);//Wait Message
-        }else {
+        } else {
             kendo.ui.progress($("body"), true);//Wait Message
         }
 
@@ -581,17 +606,17 @@ var odinLite_manageData = {
         $("#manageData_existingEntity").fadeIn();
         $("#manageData_welcomeMessage").hide();
         $(".manageData_modelName").html(odinLite_manageData.currentModel.text);
-        if(!via.undef(odinLite_manageData.currentModel.description)){
+        if (!via.undef(odinLite_manageData.currentModel.description)) {
             $(".manageData_modelDescription").html(odinLite_manageData.currentModel.description);
         }
 
 
-        if(!isFilter) {
+        if (!isFilter) {
             $('#manageData_tableSelection').hide();
         }
         $(".manageData_tableSpreadhseetContainer").hide();
         $('#manageData_totalRows').empty();
-        $('#manageData_deleteTableButton').attr("disabled",true);
+        $('#manageData_deleteTableButton').attr("disabled", true);
 
         //Make the call to get the initial values for Model Cache
         $.post(odin.SERVLET_PATH,
@@ -604,17 +629,22 @@ var odinLite_manageData = {
                 overrideUser: odinLite.OVERRIDE_USER,
                 isRefresh: isFilter
             },
-            function(data, status){
-                if(isFilter){
+            function (data, status) {
+                if (isFilter) {
                     kendo.ui.progress($('#manageData_tableSelection'), false);//Wait Message
-                }else {
+                } else {
                     kendo.ui.progress($("body"), false);//Wait Message
                 }
 
                 //Model Size
-                if(!via.undef(data.modelSize)) {
+                if (!via.undef(data.modelSize)) {
                     var formattedSize = via.getReadableFileSizeString(data.modelSize);
-                    $(".manageData_modelName").append(" <i><small>(size: "+formattedSize+") </small></i>");
+                    $(".manageData_modelName").append(" <i><small>(size: " + formattedSize + ") </small></i>");
+                }
+
+                //Override Max if needed.
+                if(!via.undef(maxElements,true)){
+                    data.MAX_ELEMENTS = maxElements;
                 }
 
                 //Save the index table type
@@ -623,13 +653,13 @@ var odinLite_manageData = {
                 $(".manageData_zeroTablesFound").hide();
                 $(".manageData_tablesFound").hide();
                 $(".manageData_zeroTablesFound").empty();
-                if(odinLite_manageData.tableIndexType === 3){
+                if (odinLite_manageData.tableIndexType === 3) {
                     $("#manageData_folderFilterText").show();
-                }else{
+                } else {
                     $("#manageData_folderFilterText").hide();
                 }
 
-                if(!via.undef(data,true) && data.success === false && !isFilter && data.totalItems === 0){
+                if (!via.undef(data, true) && data.success === false && !isFilter && data.totalItems === 0) {
                     via.debug("Failure getting model items:", data.message);
                     //via.alert("Load Failure", data.message);
                     $(".manageData_zeroTablesFound").html(data.message);
@@ -641,7 +671,7 @@ var odinLite_manageData = {
                 }
 
                 //Update Total Rows
-                if(via.undef(isFilter) || isFilter !== true){
+                if (via.undef(isFilter) || isFilter !== true) {
                     odinLite_manageData.currentTotalItems = data.totalItems;
                 }
 
@@ -650,78 +680,104 @@ var odinLite_manageData = {
                 $(".manageData_tablesFound").show();
 
                 //Show rows
-                if(data.totalItems > data.MAX_ELEMENTS){
-                    $('#manageData_totalRows').html("<i>Displaying only "+ kendo.toString(data.MAX_ELEMENTS,"#,###") +" of "+ kendo.toString(data.totalItems,"#,###") +" items. Please apply Data Item Filter.</i>")
-                }else if(!via.undef(isFilter) && isFilter === true){
-                    $('#manageData_totalRows').html("<b>Filter:</b> Displaying "+ kendo.toString(data.totalItems,"#,###") +" of "+ kendo.toString(odinLite_manageData.currentTotalItems,"#,###") +" items.")
+                if (data.totalItems > data.MAX_ELEMENTS || !via.undef(maxElements,true)) {
+                    //$('#manageData_totalRows').html("<i>Displaying only " + kendo.toString(data.MAX_ELEMENTS, "#,###") + " of " + kendo.toString(data.totalItems, "#,###") + " items. Please apply Data Item Filter.</i>");
+
+                    $('#manageData_totalRows').html("Displaying only " + "<input style=\"width:75px;\" class=\"itemList_maxElements\"/>" + " of " + kendo.toString(data.totalItems, "#,###") + " items. Please apply Data Item Filter.</i>");
+                    $(".itemList_maxElements").kendoDropDownList({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            {text: "200",value:200},
+                            {text: "500",value:500},
+                            {text: "1,000",value:1000}
+                        ],
+                        value: data.MAX_ELEMENTS,
+                        change: function(e){
+                            var val = e.sender.value();
+                            odinLite_manageData.getItemTreeList(false,val);
+                        }
+                    });
+                } else if (!via.undef(isFilter) && isFilter === true) {
+                    $('#manageData_totalRows').html("<b>Filter:</b> Displaying " + kendo.toString(data.totalItems, "#,###") + " of " + kendo.toString(odinLite_manageData.currentTotalItems, "#,###") + " items.")
                 }
 
-                if(data.totalItems === 0){
-                    $('#manageData_deleteTableButton').attr("disabled",true);
-                }else{
-                    $('#manageData_deleteTableButton').attr("disabled",false);
+                if (data.totalItems === 0) {
+                    $('#manageData_deleteTableButton').attr("disabled", true);
+                } else {
+                    $('#manageData_deleteTableButton').attr("disabled", false);
                 }
 
                 /*******/
                 //Populate data item tree
                 //Get the data in the correct format.
                 var treeData = [];
-                if(!via.undef(data) && !via.undef(data.itemList) && data.itemList.length > 0) {
+                if (!via.undef(data) && !via.undef(data.itemList) && data.itemList.length > 0) {
                     treeData = JSON.parse(JSON.stringify(data.itemList));
                 }
                 var kendoTreeData = [];
-                for(var i=0;i<treeData.length;i++) {
+                for (var i = 0; i < treeData.length; i++) {
                     var node = treeData[i];
-                    kendoTreeData = renameChildren(kendoTreeData,node,true);
+                    kendoTreeData = renameChildren(kendoTreeData, node, true);
                 }
                 odinLite_manageData.currentDataItemList = kendoTreeData;
-                function renameChildren(kendoTreeData,node,isRoot){//Recursive function. All it does it rename children to items.
+                function renameChildren(kendoTreeData, node, isRoot) {//Recursive function. All it does it rename children to items.
                     //Recursive - If it has children call this method again.
-                    if(!via.undef(node.children) && node.children.length > 0 ){
-                        for(var i=0;i<node.children.length;i++){
+                    if (!via.undef(node.children) && node.children.length > 0) {
+                        for (var i = 0; i < node.children.length; i++) {
                             var childNode = node.children[i];
-                            kendoTreeData = renameChildren(kendoTreeData,childNode,false);
+                            kendoTreeData = renameChildren(kendoTreeData, childNode, false);
                         }
                         node.items = node.children;
                         node.children = null;
                         delete node.children;
                     }
-                    if(isRoot === true){
+                    if (isRoot === true) {
                         kendoTreeData.push(node);
                     }
                     return kendoTreeData;
                 }
+
                 //End - Get data
 
                 //Create the Data Source
                 var processDataSource = new kendo.data.HierarchicalDataSource({
-                    sort: { field: "text", dir: "asc" },
+                    sort: {field: "text", dir: "asc"},
                     data: kendoTreeData
                 });
 
                 //Make the tree and get rid of old tree.
-                if(!via.undef($("#manageData_tableTreeview").data('kendoTreeView'))){
-                    $("#manageData_tableTreeview").data('kendoTreeView').destroy();
+                var manageData_tableTreeview = $("#manageData_tableTreeview");
+                if (!via.undef(manageData_tableTreeview.data('kendoTreeView'))) {
+                    manageData_tableTreeview.data('kendoTreeView').destroy();
                 }
-                $("#manageData_tableTreeview").empty();
-                $("#manageData_tableTreeview").kendoTreeView({
+                manageData_tableTreeview.empty();
+                manageData_tableTreeview.kendoTreeView({
                     dataSource: processDataSource,
                     dataSpriteCssClassField: "iconCls",
-                    expand: function(e){
+                    expand: function (e) {
                         if ($("#manageData_tableFilterText").val() == "") {
                             $(e.node).find("li").show();
                         }
                     },
-                    change: function(e) {
+                    change: function (e) {
                         var selected = this.select();
-                        if(via.undef(selected)){return false;}
+                        if (via.undef(selected)) {
+                            return false;
+                        }
                         var item = this.dataItem(selected);
-                        if(via.undef(item)){return false;}
-                        if(item.hasChildren){return false;}
-                        if(via.undef(item.value)){return false;}
+                        if (via.undef(item)) {
+                            return false;
+                        }
+                        if (item.hasChildren) {
+                            return false;
+                        }
+                        if (via.undef(item.value)) {
+                            return false;
+                        }
 
                         odinLite_manageData.parentVal = null;
-                        if(!via.undef(item.parentNode()) && odinLite_manageData.tableIndexType === 3){
+                        if (!via.undef(item.parentNode()) && odinLite_manageData.tableIndexType === 3) {
                             odinLite_manageData.parentVal = item.parentNode().value;
                         }
                         odinLite_manageData.getDataItemTable(item.value);//Display the table on the screen
@@ -731,33 +787,33 @@ var odinLite_manageData = {
 
                 //Expand and Collapse Tree
                 $('#manageData_tableExpandButton').off();
-                $('#manageData_tableExpandButton').click(function(){
+                $('#manageData_tableExpandButton').click(function () {
                     var treeview = $("#manageData_tableTreeview").data("kendoTreeView");
                     treeview.expand(".k-item");
                 });
                 $('#manageData_tableCollapseButton').off();
-                $('#manageData_tableCollapseButton').click(function(){
+                $('#manageData_tableCollapseButton').click(function () {
                     var treeview = $("#manageData_tableTreeview").data("kendoTreeView");
                     treeview.collapse(".k-item");
                 });
                 $('#manageData_tableFilterText').off();
                 $("#manageData_tableFilterText").keyup(function (e) {
-                     if(e.keyCode == 13){
-                         //var changeReport_filterText = $(this).val();
-                         //filterTableList(changeReport_filterText);
-                         odinLite_manageData.getItemTreeList(true);
-                     }
+                    if (e.keyCode == 13) {
+                        //var changeReport_filterText = $(this).val();
+                        //filterTableList(changeReport_filterText);
+                        odinLite_manageData.getItemTreeList(true);
+                    }
                 });
                 $('#manageData_folderFilterText').off();
                 $("#manageData_folderFilterText").keyup(function (e) {
-                    if(e.keyCode == 13){
+                    if (e.keyCode == 13) {
                         //var changeReport_filterText = $(this).val();
                         //filterTableList(changeReport_filterText);
                         odinLite_manageData.getItemTreeList(true);
                     }
                 });
                 $('#manageData_tableSearchButton').off();
-                $("#manageData_tableSearchButton").click(function(){
+                $("#manageData_tableSearchButton").click(function () {
                     //var changeReport_filterText = $("#manageData_tableFilterText").val();
                     //filterTableList(changeReport_filterText);
                     odinLite_manageData.getItemTreeList(true);
@@ -769,7 +825,7 @@ var odinLite_manageData = {
             },
             'json');
 
-        function filterTableList(changeReport_filterText){
+        function filterTableList(changeReport_filterText) {
             if (changeReport_filterText !== "") {
                 $("#manageData_tableTreeview .k-group .k-group .k-in").closest("li").hide();
                 $("#manageData_tableTreeview .k-group").closest("li").hide();
@@ -799,7 +855,7 @@ var odinLite_manageData = {
         }
     },
 
-    filterDataItemTable: function(portId,item){
+    filterDataItemTable: function (portId, item) {
         kendo.ui.progress($("body"), true);//Wait Message off
 
         //Make the call to get the table selected for this model
@@ -812,16 +868,16 @@ var odinLite_manageData = {
                 portDir: odinLite_manageData.parentVal,
                 overrideUser: odinLite.OVERRIDE_USER
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
                 $("html, body").animate({
                     scrollTop: 0
                 }, 250);
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting data items:", data.message);
                     via.alert("Get Data Items Failure", data.message);
-                }else{
+                } else {
                     via.debug("Successful getting data item:", data);
 
 
@@ -834,7 +890,7 @@ var odinLite_manageData = {
      * getDataItemTable
      * This will retrieve a data item and display it on the screen
      */
-    getDataItemTable: function(dataItem){
+    getDataItemTable: function (dataItem) {
         var entityDir = odinLite.ENTITY_DIR;
         var modelId = odinLite_manageData.currentModel.value;
         $('#manageData_editModeLabel').hide();
@@ -855,37 +911,41 @@ var odinLite_manageData = {
                 portDir: odinLite_manageData.parentVal,
                 overrideUser: odinLite.OVERRIDE_USER
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
                 $("html, body").animate({
                     scrollTop: 0
                 }, 250);
 
                 //JSON parse does not like NaN
-                if(!via.undef(data,true)){
+                if (!via.undef(data, true)) {
                     data = JSON.parse(data.replace(/\bNaN\b/g, "null"));
                 }
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting data item:", data.message);
                     via.alert("Get Data Item Failure", data.message);
-                }else{
+                } else {
                     via.debug("Successful getting data item:", data);
 
                     odinLite_manageData.currentTableData = data.tsEncoded;
                     odinLite_manageData.currentTableData.requiredColumns = data.requiredColumns;
-                    var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(data.tsEncoded,false,false);
-                    if(!via.undef(data.tsEncoded.tableLabel,true)) {
+                    var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(data.tsEncoded, false, false);
+                    if (!via.undef(data.tsEncoded.tableLabel, true)) {
                         sheetData.name = data.tsEncoded.tableLabel;
                         $('.manageData_tableSpreadhseetName').html(data.tsEncoded.tableLabel);
-                    }else{
+                    } else {
                         $('.manageData_tableSpreadhseetName').html("Table Preview");
                     }
 
                     //Insert the sheet preview.
-                    if(!via.undef($("#manageData_tableSpreadhseet").data('kendoSpreadsheet'))){
+                    if (!via.undef($("#manageData_tableSpreadhseet").data('kendoSpreadsheet'))) {
                         $("#manageData_tableSpreadhseet").data('kendoSpreadsheet').destroy();
                     }
+
+                    //Freeze the top Row.
+                    sheetData.frozenRows = 1;
+
                     $(".manageData_tableSpreadhseetContainer").show();
                     $("#manageData_tableSpreadhseet").empty();
                     $("#manageData_tableSpreadhseet").kendoSpreadsheet({
@@ -899,7 +959,7 @@ var odinLite_manageData = {
                         sheets: [sheetData]
                     });
                     $("#manageData_tableSpreadhseet .k-spreadsheet-sheets-bar-add").hide();
-                    $("#manageData_tableSpreadhseet .k-link").prop( "disabled", true );
+                    $("#manageData_tableSpreadhseet .k-link").prop("disabled", true);
 
                     $('.manageData_tableSpreadhseetContainer').fadeIn();
                 }
@@ -911,7 +971,7 @@ var odinLite_manageData = {
      * maximizeSheet
      * This will attempt to maximize a the spreadsheet
      */
-    maximizeSheet: function() {
+    maximizeSheet: function () {
         $('.manageData_entityInfo').toggle();
         $('.manageData_modelInfo').toggle();
         $('#manageData_tableSelection').toggle();
@@ -919,14 +979,14 @@ var odinLite_manageData = {
         if ($("#manageData_existingEntity").hasClass("col-md-6")) {
             $("#manageData_existingEntity").removeClass("col-md-6");
             $("#manageData_existingEntity").addClass("col-md-12");
-            $(".manageData_tableSpreadhseetContainer").find(".maximizeButton").attr("title","Minimize");
+            $(".manageData_tableSpreadhseetContainer").find(".maximizeButton").attr("title", "Minimize");
             $(".manageData_tableSpreadhseetContainer").find(".maximizeButtonIcon").removeClass("fa-expand");
             $(".manageData_tableSpreadhseetContainer").find(".maximizeButtonIcon").addClass("fa-compress");
             $("#manageData_tableSpreadhseet").data("kendoSpreadsheet").resize();
-        }else{
+        } else {
             $("#manageData_existingEntity").removeClass("col-md-12");
             $("#manageData_existingEntity").addClass("col-md-6");
-            $(".manageData_tableSpreadhseetContainer").find(".maximizeButton").attr("title","Maximize");
+            $(".manageData_tableSpreadhseetContainer").find(".maximizeButton").attr("title", "Maximize");
             $(".manageData_tableSpreadhseetContainer").find(".maximizeButtonIcon").removeClass("fa-compress");
             $(".manageData_tableSpreadhseetContainer").find(".maximizeButtonIcon").addClass("fa-expand");
             $("#manageData_tableSpreadhseet").data("kendoSpreadsheet").resize();
@@ -943,7 +1003,7 @@ var odinLite_manageData = {
      * exportSheet
      * This will export the sheet to excel
      */
-    exportSheet: function(){
+    exportSheet: function () {
         kendo.ui.progress($("body"), true);//Wait Message on
         //via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
 
@@ -954,14 +1014,14 @@ var odinLite_manageData = {
                 type: 'xlsx',
                 overrideUser: odinLite.OVERRIDE_USER
             },
-            function(data, status){
+            function (data, status) {
                 odinLite_manageData.hasBeenLoaded = true;//Set the loaded variable after first load.
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure downloading file:", data.message);
                     via.alert("Download Failure", data.message);
-                }else{
+                } else {
                     via.debug("Successful getting model data:", data);
                     via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
                 }
@@ -973,37 +1033,39 @@ var odinLite_manageData = {
      * deleteModelData
      * This will delete the model data of the currently selected model
      */
-    deleteModelData: function(){
-        if(via.undef(odinLite_manageData.currentModel) || via.undef(odinLite_manageData.currentModel.value)){ return; }//No model selected.
+    deleteModelData: function () {
+        if (via.undef(odinLite_manageData.currentModel) || via.undef(odinLite_manageData.currentModel.value)) {
+            return;
+        }//No model selected.
 
-        via.confirm("Confirm Delete","Are you sure you want to delete the model \""+odinLite_manageData.currentModel.text+"\"? This action cannot be undone.",function(){
-                via.inputDialog("Confirm Delete","This will <b>purge</b> all data for this model. Type the word \"<span style=\"color:red;\">delete</span>\" below to confirm.",function(val) {
-                    if (!via.undef(val, true) && val === 'delete') {
-                        kendo.ui.progress($("body"), true);//Wait Message on
+        via.confirm("Confirm Delete", "Are you sure you want to delete the model \"" + odinLite_manageData.currentModel.text + "\"? This action cannot be undone.", function () {
+            via.inputDialog("Confirm Delete", "This will <b>purge</b> all data for this model. Type the word \"<span style=\"color:red;\">delete</span>\" below to confirm.", function (val) {
+                if (!via.undef(val, true) && val === 'delete') {
+                    kendo.ui.progress($("body"), true);//Wait Message on
 
-                        $.post(odin.SERVLET_PATH,
-                            {
-                                action: 'odinLite.manageData.deleteModelDataItems',
-                                modelId: odinLite_manageData.currentModel.value,
-                                entityDir: odinLite.ENTITY_DIR,
-                                overrideUser: odinLite.OVERRIDE_USER
-                            },
-                            function (data, status) {
-                                kendo.ui.progress($("body"), false);//Wait Message off
+                    $.post(odin.SERVLET_PATH,
+                        {
+                            action: 'odinLite.manageData.deleteModelDataItems',
+                            modelId: odinLite_manageData.currentModel.value,
+                            entityDir: odinLite.ENTITY_DIR,
+                            overrideUser: odinLite.OVERRIDE_USER
+                        },
+                        function (data, status) {
+                            kendo.ui.progress($("body"), false);//Wait Message off
 
-                                if (!via.undef(data, true) && data.success === false) {
-                                    via.debug("Failure deleting model:", data.message);
-                                    via.alert("Delete Failure", data.message);
-                                } else {
-                                    via.debug("Successful delete:", data);
+                            if (!via.undef(data, true) && data.success === false) {
+                                via.debug("Failure deleting model:", data.message);
+                                via.alert("Delete Failure", data.message);
+                            } else {
+                                via.debug("Successful delete:", data);
 
-                                    odinLite_manageData.getItemTreeList();
-                                    odinLite_manageData.currentModel = null;
-                                }
-                            },
-                            'json');
-                    }
-                });
+                                odinLite_manageData.getItemTreeList();
+                                odinLite_manageData.currentModel = null;
+                            }
+                        },
+                        'json');
+                }
+            });
         });
 
     },
@@ -1012,12 +1074,12 @@ var odinLite_manageData = {
      * deleteTable
      * This will delete the table currently displayed
      */
-    deleteTable: function(){
-        via.confirm("Confirm Delete","Are you sure you want to delete the \""+odinLite_manageData.currentDataItem+"\" table?",function(){
+    deleteTable: function () {
+        via.confirm("Confirm Delete", "Are you sure you want to delete the \"" + odinLite_manageData.currentDataItem + "\" table?", function () {
             kendo.ui.progress($("body"), true);//Wait Message on
 
             var portDir = null;
-            if(odinLite_manageData.tableIndexType === 3){//We need port dir if type 3
+            if (odinLite_manageData.tableIndexType === 3) {//We need port dir if type 3
                 portDir = [odinLite_manageData.parentVal];
             }
 
@@ -1025,18 +1087,18 @@ var odinLite_manageData = {
                 {
                     action: 'odinLite.manageData.deleteTableFromCache',
                     modelId: odinLite_manageData.currentModel.value,
-                    portDir: (portDir===null)?portDir:JSON.stringify(portDir),
+                    portDir: (portDir === null) ? portDir : JSON.stringify(portDir),
                     dataItems: JSON.stringify([odinLite_manageData.currentDataItem]),
                     entityDir: odinLite.ENTITY_DIR,
                     overrideUser: odinLite.OVERRIDE_USER
                 },
-                function(data, status){
+                function (data, status) {
                     kendo.ui.progress($("body"), false);//Wait Message off
 
-                    if(!via.undef(data,true) && data.success === false){
+                    if (!via.undef(data, true) && data.success === false) {
                         via.debug("Failure deleting table:", data.message);
                         via.alert("Delete Failure", data.message);
-                    }else{
+                    } else {
                         via.debug("Successful delete:", data);
 
                         odinLite_manageData.getItemTreeList();
@@ -1051,37 +1113,37 @@ var odinLite_manageData = {
      * editSheet
      * This will put the sheet in edit mode.
      */
-    editSheet: function() {
-        var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_manageData.currentTableData,true,false);
+    editSheet: function () {
+        var sheetData = odinLite_fileFormat.getSpreadsheetDataFromTableSet(odinLite_manageData.currentTableData, true, false);
 
         //Update the sheetName
-        if(!via.undef(odinLite_manageData.currentTableData.tableLabel,true)) {
+        if (!via.undef(odinLite_manageData.currentTableData.tableLabel, true)) {
             sheetData.name = odinLite_manageData.currentTableData.tableLabel;
             $('.manageData_tableSpreadhseetName').html(odinLite_manageData.currentTableData.tableLabel);
-        }else{
+        } else {
             $('.manageData_tableSpreadhseetName').html("Table Preview");
         }
 
 
-        if(!via.undef(sheetData.rows) && !via.undef(sheetData.rows[0])){
+        if (!via.undef(sheetData.rows) && !via.undef(sheetData.rows[0])) {
             //First row is not editable
-            for(var i=0;i<sheetData.rows[0].cells.length;i++){
+            for (var i = 0; i < sheetData.rows[0].cells.length; i++) {
                 sheetData.rows[0].cells[i].enable = false;
 
-                if(!via.undef(odinLite_manageData.currentTableData.requiredColumns,true)){
+                if (!via.undef(odinLite_manageData.currentTableData.requiredColumns, true)) {
                     var isRequired = false;
-                    for(var k=0;k<odinLite_manageData.currentTableData.requiredColumns.length;k++){
-                        if(odinLite_manageData.currentTableData.requiredColumns[k] === sheetData.rows[0].cells[i].value){
+                    for (var k = 0; k < odinLite_manageData.currentTableData.requiredColumns.length; k++) {
+                        if (odinLite_manageData.currentTableData.requiredColumns[k] === sheetData.rows[0].cells[i].value) {
                             isRequired = true;
                             break;
                         }
                     }
 
                     //Loop through all the rows and shut off required columns
-                    if(isRequired) {
+                    if (isRequired) {
                         for (var j = 1; j < sheetData.rows.length; j++) {
-                            sheetData.rows[j].cells[i].enable=false;
-                            sheetData.rows[j].cells[i].color="#888888";
+                            sheetData.rows[j].cells[i].enable = false;
+                            sheetData.rows[j].cells[i].color = "#888888";
                         }
                     }
                 }
@@ -1089,7 +1151,7 @@ var odinLite_manageData = {
         }
 
         //Insert the sheet preview.
-        if(!via.undef($("#manageData_tableSpreadhseet").data('kendoSpreadsheet'))){
+        if (!via.undef($("#manageData_tableSpreadhseet").data('kendoSpreadsheet'))) {
             $("#manageData_tableSpreadhseet").data('kendoSpreadsheet').destroy();
         }
         $(".manageData_tableSpreadhseetContainer").show();
@@ -1107,7 +1169,7 @@ var odinLite_manageData = {
             sheets: [sheetData]
         });
         $("#manageData_tableSpreadhseet .k-spreadsheet-sheets-bar-add").hide();
-        $("#manageData_tableSpreadhseet .k-link").prop( "disabled", true );
+        $("#manageData_tableSpreadhseet .k-link").prop("disabled", true);
         $('#manageData_editModeLabel').show();
     },
 
@@ -1115,7 +1177,7 @@ var odinLite_manageData = {
      * editSheet
      * This will save the edits to the current sheet
      */
-    saveSheetEdits: function(){
+    saveSheetEdits: function () {
         //kendo.ui.progress($("body"), true);//Wait Message
 
         var ts = odinLite_manageData.currentTableData;
@@ -1123,21 +1185,21 @@ var odinLite_manageData = {
         var json = $("#manageData_tableSpreadhseet").data('kendoSpreadsheet').toJSON();
 
         //Check data
-        if(via.undef(json.sheets) || json.sheets.length == 0 || via.undef(json.sheets[0].rows)){
-            via.alert("Save Error","Invalid sheet data.");
+        if (via.undef(json.sheets) || json.sheets.length == 0 || via.undef(json.sheets[0].rows)) {
+            via.alert("Save Error", "Invalid sheet data.");
             return;
         }
-        if(json.sheets[0].rows.length == 0){
-            via.alert("Save Error","Zero rows contained in data.");
+        if (json.sheets[0].rows.length == 0) {
+            via.alert("Save Error", "Zero rows contained in data.");
             return;
         }
 
         //Get the idx for the required columns. Those should not be set.
         var requiredMap = {};
         var headerRow = json.sheets[0].rows[0].cells;
-        for(var k=0;k<odinLite_manageData.currentTableData.requiredColumns.length;k++){
+        for (var k = 0; k < odinLite_manageData.currentTableData.requiredColumns.length; k++) {
             for (var c = 0; c < headerRow.length; c++) {
-                if(headerRow[c].value === odinLite_manageData.currentTableData.requiredColumns[k]){
+                if (headerRow[c].value === odinLite_manageData.currentTableData.requiredColumns[k]) {
                     requiredMap[c] = c;
                     break;
                 }
@@ -1147,18 +1209,18 @@ var odinLite_manageData = {
         //Set the data
         for (var r = 1; r < json.sheets[0].rows.length; r++) {
             var cells = json.sheets[0].rows[r].cells;
-            var rowIdx = r-1;
+            var rowIdx = r - 1;
             for (var c = 0; c < cells.length; c++) {
                 var header = json.sheets[0].rows[0].cells[c].value;
                 var value = cells[c].value;
-                if(via.undef(requiredMap[c])) {
+                if (via.undef(requiredMap[c])) {
                     ts.data[rowIdx][c] = value;
                 }
             }
         }
 
         //Get the variables
-        var dataItem = odinLite_manageData.currentDataItem+"";
+        var dataItem = odinLite_manageData.currentDataItem + "";
         odinLite_manageData.currentDataItem = null;//Reset the data item so it updates.
         var entityDir = odinLite.ENTITY_DIR;
         var modelId = odinLite_manageData.currentModel.value;
@@ -1174,19 +1236,19 @@ var odinLite_manageData = {
                 tsJson: JSON.stringify(ts),
                 overrideUser: odinLite.OVERRIDE_USER
             },
-            function(data, status){
+            function (data, status) {
                 kendo.ui.progress($("body"), false);//Wait Message off
 
-                if(!via.undef(data,true) && data.success === false){
+                if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting data item:", data.message);
                     via.alert("Get Data Item Failure", data.message);
-                }else{
+                } else {
                     via.debug("Successful getting data item:", data);
 
                     $('#viewPanel').hide();
 
                     //Review the upload
-                    odinLite_modelMapping.reviewPersistErrors(data,function(){
+                    odinLite_modelMapping.reviewPersistErrors(data, function () {
                         $('#modelMappingErrorsPanel').hide();
                         $('#viewPanel').show();
                         odinLite_manageData.getDataItemTable(dataItem);
@@ -1200,8 +1262,8 @@ var odinLite_manageData = {
      * cancelSheetEdits
      * Cancels the editing without saving
      */
-    cancelSheetEdits: function(){
-        var dataItem = odinLite_manageData.currentDataItem+"";
+    cancelSheetEdits: function () {
+        var dataItem = odinLite_manageData.currentDataItem + "";
         odinLite_manageData.currentDataItem = null;//Reset the data item so it updates.
         odinLite_manageData.getDataItemTable(dataItem);
     }
