@@ -1,0 +1,49 @@
+<div id="odinLite_userInfoWindow" style="overflow-x:hidden;">
+
+	<div class="row">
+		<div class="col-md-2">
+			<ul class="nav nav-pills nav-stacked">
+				<li id="li_userInfo_home" class="active"><a data-toggle="tab" href="#userInfo_home"><i class="tr fa fa-home fa-fw"></i> Home</a></li>
+				<li id="li_userInfo_transactions"><a data-toggle="tab" href="#userInfo_transactions" ><i class="tr fa fa-bar-chart-o fa-fw"></i> Billing</a></li>
+				<li id="li_userInfo_settings"><a data-toggle="tab" href="#userInfo_settings" ><i class="tr fa fa-gear fa-fw"></i> Update Settings</a></li>
+			</ul>
+		</div>
+		<div class="col-md-9 well">
+			<div class="tab-content">
+
+				<!-- Home -->
+				<div id="userInfo_home" class="tab-pane active">
+					<h4 class="tr">User Information</h4>
+					<span>
+					</span>
+				</div>
+
+				<!-- Transactions -->
+				<div id="userInfo_transactions" class="tab-pane">
+					<h4 class="tr">Transaction Information</h4>
+					<span style="height:200px;">
+					</span>
+					<button type="button" style="margin:5px 0 0 0;" class="tr btn btn-primary  odinLite_selectUserOneOffBilling pull-right">Do One Off Billing</button>
+					<button type="button" style="margin:5px 5px 0 0;" class="tr btn btn-primary  odinLite_selectUserRefundTransaction pull-right">Refund Transaction</button>
+					<button type="button" style="margin:5px 5px 0 0;" class="tr btn btn-primary  odinLite_selectUserTransactionDetail pull-right">Get Transaction Detail</button>
+				</div>
+
+				<!-- Settings -->
+				<div id="userInfo_settings" class="tab-pane active">
+					<h4 class="tr">User Settings</h4>
+					<span>
+						<label for="userInfo_settings_key">Key</label><br/>
+						<input id="userInfo_settings_key" style="width:400px;"/>
+						<br/><br/>
+						<label for="userInfo_settings_value">Value</label><br/>
+						<input id="userInfo_settings_value" style="width:400px;" class="k-textbox"/>
+						<hr/>
+						<button type="button" style="margin:5px 0 0 0;" class="tr btn btn-success userInfo_settings_update_button pull-right">Update/Add Setting</button>
+						<button type="button" style="margin:5px 5px 0 0;" class="tr btn btn-danger  userInfo_settings_delete_button pull-right">Delete Setting</button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>

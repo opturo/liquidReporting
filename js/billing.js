@@ -142,10 +142,53 @@ var odinLite_billing = {
             odinLite_billing.billingWindowPopup(popupType,callbackFn);
         } else {//They are verified. Call the function to continue the login.
             console.log("checkBillingIsVerified: They are verified. Call the function to continue the login.");
+
+            //See if there is any past due balance.
+            odinLite_billing.pastDueWindowPopup();
+
             if (!via.undef(callbackFn)) {
                 callbackFn();//Call the function to continue the login.
             }
         }
+    },
+
+    /**
+     * pastDueWindowPopup
+     * This is used for initial billing, expired or failed billing as well as updating a payment type.
+     */
+    pastDueWindowPopup: function(){
+        return;
+        var billingDataSet = odin.getUserSpecificSetting("billingDataSet");
+        var billingFailureDate = odin.getUserSpecificSetting("billingFailureDate");
+        //Check to see if they have a past due bill. Otherwise return.
+        if(via.undef(billingDataSet,true) || via.undef(billingFailureDate,true)){ return; }
+
+        console.log("they have a past due bill.");
+        $.get("./html/pastDueBillWindow.html", function (billingWindowTemplate) {
+            $('#odinLite_pastDueBillingWindow').remove();
+            $('body').append(billingWindowTemplate);
+
+            var billingWindow = $('#odinLite_pastDueBillingWindow').kendoWindow({
+                title: "Past Due Bill  ",
+                draggable: false,
+                resizable: false,
+                width: "850px",
+                height: "500px",
+                modal: true,
+                close: false,
+                actions: [],
+                close: function () {
+                    billingWindow = null;
+                    $('#odinLite_pastDueBillingWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            billingWindow.center();
+            billingWindow.open();
+
+            //Update the due date.
+            $('#odinLite_pastDueBillingWindow .failedBillingDate').append(billingFailureDate + ".");
+        });
     },
 
     /**
@@ -277,10 +320,8 @@ var odinLite_billing = {
                             $.each($('#cc-billing-form').serializeArray(), function (i, field) {
                                 formValues[field.name] = field.value;
                             });
-                            console.log('formValues',formValues);
 
                             /* Validate */
-
                             //Zip Code
                             $("#cc-billing-form input[name='zip']").removeClass("formError");//Clear error
                             if (formValues.countryCode === "US") {
@@ -327,7 +368,7 @@ var odinLite_billing = {
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure authorizing user:", data.message);
                     via.kendoAlert("Failure authorizing", data.message, function () {
-                        console.log("Popup modal window, again. User failed to authorize for whatever reason.");
+                        //console.log("Popup modal window, again. User failed to authorize for whatever reason.");
                     });
                     return;
                 } else {//Success
@@ -340,6 +381,9 @@ var odinLite_billing = {
                         if (!via.undef(callbackFn)) {
                             callbackFn(isFirstTimeUser);//Continue with the login
                         }
+
+                        //See if there is any past due balance.
+                        odinLite_billing.pastDueWindowPopup();
                     });
                     return;
                 }

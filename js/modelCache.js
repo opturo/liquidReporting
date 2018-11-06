@@ -406,7 +406,7 @@ var odinLite_modelCache = {
      * This will create a new entity for a user
      */
     createNewEntity: function(callbackFn){
-        via.inputDialog("Create New Entity","Please enter an entity name.",function(name){
+        via.kendoPrompt("Create New Entity","Please enter an entity name.",function(name){
             kendo.ui.progress($("body"), true);//Wait Message off
 
             //Make the call to create the entity

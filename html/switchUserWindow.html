@@ -3,12 +3,15 @@
 		 <label style="font-size:large;" for="odinLite_switchUserName" class="tr">User Name:</label>
 		 <input id="odinLite_switchUserName" style="width:300px;"/>
 		 <hr/>
-		 <label style="font-size:large;" for="odinLite_switchUserEntity" class="tr">User Entity:</label>
-		 <input id="odinLite_switchUserEntity" style="width:300px;"/>
+        <span style="display:none;">
+             <label style="font-size:large;" for="odinLite_switchUserEntity" class="tr">User Entity:</label>
+             <input id="odinLite_switchUserEntity" style="width:300px;"/>
+        </span>
 	</form>
 	<p style="margin-top:10px;">
-		 <button type="button" class="tr btn btn-primary  odinLite_selectSwitchUser pull-right">Select User</button>
+		 <!--<button type="button" class="tr btn btn-primary  odinLite_selectSwitchUser pull-right">Select User</button>-->
+		 <button type="button" class="tr btn btn-primary  odinLite_selectUserInfo pull-right">Show User Info</button>
 		 <button type="button" style="margin-right:10px;" class="tr btn btn-success odinLite_becomeUser pull-right">Become User</button>
 	</p>
-	<button title="Remove Current Switch User" type="button" class="tr btn btn-danger odinLite_deleteSwitchUser"><i class="fa fa-minus-circle"></i></button>
+	<button  style="display:none;" title="Remove Current Switch User" type="button" class="tr btn btn-danger odinLite_deleteSwitchUser"><i class="fa fa-minus-circle"></i></button>
 </div>

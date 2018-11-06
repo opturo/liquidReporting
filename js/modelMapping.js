@@ -436,12 +436,16 @@ var odinLite_modelMapping = {
 
         /**************************************/
         /* Call to the server for persisting */
-        odin.progressBar("Persisting Data",100,"Please wait...");
+        odin.progressBar("Persisting Data",0,"Initializing...");
+        var intervalId = setInterval(function(){
+            odinLite_modelMapping.getCurrentProgress();
+        },1000);
         $.post(odin.SERVLET_PATH,
             serverParams,
             function(data, status){
+                console.log("done",data);
                 odin.progressBar(null,100,null,true);
-
+                clearInterval(intervalId);
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Persist Failure:", data);
                     via.alert("Persist Failure", data.message);
@@ -449,10 +453,29 @@ var odinLite_modelMapping = {
                     via.debug("Persist Successful", data);
 
                     //Review the errors and return home when done.
-                    $('#modelMappingPanel').hide()
+                    $('#modelMappingPanel').hide();
                     odinLite_modelMapping.reviewPersistErrors(data, function(){
                         odinLite.loadHome();
                     });
+                }
+            },
+            'json');
+    },
+
+    /**
+     * getCurrentProgress
+     * This will get the current progress of the persist
+     */
+    getCurrentProgress: function(){
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.modelMapping.getCurrentProgress'
+            },
+            function(data){
+                console.log('getCurrentProgress',data);
+                if(!via.undef(data) && !via.undef(data.currentProgress)){
+                    console.log('here');
+                    odin.progressBar("Persisting Data",data.currentProgress[3],data.currentProgress[0]);
                 }
             },
             'json');

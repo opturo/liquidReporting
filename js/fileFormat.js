@@ -2207,7 +2207,6 @@ var odinLite_fileFormat = {
         }
 
         //Load the file formatting
-        odinLite_fileFormat.FILE_DATA.staticColumns = JSON.parse(loadJson.delimType);
         odinLite_fileFormat.FILE_DATA.endColumn = JSON.parse(loadJson.endColumn);
         odinLite_fileFormat.FILE_DATA.endRow = JSON.parse(loadJson.endRow);
         odinLite_fileFormat.FILE_DATA.hasColumnHeader = JSON.parse(loadJson.hasColumnHeader);
@@ -2215,7 +2214,7 @@ var odinLite_fileFormat = {
         odinLite_fileFormat.FILE_DATA.startColumn = JSON.parse(loadJson.startColumn);
         odinLite_fileFormat.FILE_DATA.startRow = JSON.parse(loadJson.startRow);
         odinLite_fileFormat.FILE_DATA.textQualifier = JSON.parse(loadJson.textQualifier);
-        odinLite_fileFormat.FILE_DATA.delimType = JSON.parse(loadJson.delimType);
+        odinLite_fileFormat.FILE_DATA.delimType = loadJson.delimType;
 
         //Load the Advanced Settings
         odinLite_fileFormat.staticColumns = JSON.parse(loadJson.staticColumns);
@@ -2224,6 +2223,7 @@ var odinLite_fileFormat = {
         odinLite_fileFormat.dataManagementPlugin = loadJson.dataManagementPlugin;
         odinLite_fileFormat.filterRules = JSON.parse(loadJson.filterRules);
         odinLite_fileFormat.validationRules = JSON.parse(loadJson.validationRules);
+
 
         //Set the formatting
         odinLite_fileFormat.setFormattingOptions();

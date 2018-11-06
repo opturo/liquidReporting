@@ -437,7 +437,7 @@ var odinLite = {
                 draggable: false,
                 resizable: false,
                 width: "450px",
-                height: "165px",
+                height: "135px",
                 modal: true,
                 close: true,
                 actions: [
@@ -453,6 +453,7 @@ var odinLite = {
             switchUserWindow.center();
 
             //Button Events
+            //Switch User
             $(".odinLite_selectSwitchUser").on("click", function () {
                 var userDD = $("#odinLite_switchUserName").data('kendoDropDownList');
                 var entityDD = $("#odinLite_switchUserEntity").data('kendoDropDownList');
@@ -469,7 +470,389 @@ var odinLite = {
                 switchUserWindow = null;
             });
 
+            //User Info
+            $(".odinLite_selectUserInfo").click(function(){
+                var userDD = $("#odinLite_switchUserName").data('kendoDropDownList');
+                var entityDD = $("#odinLite_switchUserEntity").data('kendoDropDownList');
 
+                var userId = userDD.value();
+                var userName = userDD.text();
+                var entityDir = entityDD.value();
+                var entityName = entityDD.text();
+
+                kendo.ui.progress($("#odinLite_switchUserWindow"), true);//Wait Message off
+                $.post(odin.SERVLET_PATH,
+                    {
+                        action: 'odinLite.getAdminUserInfo',
+                        userId: userId,
+                        userName: userName
+                    },
+                    function (data, status) {
+                        kendo.ui.progress($("#odinLite_switchUserWindow"), false);//Wait Message off
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.debug("Failure getting user info:", data.message);
+                            via.kendoAlert("Failure getting user info", data.message);
+                        } else {
+                            via.debug("Successful getting user info:", data);
+
+                            //Get the window template
+                            $.get("./html/userInfoWindow.html", function (entityWindowTemplate) {
+                                switchUserWindow.close();
+                                switchUserWindow = null;
+                                $('#odinLite_switchUserWindow').remove();
+
+                                $('#odinLite_userInfoWindow').remove();
+                                $('body').append(entityWindowTemplate);
+
+                               //Make the window.
+                                var userInfoWindow = $('#odinLite_userInfoWindow').kendoWindow({
+                                    title: "Choose an User",
+                                    draggable: false,
+                                    resizable: false,
+                                    width: "1080px",
+                                    height: "75%",
+                                    modal: true,
+                                    close: true,
+                                    actions: [
+                                        //"Maximize"
+                                        "Close"
+                                    ],
+                                    close: function () {
+                                        userInfoWindow = null;
+                                        $('#odinLite_userInfoWindow').remove();
+                                    }
+                                }).data("kendoWindow");
+
+                                userInfoWindow.center();
+
+
+                                //User Object Data//
+                                $('#userInfo_home span').empty();
+                                $('#userInfo_home span').append("<pre>" + via.jsonSyntaxHighlight(JSON.stringify(data.userObject, null, 4)) + "</pre>");
+
+                                //User Settings Update
+                                function userSettingUpdate(){
+                                    if(!via.undef($("#userInfo_settings_key").data('kendoComboBox'))){ return; }
+
+                                    var ds = [];
+                                    $.each(data.userSettings,function(k,v){
+                                        ds.push({
+                                            text: k, value: v
+                                        });
+                                    });
+
+                                    var userSettingCombo = $("#userInfo_settings_key").kendoComboBox({
+                                        dataTextField: "text",
+                                        dataValueField: "value",
+                                        dataSource: ds,
+                                        filter: "contains",
+                                        suggest: true,
+                                        value: null,
+                                        change: function(e){
+                                            if(via.undef(e.sender.value(),true) || e.sender.value() === e.sender.text()){
+                                                $("#userInfo_settings_value").val(null);
+                                            }else{
+                                                $("#userInfo_settings_value").val(e.sender.value());
+                                            }
+                                        }
+                                    }).data('kendoComboBox');
+
+                                    //Button Events
+                                    //Add/Update
+                                    $(".userInfo_settings_update_button").click(function(){
+                                        var key = userSettingCombo.text();
+                                        var val = $("#userInfo_settings_value").val();
+                                        if(via.undef(key,true)){ return; }
+                                        if(via.undef(val,true)){ return; }
+
+                                        via.kendoConfirm("Delete User Setting","Are you sure you want to change the user setting <b>"+key+"</b> to:<br/><b>"+val+"</b>.",function(){
+                                            //Post to the server
+                                            kendo.ui.progress($("#odinLite_userInfoWindow"), true);
+                                            $.post(odin.SERVLET_PATH,
+                                                {
+                                                    action: "admin.setUserSettings",
+                                                    userId: userId,
+                                                    userName: userName,
+                                                    keys: JSON.stringify([key]),
+                                                    values: JSON.stringify([val]),
+                                                    isOdinLite: true
+                                                },
+                                                function (data, status) {
+                                                    kendo.ui.progress($("#odinLite_userInfoWindow"), false);//Wait Message off
+
+                                                    if (!via.undef(data, true) && data.success === false) {
+                                                        via.debug("Failure updating user settings:", data.message);
+                                                        via.alert("Failure updating user settings", data.message);
+                                                    } else {
+                                                        via.debug("Successful updating user settings:", data);
+
+                                                        via.kendoAlert("Update User Settings",data.message,function(){
+                                                            //User Object Data//
+                                                            $('#userInfo_home span').empty();
+                                                            $('#userInfo_home span').append("<pre>" + via.jsonSyntaxHighlight(JSON.stringify(data.userObject, null, 4)) + "</pre>");
+
+                                                            var ds = [];
+                                                            $.each(data.userSettings,function(k,v){
+                                                                ds.push({
+                                                                    text: k, value: v
+                                                                });
+                                                            });
+                                                            userSettingCombo.setDataSource(ds);
+                                                            userSettingCombo.value(null);
+                                                            $("#userInfo_settings_value").val(null);
+                                                        });
+                                                    }
+                                                },
+                                                'json');
+                                        });
+                                    });
+
+                                    //Delete
+                                    $(".userInfo_settings_delete_button").click(function(){
+                                        var key = userSettingCombo.text();
+                                        if(via.undef(key,true)){ return; }
+
+                                        via.kendoConfirm("Delete User Setting","Are you sure you want to remove the user setting <b>"+key+"</b>.",function(){
+                                            //Post to the server
+                                            kendo.ui.progress($("#odinLite_userInfoWindow"), true);
+                                            $.post(odin.SERVLET_PATH,
+                                                {
+                                                    action: "admin.deleteUserSettings",
+                                                    userId: userId,
+                                                    userName: userName,
+                                                    keys: JSON.stringify([key]),
+                                                    isOdinLite: true
+                                                },
+                                                function (data, status) {
+                                                    kendo.ui.progress($("#odinLite_userInfoWindow"), false);//Wait Message off
+
+                                                    if (!via.undef(data, true) && data.success === false) {
+                                                        via.debug("Failure deleting user settings:", data.message);
+                                                        via.alert("Failure deleting user settings", data.message);
+                                                    } else {
+                                                        via.debug("Successful deleting user settings:", data);
+
+                                                        via.kendoAlert("Deleting User Settings",data.message,function(){
+                                                            //User Object Data//
+                                                            $('#userInfo_home span').empty();
+                                                            $('#userInfo_home span').append("<pre>" + via.jsonSyntaxHighlight(JSON.stringify(data.userObject, null, 4)) + "</pre>");
+
+                                                            var ds = [];
+                                                            $.each(data.userSettings,function(k,v){
+                                                                ds.push({
+                                                                    text: k, value: v
+                                                                });
+                                                            });
+                                                            userSettingCombo.setDataSource(ds);
+                                                            userSettingCombo.value(null);
+                                                            $("#userInfo_settings_value").val(null);
+                                                        });
+                                                    }
+                                                },
+                                                'json');
+                                        });
+                                    });
+
+                                }
+
+
+                                //Transaction Data//
+                                var grid = null;
+                                function updateTransactionData(transactionsTs) {
+                                    if(via.undef(transactionsTs)){return;}
+                                    console.log('updating TransactionData',transactionsTs);
+                                    $('#userInfo_transactions span').empty();
+                                    odinTable.createTable("odinLite_userInfoTransactionTable", transactionsTs, '#userInfo_transactions span');
+                                    grid = $('#odinLite_userInfoTransactionTable').data('kendoGrid');
+                                    grid.setOptions({
+                                        sortable: true,
+                                        groupable: false,
+                                        columnMenu: false,
+                                        height: "275px",
+                                        filterable: false,
+                                        pageable: false,
+                                        selectable: true
+                                    });
+                                }
+                                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                                    var target = $(e.target).attr("href"); // activated tab
+                                    if(target === '#userInfo_transactions') {
+                                        updateTransactionData(data.transactionsTs);
+                                    }else if(target === '#userInfo_settings'){
+                                        userSettingUpdate();
+                                    }
+                                });
+
+
+                                //One Off Billing
+                                $('.odinLite_selectUserOneOffBilling').click(function(){
+                                    via.kendoPrompt("One off Billing","What is the amount you would like to charge?",function(total){
+                                        var regex  = /^\d+(?:\.\d{0,2})$/;
+                                        if (!regex.test(total)){
+                                            via.kendoAlert("Invalid Total","Total is invalid: " + total);
+                                        }else{
+                                            via.kendoPrompt("One off Billing","What is the reason for the one off billing?",function(description) {
+                                                via.kendoConfirm("Check Charges", "This will charge <b>" + total + "</b> using authorization id <b>" +
+                                                    data.userSettings.authorizationId + "</b>.<br/>When complete an email receipt will be sent to <b>" + userName + "</b>.<br/>" +
+                                                    "With the reason: <b>"+description+"</b>", function () {
+
+                                                    //Post to the server
+                                                    kendo.ui.progress($("#odinLite_userInfoWindow"), true);
+                                                    $.post(odin.SERVLET_PATH,
+                                                        {
+                                                            action: 'odinLite.billing.doAdhocBilling',
+                                                            userId: userId,
+                                                            userName: userName,
+                                                            totalAmount:total,
+                                                            billingDescription:description
+                                                        },
+                                                        function (data, status) {
+                                                            kendo.ui.progress($("#odinLite_userInfoWindow"), false);//Wait Message off
+
+                                                            if (!via.undef(data, true) && data.success === false) {
+                                                                via.debug("Failure billing user:", data.message);
+                                                                via.alert("Failure billing user", data.message);
+                                                            } else {
+                                                                via.debug("Successful billing user:", data);
+
+                                                                if (!via.undef(data.message, true)) {
+                                                                    via.kendoAlert("Billing Successful",data.message,function(){
+                                                                        updateTransactionData(data.transactionsTs);
+                                                                    });
+                                                                }else{
+                                                                    via.kendoAlert("Billing Successful","Successfully billed.",function(){
+                                                                        updateTransactionData(data.transactionsTs);
+                                                                    });
+                                                                }
+                                                            }
+                                                        },
+                                                        'json');
+                                                });
+                                            });
+                                        }
+                                    });
+                                });
+
+                                //Refund Transaction
+                                $('.odinLite_selectUserRefundTransaction').click(function(){
+                                    //Get Transaction ID
+                                    var selectedItem = grid.dataItem(grid.select());
+                                    if(via.undef(selectedItem)){return;}
+                                    var identifierName = "Transaction ID";
+                                    var billingName = "Billing Amount";
+                                    var id = null;
+                                    var billingAmount = null;
+                                    $.each( selectedItem, function(k,v){
+                                        if(k.startsWith(via.cleanId(identifierName))){
+                                            id = v;
+                                        }else if(k.startsWith(via.cleanId(billingName))){
+                                            billingAmount = v;
+                                        }
+                                    });
+                                    if(via.undef(id)){return;}
+
+                                    if(via.undef(billingAmount,true) || billingAmount === 0){
+                                        via.kendoAlert("Refund Error","There was no charge for this transaction.");
+                                        return;
+                                    }
+
+                                    via.kendoPrompt("Process Refund","What is the amount you would like to refund for transaction id <b>"+id+"</b>? Total transaction was <b>" + billingAmount + "</b>.",function(total){
+                                        var regex  = /^\d+(?:\.\d{0,2})$/;
+                                        if (!regex.test(total)){
+                                            via.kendoAlert("Invalid Total","Total is invalid: " + total);
+                                        }else{
+                                            total = parseFloat(total);
+                                            if(billingAmount < total){
+                                                via.kendoAlert("Refund Error","The total refund is more than the billed amount.");
+                                                return;
+                                            }
+                                            via.kendoPrompt("Process Refund","What is the reason for the refund?",function(description) {
+                                                via.kendoConfirm("Check Charges", "This will refund <b>" + total + "</b> for transaction id <b>" +
+                                                    id + "</b>.<br/>When complete an email receipt will be sent to <b>" + userName + "</b>.<br/>With the description: <b>"+description+"</b>", function () {
+
+                                                    //Post to the server
+                                                    kendo.ui.progress($("#odinLite_userInfoWindow"), true);
+                                                    $.post(odin.SERVLET_PATH,
+                                                        {
+                                                            action: 'odinLite.billing.processRefund',
+                                                            userId: userId,
+                                                            userName: userName,
+                                                            totalAmount:total,
+                                                            refundDescription:description,
+                                                            saleId: id
+                                                        },
+                                                        function (data, status) {
+                                                            kendo.ui.progress($("#odinLite_userInfoWindow"), false);//Wait Message off
+
+                                                            if (!via.undef(data, true) && data.success === false) {
+                                                                via.debug("Failure refunding user:", data.message);
+                                                                via.alert("Failure refunding user", data.message);
+                                                            } else {
+                                                                via.debug("Successful refunding user:", data);
+
+                                                                if (!via.undef(data.message, true)) {
+                                                                    via.kendoAlert("Refund Successful",data.message,function(){
+                                                                        updateTransactionData(data.transactionsTs);
+                                                                    });
+                                                                }else{
+                                                                    via.kendoAlert("Refund Successful","Successfully refunded.",function(){
+                                                                        updateTransactionData(data.transactionsTs);
+                                                                    });
+                                                                }
+                                                            }
+                                                        },
+                                                        'json');
+                                                });
+                                            });
+                                        }
+                                    });
+                                });
+
+                                //Transaction Detail
+                                $('.odinLite_selectUserTransactionDetail').click(function(){
+                                    var selectedItem = grid.dataItem(grid.select());
+                                    if(via.undef(selectedItem)){return;}
+                                    var identifierName = "Transaction ID";
+                                    var id = null;
+                                    $.each( selectedItem, function(k,v){
+                                        if(k.startsWith(via.cleanId(identifierName))){
+                                            id = v;
+                                            return;
+                                        }
+                                    });
+                                    if(via.undef(id)){return;}
+
+
+                                    kendo.ui.progress($("body"), true);
+                                    $.post(odin.SERVLET_PATH,
+                                        {
+                                            action: 'odinLite.billing.getTransactionDetails',
+                                            id : id
+                                        },
+                                        function(data, status){
+                                            kendo.ui.progress($("body"), false);
+                                            $('#accountSettings_updatePasswordButton').prop( "disabled", false );
+
+                                            if(!via.undef(data,true) && data.success === false){
+                                                via.debug("Get Transaction Details Error:", data.message);
+                                                via.kendoAlert("Get Transaction Details Error",data.message);
+                                            }else{//Success - File Preview
+                                                via.debug("Get Transaction Details success:", data);
+                                                via.kendoAlert(identifierName +": "+ id,"<pre>" + via.jsonSyntaxHighlight(JSON.stringify(data.transactionResponse, null, 4)) + "</pre>");
+                                            }
+                                        },
+                                        'json');
+                                });
+
+                            });
+
+                        }
+                    },
+                    'json');
+            });
+
+            //Become User
             $(".odinLite_becomeUser").on("click", function () {
                 kendo.ui.progress($("body"), true);
                 var userDD = $("#odinLite_switchUserName").data('kendoDropDownList');

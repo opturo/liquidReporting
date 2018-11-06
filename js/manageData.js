@@ -627,7 +627,8 @@ var odinLite_manageData = {
                 itemFilter: $("#manageData_tableFilterText").val(),
                 portFilter: $("#manageData_folderFilterText").val(),
                 overrideUser: odinLite.OVERRIDE_USER,
-                isRefresh: isFilter
+                isRefresh: isFilter,
+                maxElementsOverride: maxElements
             },
             function (data, status) {
                 if (isFilter) {
@@ -640,11 +641,6 @@ var odinLite_manageData = {
                 if (!via.undef(data.modelSize)) {
                     var formattedSize = via.getReadableFileSizeString(data.modelSize);
                     $(".manageData_modelName").append(" <i><small>(size: " + formattedSize + ") </small></i>");
-                }
-
-                //Override Max if needed.
-                if(!via.undef(maxElements,true)){
-                    data.MAX_ELEMENTS = maxElements;
                 }
 
                 //Save the index table type
@@ -683,7 +679,7 @@ var odinLite_manageData = {
                 if (data.totalItems > data.MAX_ELEMENTS || !via.undef(maxElements,true)) {
                     //$('#manageData_totalRows').html("<i>Displaying only " + kendo.toString(data.MAX_ELEMENTS, "#,###") + " of " + kendo.toString(data.totalItems, "#,###") + " items. Please apply Data Item Filter.</i>");
 
-                    $('#manageData_totalRows').html("Displaying only " + "<input style=\"width:75px;\" class=\"itemList_maxElements\"/>" + " of " + kendo.toString(data.totalItems, "#,###") + " items. Please apply Data Item Filter.</i>");
+                    $('#manageData_totalRows').html("Displaying only " + "<input style=\"width:85px;\" class=\"itemList_maxElements\"/>" + " of " + kendo.toString(data.totalItems, "#,###") + " items. Please apply Data Item Filter.</i>");
                     $(".itemList_maxElements").kendoDropDownList({
                         dataTextField: "text",
                         dataValueField: "value",
@@ -715,11 +711,13 @@ var odinLite_manageData = {
                 if (!via.undef(data) && !via.undef(data.itemList) && data.itemList.length > 0) {
                     treeData = JSON.parse(JSON.stringify(data.itemList));
                 }
+
                 var kendoTreeData = [];
                 for (var i = 0; i < treeData.length; i++) {
                     var node = treeData[i];
                     kendoTreeData = renameChildren(kendoTreeData, node, true);
                 }
+
                 odinLite_manageData.currentDataItemList = kendoTreeData;
                 function renameChildren(kendoTreeData, node, isRoot) {//Recursive function. All it does it rename children to items.
                     //Recursive - If it has children call this method again.
