@@ -41,6 +41,13 @@ var packageSelection = {
 
     /* When the page is loaded reset the selected and canceled package lists */
     clearLists: function () {
+        packageSelection.newPackages = [];
+        packageSelection.cancelPackages = [];
+
+        var updateTable = $("#package-update-table tbody");
+        $(updateTable).data('addPackageIds',null);
+        $(updateTable).data('discountCode',null);
+
         var currentPackageList = $("#current-package-list");
         currentPackageList.find("ul").empty();
 
@@ -467,8 +474,8 @@ var packageSelection = {
      * submits the payment information to the credit card, etc.
      */
     submitPayment: function(){
-        var total = $("#package-update-table tbody").data("total");
-        var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for this package update. Click OK to continue.";
+            var total = $("#package-update-table tbody").data("total");
+        var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for the first of monthly payments for the subscription(s) you selected.<br/>Click OK to continue.";
         if(via.undef(total,true) || total === 0){
             submitText = "Your credit card will <b>NOT</b> be charged for this package update. Click OK to continue.";
         }
@@ -490,6 +497,7 @@ var packageSelection = {
                 }else{
                     cancellations =  $.merge(cancellations,packageSelection.systemCancelPackages);
                 }
+                cancellations = $.unique( cancellations );
             }
             var removePackageList = JSON.stringify(cancellations);
 

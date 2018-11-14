@@ -105,7 +105,6 @@ var odinLite_billing = {
                     return;
                 } else {//Success
                     via.debug("Discount code success", data);
-                    console.log("getAutoApplyDiscountCode", data);//Testing
                 }
             },
             'json');
@@ -157,13 +156,13 @@ var odinLite_billing = {
      * This is used for initial billing, expired or failed billing as well as updating a payment type.
      */
     pastDueWindowPopup: function(){
-        return;
         var billingDataSet = odin.getUserSpecificSetting("billingDataSet");
         var billingFailureDate = odin.getUserSpecificSetting("billingFailureDate");
         //Check to see if they have a past due bill. Otherwise return.
         if(via.undef(billingDataSet,true) || via.undef(billingFailureDate,true)){ return; }
 
-        console.log("they have a past due bill.");
+        billingDataSet = JSON.parse(billingDataSet);//Parse the table
+
         $.get("./html/pastDueBillWindow.html", function (billingWindowTemplate) {
             $('#odinLite_pastDueBillingWindow').remove();
             $('body').append(billingWindowTemplate);
@@ -186,9 +185,95 @@ var odinLite_billing = {
             billingWindow.center();
             billingWindow.open();
 
+            //Update - Empty
+            var updateTable = $("#pastDue-update-table tbody");
+            updateTable.empty();
+
+            //Get the packages to be billed
+            var itemizedArr = [];
+            var itemizedSet =  billingDataSet.tablesets[0];
+            for(var r=0;r<itemizedSet.data.length;r++){
+                var data = itemizedSet.data[r];
+                itemizedArr.push({
+                    application: data[0],
+                    package: data[1],
+                    cost: kendo.toString(data[2], "c"),
+                });
+            }
+
+            //Loop through the lines and build the table.
+            $.each(itemizedArr, function (index, row) {
+                var html = null;
+                if (via.undef(row.package, true) && via.undef(row.cost, true)) {
+                    html = "<tr><td colspan='5'>{{application}}</td></tr>";
+                } else if (!via.undef(row.application, true) && row.application.toLowerCase() === 'total') {
+                    html = "<tr><td><b>{{application}}</b></td><td>{{package}}</td><td align='right' style='color:red;font-weight:bold;'>{{cost}}</td></tr>";
+                } else {
+                    html = "<tr><td>{{application}}</td><td>{{package}}</td><td align='right'>{{cost}}</td></tr>";
+                }
+                var output = Mustache.render(html, row);
+
+                updateTable.append(output);
+            });
+
             //Update the due date.
             $('#odinLite_pastDueBillingWindow .failedBillingDate').append(billingFailureDate + ".");
+
+            var totalSet =  billingDataSet.tablesets[1];
+            var total = totalSet.data[0][0];
+            if(via.undef(total,true)){
+                via.kendoAlert("Billing Error","Total owed is undefined.");
+            }
+
+            $('#pastDue-makePayment-button').click(function(){
+                var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for this past-due bill period. Click OK to continue.";
+                via.kendoConfirm("Submit Past-Due Payment",submitText,function(){
+                    odinLite_billing.pastDueBilling(billingDataSet,function(data){
+                        billingWindow.close();
+                        via.kendoAlert("Billing Complete",data.message,function(){
+                            odin.USER_INFO.userSettings = data.userSettings;
+                        });
+                    });
+                });
+            });
         });
+    },
+
+    /**
+     * pastDueBilling
+     * Use this for billing a past due bill.
+     */
+    pastDueBilling: function (datasetJson,successCallbackFn,failCallbackFn) {
+        if (via.undef(datasetJson, true) && via.undef(removePackageList, true)) {
+            via.alert("Missing Arguments", "No DataSet Specified.");
+            return;
+        }
+
+        kendo.ui.progress($("#odinLite_pastDueBillingWindow"), true);//Wait Message on
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.billing.performPastDueBilling',
+                datasetJson: JSON.stringify(datasetJson)
+            },
+            function (data, status) {
+                kendo.ui.progress($("#odinLite_pastDueBillingWindow"), false);//Wait Message off
+
+                if (!via.undef(data, true) && data.success === false) {
+                    via.debug("Failure Past-Due Billing:", data.message);
+                    via.alert("Failure Past-Due Billing", data.message, function () {
+                        if(!via.undef(failCallbackFn)){
+                            failCallbackFn(data);
+                        }
+                    });
+                    return;
+                } else {//Success
+                    via.debug("Past-Due Billing Success", data);
+                    if(!via.undef(successCallbackFn)){
+                        successCallbackFn(data);
+                    }
+                }
+            },
+            'json');
     },
 
     /**
@@ -376,7 +461,6 @@ var odinLite_billing = {
                     $('#odinLite_ccBillingWindow').data('kendoWindow').close();
 
                     via.alert("Credit Card Authorization Successful", data.message, function () {
-                        console.log("They just got verified. Call the function to continue the login.");
                         odin.USER_INFO.userSettings = data.userSettings;//Update user settings with the new values.
                         if (!via.undef(callbackFn)) {
                             callbackFn(isFirstTimeUser);//Continue with the login
@@ -398,7 +482,7 @@ var odinLite_billing = {
      */
     chargeBillingByPackage: function (addPackageList,removePackageList,discountCode,countryCode,successCallbackFn,failCallbackFn) {
         if (via.undef(addPackageList, true) && via.undef(removePackageList, true)) {
-            via.alert("Missing Arguments", "No packages specified..");
+            via.alert("Missing Arguments", "No packages specified.");
             return;
         }
 
@@ -462,7 +546,6 @@ var odinLite_billing = {
                     return;
                 } else {//Success
                     via.debug("Success updating package", data);
-                    console.log("updateUserPackage", data);//Testing
                 }
             },
             'json');

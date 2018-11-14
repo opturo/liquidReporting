@@ -475,7 +475,7 @@ var odinLite_modelMapping = {
                 console.log('getCurrentProgress',data);
                 if(!via.undef(data) && !via.undef(data.currentProgress)){
                     console.log('here');
-                    odin.progressBar("Persisting Data",data.currentProgress[3],data.currentProgress[0]);
+                    odin.progressBar("Persisting Data",data.currentProgress[1],data.currentProgress[0]);
                 }
             },
             'json');

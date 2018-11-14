@@ -1,12 +1,20 @@
 <div id="odinLite_pastDueBillingWindow" style="overflow-y: auto;overflow-x:hidden;">
     <div class="panel-heading-color panel panel-danger">
         <div class="panel-heading">
-            <p class="panel-heading-title">Their is a past due reoccurring bill that was unsuccessfully processed on <span class="failedBillingDate"></span>. This payment must be processed before continuing.</p>
+            <p class="panel-heading-title">There is a past due reoccurring bill that was unsuccessfully processed on <span class="failedBillingDate"></span>. This payment must be processed before continuing.</p>
         </div>
         <div class="panel-body">
-            <p>Please enter your credit card information to access demo reports. This is for verification purposes only. You will not be charged until you choose to sign up for a reporting package.</p>
-            <form id="pastDue-billing-form" action="" type=""  onsubmit="odinLite_billing.getBillingInfo();">
-            </form>
+            <table id="pastDue-update-table" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Application</th>
+                    <th>Package Name</th>
+                    <th>Monthly Subscription Cost</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button id="pastDue-makePayment-button" class="btn btn-primary btn-block" style="width:140px;display:block;margin:0 auto;">Submit Payment</button>
         </div>
     </div>
 </div>
