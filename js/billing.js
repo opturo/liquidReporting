@@ -226,7 +226,7 @@ var odinLite_billing = {
             }
 
             $('#pastDue-makePayment-button').click(function(){
-                var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for this past-due bill period. Click OK to continue.";
+                var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for the past-due bill period. Click OK to continue.";
                 via.kendoConfirm("Submit Past-Due Payment",submitText,function(){
                     odinLite_billing.pastDueBilling(billingDataSet,function(data){
                         billingWindow.close();
@@ -380,7 +380,7 @@ var odinLite_billing = {
                             draggable: false,
                             resizable: false,
                             width: "850px",
-                            height: "500px",
+                            height: "90%",
                             modal: true,
                             close: (allowClosing===true)?true:false,
                             actions: actions,

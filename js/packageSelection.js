@@ -475,9 +475,10 @@ var packageSelection = {
      */
     submitPayment: function(){
             var total = $("#package-update-table tbody").data("total");
-        var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for the first of monthly payments for the subscription(s) you selected.<br/>Click OK to continue.";
+        var submitText = "Your credit card will be charged <b>" + kendo.toString(total, "c") + "</b> for the first monthly payment of the subscription packages(s) you selected.<br/>" +
+            "You may cancel at anytime.<br/><br/><p style='text-align:center;'>Click OK to continue.</p>";
         if(via.undef(total,true) || total === 0){
-            submitText = "Your credit card will <b>NOT</b> be charged for this package update. Click OK to continue.";
+            submitText = "Your credit card will <b>NOT</b> be charged for this package update.<br/><br/><p style='text-align:center;'>Click OK to continue.</p>";
         }
         via.kendoConfirm("Submit Payment Info",submitText,function(){
             var updateTable = $("#package-update-table tbody");
