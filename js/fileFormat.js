@@ -510,6 +510,7 @@ var odinLite_fileFormat = {
                 addInputBox(dataItem.columnName);
                 getInputBoxValue(dataItem.value);
             }
+            $("#fileFormat_addColumn_columnType").data('kendoDropDownList').trigger("change")
         }
 
         //Delete a column from the table
@@ -2156,7 +2157,7 @@ var odinLite_fileFormat = {
 
         var saveJson = {
             //Save the file formatting
-            delimType:JSON.stringify(formattingObj.delimType),
+            delimType:formattingObj.delimType,
             endColumn:JSON.stringify(formattingObj.endColumn),
             endRow:JSON.stringify(formattingObj.endRow),
             hasColumnHeader:JSON.stringify(formattingObj.hasColumnHeader),
@@ -2413,7 +2414,10 @@ var odinLite_fileFormat = {
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure generating preview:", data.message);
                     if(!via.undef(odinLite_fileFormat.loadedReport,true)){
-                        via.alert("Failure generating preview", data.message + "<br/><b>Unloading saved report:</b> " + odinLite_fileFormat.loadedReport, function () {
+                        via.alert("Failure generating preview", data.message,function(){
+                            $('#import_fileFormat_spreadsheet').empty();
+                        });
+                        /*via.alert("Failure generating preview", data.message + "<br/><b>Unloading saved report:</b> " + odinLite_fileFormat.loadedReport, function () {
                             odinLite_fileFormat.loadedReport = null;
                             $('.fileFormat_reportName').empty();//Remove the loaded report text
                             odinLite_fileFormat.clearAdvancedSettings();//Clear advanced settings.
@@ -2426,7 +2430,7 @@ var odinLite_fileFormat = {
                             odinLite_fileFormat.updateFilePreview(null, overrideInitialValues);
                             $('#fileFormat_nextButton').prop("disabled",false);
                             $('#fileFormat_downloadButton').prop("disabled",false);
-                        });
+                        });*/
                     }else {
                         via.alert("Failure generating preview", data.message, function () {
                             if (via.undef(data.tsEncoded)) {
@@ -2533,7 +2537,8 @@ var odinLite_fileFormat = {
         }
 
         //Delimiter
-        if(!odinLite_fileFormat.isExcel() && !via.undef(odinLite_fileFormat.FILE_DATA.delimType)){
+        odinLite_fileFormat.FILE_DATA.delimType = odinLite_fileFormat.FILE_DATA.delimType.replace(/\"/g,"");//Fix for legacy saves
+        if(!odinLite_fileFormat.isExcel() && !via.undef(odinLite_fileFormat.FILE_DATA.delimType,true)){
             $('input[name="fileFormat_delimiterType"][value="' + odinLite_fileFormat.FILE_DATA.delimType + '"]').prop('checked', true);
         }
 

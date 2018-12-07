@@ -57,13 +57,19 @@
                     <option value="MM-dd-yyyy">MM-dd-yyyy (01-15-2016)</option>
                 </select>
                 <br/>
-                <label for="accountSettings_theme" style="margin-right:10px;width:150px;" class="tr">Theme </label>
+                <label for="accountSettings_theme" style="margin-right:10px;width:150px;margin-bottom:20px;" class="tr">Theme </label>
                 <select style="width:225px;" id="accountSettings_theme">
                     <option value="classic">Classic</option>
                     <option value="dark">Dark</option>
                     <option value="crisp">Crisp</option>
                     <option value="orange">Orange</option>
                     <option value="paper">Paper</option>
+                </select>
+                <br/>
+                <label for="accountSettings_enableWebServices" style="margin-right:10px;width:150px;" class="tr">Enable Web Services </label>
+                <select style="width:225px;" id="accountSettings_enableWebServices">
+                    <option value="true">true</option>
+                    <option value="false" selected>false</option>
                 </select>
                 <button id="accountSettings_saveButton" style="position:absolute;right:0;bottom:0;margin:10px;" type="button" class="tr btn btn-primary">Save</button>
             </div>
