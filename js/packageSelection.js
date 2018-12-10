@@ -230,7 +230,7 @@ var packageSelection = {
             "<input "+disabled+"type='radio' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> {{packageName}}" +
             "<br>" +
             "<p>{{description}}</p>" +
-            "<a href='http://opturo.com/" + odin.ODIN_LITE_DIR + "/analytics.php?package_id={{packageId}}' target='_blank'>See More Details</a>" +
+            "<a href='http://says.opturo.com/index.php?appId={{applicationId}}' target='_blank'>See More Details</a>" +
             "<br>" +
             "<p>Monthly Cost (USD): <span> {{monthlyCost}} per month </span></p>" +
             "<p>One-time Set Up Fee (USD): <span>{{setUpFee}}</span></p>" +
