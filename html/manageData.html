@@ -12,7 +12,9 @@
    <div class="col-md-3 well manageData_modelInfo">
       <div id="manageData_modelSelection">
          <div class="dialogContent">
-            <h4 class="tr">Select a Data Model <span class="manageData_entitySize"></span></h4>
+            <h4 class="tr">Select a Data Model <span class="manageData_entitySize"></span>
+               <button title="Show File Structure" onclick="odinLite_manageData.getFolderStructure();" style="margin-left:5px;" type="button" class="tr tr btn btn-primary navbar-btn "><i class="fa fa-folder-open-o"></i></button>
+            </h4>
             <span class="form-inline">
                <input id="manageData_modelFilterText" type="text" class="tr form-control" placeholder="Data Model Filter" style="width:230px"/>
                <a style="margin-left:8px;" title="Expand All"  id="manageData_modelExpandButton" class="tr btn navbar-btn btn-default" href="#"><i class="fa fa-plus"></i></a>

@@ -1,5 +1,5 @@
 <div id="odinLite_advancedSettingsWindow" style="overflow-y: auto;overflow-x:hidden;">
-	<div id='tabstrip'><ul><li class='k-state-active'>Data Management Plug-in</li><li>Map Column</li><li>Add Column</li><li>Filter Data</li><li>Validate Data</li><li>Data Merge Options</li></ul>
+	<div id='advancedSettings_tabstrip'><ul><li class='k-state-active'>Data Management Plug-in</li><li>Map Column</li><li>Add Column</li><li>Filter Data</li><li>Validate Data</li><li>Data Merge Options</li></ul>
         <!-- Data Management Plug-in -->
         <div>
             <ul class="fieldlist">
@@ -93,7 +93,7 @@
                             <label for="fileFormat_addColumn_suffixIsRegex" class="tr">Suffix Is Regex: </label>
                             <input type="checkbox" id="fileFormat_addColumn_suffixIsRegex">
                         </li>
-                        <li class="col-md-4">
+                        <li class="col-md-2">
                             <label for="fileFormat_addColumn_dateFormat" class="tr">Date Format: </label>
                             <input id="fileFormat_addColumn_dateFormat" style="width:200px;"/>
                         </li>
@@ -117,7 +117,12 @@
 
 			</form>
 			<p style="margin-top:10px;">
-				<button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_addColumnButton">Add Column</button>
+                <span id="fileFormat_testExtractContainer" style="display:none;">
+                <button type="button" style="float:right;margin-bottom:10px;" class="tr btn btn-primary  fileFormat_testExtractButton" onclick="odinLite_fileFormat.testFileNameExtract();">Test Extract</button>
+                <br/>
+                <br/>
+                </span>
+				<button type="button" style="float:right;clear:both;" class="tr btn btn-primary  fileFormat_addColumnButton">Add Column</button>
                 <br/>
 			</p>
 
@@ -265,6 +270,7 @@
 
     <!-- Apply Settings Button -->
     <p style="margin-top:10px;">
-        <button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_applyAdvancedSettingsButton">Apply Settings</button>
+        <button type="button" style="margin-left:10px;float:right;" class="tr btn btn-primary  fileFormat_applyAdvancedSettingsButton">Apply Settings and Close</button>
+        <button type="button" style="float:right;" class="tr btn btn-primary  fileFormat_runToAdvancedSettingsButton">Run to Current Tab</button>
     </p>
 </div>

@@ -433,7 +433,7 @@ var odinLite = {
 
             //Make the window.
             var switchUserWindow = $('#odinLite_switchUserWindow').kendoWindow({
-                title: "Choose an User",
+                title: "Choose a User",
                 draggable: false,
                 resizable: false,
                 width: "450px",
@@ -441,7 +441,7 @@ var odinLite = {
                 modal: true,
                 close: true,
                 actions: [
-                    //"Maximize"
+                    //"Maximize",
                     "Close"
                 ],
                 close: function () {
@@ -507,7 +507,7 @@ var odinLite = {
 
                                //Make the window.
                                 var userInfoWindow = $('#odinLite_userInfoWindow').kendoWindow({
-                                    title: "Choose an User",
+                                    title: "User Info",
                                     draggable: false,
                                     resizable: false,
                                     width: "1080px",
@@ -515,7 +515,7 @@ var odinLite = {
                                     modal: true,
                                     close: true,
                                     actions: [
-                                        //"Maximize"
+                                        "Maximize",
                                         "Close"
                                     ],
                                     close: function () {

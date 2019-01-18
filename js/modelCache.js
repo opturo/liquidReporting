@@ -29,26 +29,26 @@ var odinLite_modelCache = {
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure getting model data:", data.message);
-                    via.alert("Load Failure", data.message);
+                    via.kendoAlert("Load Failure", data.message);
                 }else{
                     via.debug("Successful getting model data:", data);
 
                     //Models Missing
                     if(via.undef(data.modelList)){
-                        via.alert("Load Failure", "No models contained in list.");
+                        via.kendoAlert("Load Failure", "No models contained in list.");
                         return;
                     }
                     //Zero Models
                     var modelListLength = Object.keys(data.modelList).length;
                     if(modelListLength === 0){
-                        via.alert("Load Failure", "User not permissioned for any models.");
+                        via.kendoAlert("Load Failure", "User not permissioned for any models.");
                         return;
                     }
 
                     //Required and Optional Models
                     if(via.undef(odinLite.isDataManagerUser) || odinLite.isDataManagerUser !== true) {
                         if (via.undef(data.requiredModels) && via.undef(data.optionalModels)) {
-                            via.alert("Load Failure", "Required and optional models not found.");
+                            via.kendoAlert("Load Failure", "Required and optional models not found.");
                             return;
                         }
                         var requiredModelsLength = 0;
@@ -60,7 +60,7 @@ var odinLite_modelCache = {
                             optionalModelsLength = Object.keys(data.optionalModels).length;
                         }
                         if (optionalModelsLength === 0 && requiredModelsLength === 0) {
-                            via.alert("Load Failure", "Processes do not contain Required or optional models.");
+                            via.kendoAlert("Load Failure", "Processes do not contain Required or optional models.");
                             return;
                         }
                     }
@@ -363,7 +363,7 @@ var odinLite_modelCache = {
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure getting model:", data.message);
-                    via.alert("Model Failure", data.message);
+                    via.kendoAlert("Model Failure", data.message);
                 }else{
                     via.debug("Successful getting model:", data);
 
@@ -421,10 +421,10 @@ var odinLite_modelCache = {
 
                     if(!via.undef(data,true) && data.success === false){
                         via.debug("Failure creating entity:", data.message);
-                        via.alert("Entity Create Failure", data.message);
+                        via.kendoAlert("Entity Create Failure", data.message);
                     }else{
                         via.debug("Successful creating entity:", data);
-                        via.alert("Entity Create Success", data.message);
+                        via.kendoAlert("Entity Create Success", data.message);
                     }
 
                     if(!via.undef(callbackFn)){
@@ -455,10 +455,10 @@ var odinLite_modelCache = {
 
                             if(!via.undef(data,true) && data.success === false){
                                 via.debug("Failure deleting entity:", data.message);
-                                via.alert("Entity Delete Failure", data.message);
+                                via.kendoAlert("Entity Delete Failure", data.message);
                             }else{
                                 via.debug("Successful deleting entity:", data);
-                                via.alert("Entity Delete Success", data.message);
+                                via.kendoAlert("Entity Delete Success", data.message);
                             }
 
                             if(!via.undef(callbackFn)){
@@ -467,7 +467,7 @@ var odinLite_modelCache = {
                         },
                         'json');
                 }else{
-                    via.alert("Delete Entity", "Entity not deleted.");
+                    via.kendoAlert("Delete Entity", "Entity not deleted.");
                 }
             });
         });
@@ -569,7 +569,7 @@ var odinLite_modelCache = {
 
                         if(!via.undef(data,true) && data.success === false){
                             via.debug("Platform Copy Failure:", data.message);
-                            via.alert("Platform Copy Failure", data.message);
+                            via.kendoAlert("Platform Copy Failure", data.message);
                         }else{
                             via.debug("Success copying platform:", data);
 
@@ -931,7 +931,7 @@ var odinLite_modelCache = {
                 for(var i in saveColumns){
                     //Name Defined Check
                     if(via.undef(saveColumns[i].name) || saveColumns[i].name.trim().length === 0){
-                        via.alert("Model Save Failed","All Columns required a name. Please check to be sure you named your columns.");
+                        via.kendoAlert("Model Save Failed","All Columns required a name. Please check to be sure you named your columns.");
                         return;
                     }
                     //Custom Included Check
@@ -942,7 +942,7 @@ var odinLite_modelCache = {
                 }
                 //Custom Column is required and not found.
                 if(isColIncluded === false){
-                    via.alert("Model Save Failed","Custom Column \"" + col.name + "\" is not in the model definition.");
+                    via.kendoAlert("Model Save Failed","Custom Column \"" + col.name + "\" is not in the model definition.");
                     return;
                 }
             }
@@ -962,7 +962,7 @@ var odinLite_modelCache = {
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure saving model:", data.message);
-                    via.alert("Save Model Failure", data.message);
+                    via.kendoAlert("Save Model Failure", data.message);
                 }else{
                     via.debug("Successful saving model:", data);
                     odinLite_modelCache.getModelInfo(odinLite_modelCache.currentModel.value,true);

@@ -1,0 +1,23 @@
+<div id="odinLite_dbTransferWindow" style="overflow:hidden;">
+	<!-- DB Query box -->
+	<label for="odinLite_dbTransfer_sqlArea">SQL Query</label>
+	<textarea rows="8" class="k-textbox" style="width:100%;margin-bottom:2px;" id="odinLite_dbTransfer_sqlArea" />
+
+	<!-- Save and Load -->
+	<button type="button" onclick="odinLite_uploadFiles.loadDatabaseSQLWindow();" style="margin:0 10px 0 0;" title="Load Settings" class="tr btn btn-primary">
+		<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+	</button>
+	<button type="button" onclick="odinLite_uploadFiles.saveDatabaseSQLWindow();" style="" title="Save Settings" class="tr btn btn-primary">
+		<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+	</button>
+
+	<!-- Run Query Button -->
+	<a style="float:right" title="Run Query"  id="odinLite_dbQueryButton" class="tr btn btn-primary" href="#"><i class="fa fa-arrow-right"></i> Run Query</a>
+
+	<!-- DB Results -->
+	<div id="odinLite_dbResultGrid" style="clear:both;height:325px;user-select: none;overflow-x:hidden;overflow-y:auto;margin-top:2px;"></div>
+
+	<!-- Transfer Button -->
+	<a style="margin-top:5px;" title="Add file"  id="odinLite_dbImportButton" class="tr btn btn-primary pull-right" href="#"><i class="fa fa-cloud-download"></i> Import Data</a>
+
+</div>

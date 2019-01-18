@@ -138,7 +138,7 @@ var odinLite_modelMapping = {
 
         //Check for undefined variables which would lead to error.
         if(via.undef(odinLite_modelCache) || via.undef(odinLite_modelCache.currentEntity) || via.undef(odinLite_modelCache.currentEntity.savedColumnInfo,true)){
-            via.alert("Model Mapping Error","Please try again.");
+            via.kendoAlert("Model Mapping Error","Please try again.");
             return;
         }
 
@@ -184,7 +184,7 @@ var odinLite_modelMapping = {
     getColumnListFromTableSet: function(){
         if(via.undef(odinLite_fileFormat.FILE_DATA) || via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded) ||
             via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded.columnHeaders)){
-            via.alert("Model Mapping Error","No data in uploaded file.");
+            via.kendoAlert("Model Mapping Error","No data in uploaded file.");
             return null;
         }
         var columnHeaders = odinLite_fileFormat.FILE_DATA.tsEncoded.columnHeaders;
@@ -258,7 +258,7 @@ var odinLite_modelMapping = {
 
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure generating Model Mapping preview:", data.message);
-                    via.alert("Failure generating preview", data.message);
+                    via.kendoAlert("Failure generating preview", data.message);
                 }else{
                     via.debug("Successful generating Model Mapping preview:", data);
                     //Get the # of rows to display
@@ -378,25 +378,25 @@ var odinLite_modelMapping = {
 
         //Get the modelID being uploaded to.
         if(via.undef(odinLite_modelCache.currentModel) || via.undef(odinLite_modelCache.currentModel.value)){
-            via.alert("Persist Data Error","Cannot find the model ID.");
+            via.kendoAlert("Persist Data Error","Cannot find the model ID.");
             return;
         }
         serverParams.modelID = odinLite_modelCache.currentModel.value;
 
         //Get the databaseDir
         if(via.undef(odinLite_modelCache.currentEntity) || via.undef(odinLite_modelCache.currentEntity.entityDir)){
-            via.alert("Persist Data Error","Cannot find the database directory.");
+            via.kendoAlert("Persist Data Error","Cannot find the database directory.");
             return;
         }
         serverParams.entityDir = odinLite_modelCache.currentEntity.entityDir;
 
         //Get the file information
         if(via.undef(odinLite_fileFormat.FILE_DATA)){
-            via.alert("Persist Data Error","Cannot find the file data needed to save data.");
+            via.kendoAlert("Persist Data Error","Cannot find the file data needed to save data.");
             return;
         }
         if(via.undef(odinLite_fileFormat.FILE_DATA.files,true)){
-            via.alert("Persist Data Error","Cannot find the files needed to save data.");
+            via.kendoAlert("Persist Data Error","Cannot find the files needed to save data.");
             return;
         }
         serverParams.type = odinLite_fileFormat.FILE_DATA.type;
@@ -448,7 +448,7 @@ var odinLite_modelMapping = {
                 clearInterval(intervalId);
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Persist Failure:", data);
-                    via.alert("Persist Failure", data.message);
+                    via.kendoAlert("Persist Failure", data.message);
                 }else{
                     via.debug("Persist Successful", data);
 
@@ -513,11 +513,11 @@ var odinLite_modelMapping = {
                         if(emptyCheck === true){//Check for unmapped.
                             //Required
                             if(via.undef(odinLite_modelCache.currentEntity.timeSeriesToPortIndexTimeSeriesColumns)){
-                                via.alert("Mapping Error", "Cannot find required columns for Time Series To Port Index Merge.");
+                                via.kendoAlert("Mapping Error", "Cannot find required columns for Time Series To Port Index Merge.");
                                 return null;
                             }else if($.inArray(colInfo.name,odinLite_modelCache.currentEntity.timeSeriesToPortIndexTimeSeriesColumns[0]) !== -1 &&
                                 via.undef(mapping_dd.value(), true)){
-                                via.alert("Mapping Error", "Choose a mapping column for " + colInfo.name + ".");
+                                via.kendoAlert("Mapping Error", "Choose a mapping column for " + colInfo.name + ".");
                                 return null;
                             }
                             //Optional
@@ -539,7 +539,7 @@ var odinLite_modelMapping = {
                 }
             }
             if(hasOptional === false && emptyCheck === true){
-                via.alert("Mapping Error", "Choose at least one optional column.");
+                via.kendoAlert("Mapping Error", "Choose at least one optional column.");
                 return null;
             }
         }else { //All other types
@@ -560,7 +560,7 @@ var odinLite_modelMapping = {
                         if ($('#modelMapping_timeSeriesMerge').prop('checked') === true && odinLite_modelCache.currentEntity.tableIndexType === 3 && emptyCheck === true && colInfo.isRequired && !via.undef(mapping_dd.value(), true)) {
                             hasRequired = true;
                         }else if(emptyCheck === true && via.undef(mapping_dd.value(), true) && colInfo.isRequired){
-                            via.alert("Mapping Error", "Choose a mapping column for " + colInfo.name + ".");
+                            via.kendoAlert("Mapping Error", "Choose a mapping column for " + colInfo.name + ".");
                             return null;
                         }
 
@@ -577,7 +577,7 @@ var odinLite_modelMapping = {
 
             //For table type 3 only - error if no required columns are checked.
             if ($('#modelMapping_timeSeriesMerge').prop('checked') === true && odinLite_modelCache.currentEntity.tableIndexType === 3 && hasRequired === false && emptyCheck === true) {
-                via.alert("Mapping Error", "Choose at least one required column.");
+                via.kendoAlert("Mapping Error", "Choose at least one required column.");
                 return null;
             }
         }

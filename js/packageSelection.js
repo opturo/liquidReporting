@@ -77,6 +77,54 @@ var packageSelection = {
             packageSelection.systemCancelPackages = null;
         }
         packageSelection.isBackButton = false;
+
+        //PackageFilter
+        var filterField = $('#package_filterText');
+        filterField.off();
+        filterField.val("");
+        filterField.keyup(function(e){
+            var filterVal = $(this).val();
+            var packages = $("#packages .package-description");
+            for(var i=0;i<packages.length;i++){
+                var div = $(packages[i]);
+                var desc = div.closest("p").context.innerText;
+                if(!via.undef(filterVal) && !via.undef(desc) && desc.toLowerCase().indexOf(filterVal.toLowerCase())!==-1){
+                    div.show();
+                    div.data("hidden","false");
+                }else{
+                    div.hide();
+                    div.data("hidden","true");
+                }
+            }
+            //Check the application panel
+            var isAllHidden = true;
+            var applications = $("#package-list .application-selection-panel");
+            for(var i=0;i<applications.length;i++){
+                var appPanel = applications[i];
+                var packages = $(appPanel).find(".package-description");
+                console.log(appPanel,packages);
+                var isHidden = true;
+                for(var j=0;j<packages.length;j++){
+                    var packageDiv = packages[j];
+                    console.log(packageDiv,$(packageDiv).is(":hidden"));
+                    if($(packageDiv).data("hidden")!=="true"){
+                        isHidden = false;
+                        break;
+                    }
+                }
+                if(isHidden === true){
+                    $(appPanel).hide();
+                }else{
+                    $(appPanel).show();
+                    isAllHidden = false;
+                }
+            }
+            if(isAllHidden === true){
+                $('.allPackagesFiltered').fadeIn();
+            }else{
+                $('.allPackagesFiltered').hide();
+            }
+        });
     },
 
     /* Gets the current costs of data usage in SAYS */
@@ -666,6 +714,20 @@ var packageSelection = {
             $('#discount-code-button').attr("disabled",false);
             $('#payment-back-button').attr("disabled",false);
             $('#payment-makePayment-button').attr("disabled",false);
+
+
+            //Update text on submit button;
+            console.log(packageUpdates,$(updateTable).data('total'));
+            if(packageUpdates.updates.length === 0 && packageUpdates.cancellations.length > 0) {//Just cancels
+                $('#payment-makePayment-button').html("Cancel Packages");
+                $('#payment-makePayment-button').css("width","140px");
+            }else if(packageUpdates.updates.length > 0 && $(updateTable).data('total')===0){
+                $('#payment-makePayment-button').html("Subscribe to Free Package(s)");
+                $('#payment-makePayment-button').css("width","210px");
+            }else{
+                $('#payment-makePayment-button').html("Submit Payment");
+                $('#payment-makePayment-button').css("width","140px");
+            }
         });
     },
 

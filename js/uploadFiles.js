@@ -96,6 +96,33 @@ var odinLite_uploadFiles = {
             });
 
 
+            if (odin.USER_INFO.userName === "rocco") {
+                //FTP Transfer Button
+                $('#ftpDownloadButton').show();
+                $('#ftpDownloadButton').off();
+                $('#ftpDownloadButton').click(function () {
+                    odinLite_uploadFiles.createFtpSettingsWindow();
+                });
+            }
+            //DB load button
+            if (odin.USER_INFO.userName === "rocco") {
+                //DB Load Button
+                $('#dbDownloadButton').show();
+                $('#dbDownloadButton').off();
+                $('#dbDownloadButton').click(function () {
+                    odinLite_uploadFiles.createDatabaseSettingsWindow();
+                });
+            }
+            //Web Service load button
+            if (odin.USER_INFO.userName === "rocco") {
+                //FTP Transfer Button
+                $('#webServiceDownloadButton').show();
+                $('#webServiceDownloadButton').off();
+                $('#webServiceDownloadButton').click(function () {
+                    odinLite_uploadFiles.createWebServiceSettingsWindow();
+                });
+            }
+
             //Style the upload box
             var uploadFilesSettings = {};
             if (!via.undef(odinLite_uploadFiles.fileExtension, true)) {
@@ -328,6 +355,828 @@ var odinLite_uploadFiles = {
 
         }
 
+    },
+
+    /**
+     * createWebServiceSettingsWindow
+     * Creates Web Service window for importing data.
+     */
+    createWebServiceSettingsWindow: function () {
+        via.kendoPrompt("Web Service Import","Enter the URL of the web service to import data from.",function(url){
+            kendo.ui.progress($('body'), true);//Wait Message
+
+            $.post(odin.SERVLET_PATH,
+                {
+                    action: 'odinLite.uploadFiles.webServiceImport',
+                    overrideUser: odinLite.OVERRIDE_USER,
+                    url: url
+                },
+                function (data, status) {
+                    kendo.ui.progress($('body'), false);//Wait Message
+
+                    if (!via.undef(data, true) && data.success === false) {
+                        via.kendoAlert("Web Service Error",data.message);
+                        via.debug("Web Service Error:", data.message);
+                    } else {//Success - FTP
+                        via.debug("Web Service success:", data.message);
+
+                        odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
+                        odinLite_fileFormat.init(data);
+                    }
+                },
+                'json');
+        },function(){
+
+        },500);
+    },
+
+    /**
+     * createDatabaseSettingsWindow
+     * Creates Database window for database settings.
+     * @param data
+     */
+    createDatabaseSettingsWindow: function () {
+
+        //Get the window template
+        $.get("./html/dbSettingsWindow.html", function (windowTemplate) {
+            $('#odinLite_dbSettingsWindow').remove();
+            $('body').append(windowTemplate);
+
+            //Make the window.
+            var dbSettingsWindow = $('#odinLite_dbSettingsWindow').kendoWindow({
+                title: "Database Settings",
+                draggable: false,
+                resizable: false,
+                width: "450px",
+                height: "410px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Close"
+                ],
+                close: function () {
+                    dbSettingsWindow = null;
+                    $('#odinLite_dbSettingsWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            dbSettingsWindow.center();
+
+            //Style the combo
+            $("#odinLite_database_type").kendoDropDownList();
+
+            //Button Events
+            $(".odinLite_dbTransfer_connect").on("click", function () {
+                testDatabaseConnection(dbSettingsWindow);
+            });
+        });
+
+        /* Functions */
+        function testDatabaseConnection(dbSettingsWindow){
+            kendo.ui.progress($('#odinLite_dbSettingsWindow'), true);//Wait Message
+
+            //Get the values for ftp connection
+            var formData = new FormData($('#odinLite_dbTransferWindow_form')[0]);
+            var serverVars = {};
+            formData.forEach(function(value, key){
+                serverVars[key] = value;
+            });
+
+            $.post(odin.SERVLET_PATH,
+                $.extend(serverVars,{
+                    action: 'odinLite.uploadFiles.dbTransferTesting',
+                    overrideUser: odinLite.OVERRIDE_USER
+                }),
+                function (data, status) {
+                    kendo.ui.progress($('#odinLite_dbSettingsWindow'), false);//Wait Message
+
+                    if (!via.undef(data, true) && data.success === false) {
+                        via.kendoAlert("Database Connection Error",data.message);
+                        via.debug("Database Connection Error:", data.message);
+                    } else {//Success - FTP
+                        via.debug("Database Connection success:", data.message);
+
+                        odinLite_uploadFiles.createDatabaseImportWindow(dbSettingsWindow,serverVars);
+                    }
+                },
+                'json');
+
+        }
+    },
+
+    /**
+     * createDatabaseTransferWindow
+     * Creates database window for importing data.
+     * @param data
+     */
+    createDatabaseImportWindow: function (settingsWindow,serverVars) {
+        //Get the window template
+        $.get("./html/dbTransferWindow.html", function (ftpWindowTemplate) {
+            $('#odinLite_dbTransferWindow').remove();
+            $('body').append(ftpWindowTemplate);
+
+            //Make the window.
+            var dbWindow = $('#odinLite_dbTransferWindow').kendoWindow({
+                title: "Database Data Load",
+                draggable: false,
+                resizable: false,
+                width: "850px",
+                height: "590px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                close: function () {
+                    dbWindow = null;
+                    $('#odinLite_dbTransferWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            dbWindow.center();
+
+            settingsWindow.close();
+
+            //Button Events
+            $("#odinLite_dbQueryButton").on("click", function () {
+                runDbQuery(dbWindow,serverVars);
+            });
+            $("#odinLite_dbImportButton").on("click", function () {
+                importDbData(dbWindow,serverVars);
+            });
+
+
+            /* Functions */
+            function importDbData(dbWindow,serverVars){
+                var sqlString = $('#odinLite_dbResultGrid').data("gridSql");
+                if(via.undef(sqlString,true)) {
+                    via.kendoAlert("Data Missing","Please run SQL Query.");
+                    return;
+                }
+
+                kendo.ui.progress($('#odinLite_dbTransferWindow'), true);//Wait Message
+                $.post(odin.SERVLET_PATH,
+                    $.extend(serverVars, {
+                        action: 'odinLite.uploadFiles.dbTransferImport',
+                        overrideUser: odinLite.OVERRIDE_USER,
+                        query: sqlString
+                    }),
+                    function (data, status) {
+                        kendo.ui.progress($('#odinLite_dbTransferWindow'), false);//Wait Message
+
+                        console.log(data);
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.kendoAlert("Database Connection Error", data.message);
+                            via.debug("Database Import Error:", data.message);
+                        } else {//Success - DB Query
+                            via.debug("Database Import success:", data.message);
+
+                            dbWindow.close();
+
+                            odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
+                            odinLite_fileFormat.init(data);
+                        }
+                    },
+                    'json');
+            }
+
+            function runDbQuery(dbWindow,serverVars){
+                var sqlString = $('#odinLite_dbTransfer_sqlArea').val();
+                if(via.undef(sqlString,true)) {
+                    via.kendoAlert("SQL Missing","Please enter SQL Query.");
+                    return;
+                }
+
+                $('#odinLite_dbResultGrid').empty();
+                $('#odinLite_dbResultGrid').data("gridSql",null);
+                kendo.ui.progress($('#odinLite_dbTransferWindow'), true);//Wait Message
+                $.post(odin.SERVLET_PATH,
+                    $.extend(serverVars, {
+                        action: 'odinLite.uploadFiles.dbTransferTesting',
+                        overrideUser: odinLite.OVERRIDE_USER,
+                        query: sqlString
+                    }),
+                    function (data, status) {
+                        kendo.ui.progress($('#odinLite_dbTransferWindow'), false);//Wait Message
+
+                        console.log(data);
+
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.kendoAlert("Database Connection Error", data.message);
+                            via.debug("Database Connection Error:", data.message);
+                        } else {//Success - DB Query
+                            via.debug("Database Connection success:", data.message);
+                            odinTable.createTable("sqlDataTable",data.reportData,"#odinLite_dbResultGrid");
+                            $('#sqlDataTable').data('kendoGrid').setOptions({
+                                groupable:false,
+                                height:'99%'
+                            });
+                            $('#odinLite_dbResultGrid').css("padding","0");
+                            $('#odinLite_dbResultGrid').data("gridSql",sqlString);
+                        }
+                    },
+                    'json');
+            }
+        });
+    },
+
+    /**
+     * loadDatabaseSQLWindow
+     * This will load database settings.
+     */
+    loadDatabaseSQLWindow: function(){
+        via.loadWindow(odin.ODIN_LITE_APP_ID,4,function(loadJson){
+            $('#odinLite_dbTransfer_sqlArea').val(loadJson.sql);
+        });
+    },
+
+    /**
+     * saveDatabaseSQLWindow
+     * This will save the database sql.
+     */
+    saveDatabaseSQLWindow: function(){
+        var formData = new FormData($('#odinLite_dbTransferWindow_form')[0]);
+        var saveJson = {};
+
+        var sqlString = $('#odinLite_dbTransfer_sqlArea').val();
+        if(via.undef(sqlString,true)){
+            via.kendoAlert("Missing Value","Specify a SQL string to save.");
+        }
+        saveJson.sql = sqlString;
+
+        console.log('saveJson',saveJson);
+
+        //Perform the save.
+        via.saveWindow(odin.ODIN_LITE_APP_ID,4,JSON.stringify(saveJson),function(){
+
+        },false);
+    },
+
+    /**
+     * loadDatabaseSettingsWindow
+     * This will load database settings.
+     */
+    loadDatabaseSettingsWindow: function(){
+        via.loadWindow(odin.ODIN_LITE_APP_ID,3,function(loadJson){
+            $.each(loadJson,function(key,value){
+                if(key === 'password'){
+                    value = CryptoJS.AES.decrypt(value, via.ENCRYPT_KEY).toString(CryptoJS.enc.Utf8);
+                }
+
+                if(key === 'type') {
+                    $("#odinLite_database_type").data('kendoDropDownList').value(value);
+                    return;
+                }else {
+                    var input = $("#odinLite_dbTransferWindow_form [name='" + key + "']");
+                    if (!via.undef(input) && !via.undef(value, true)) {
+                        $(input).val(value);
+                    }
+                }
+            });
+        });
+    },
+
+    /**
+     * saveDatabaseSettingsWindow
+     * This will save the database settings.
+     */
+    saveDatabaseSettingsWindow: function(){
+        var formData = new FormData($('#odinLite_dbTransferWindow_form')[0]);
+        var saveJson = {};
+
+        var failedVars = [];
+        formData.forEach(function(value, key){
+            saveJson[key] = value;
+
+            var input = $("#odinLite_dbTransferWindow_form [name='"+key+"']");
+            if(!via.undef(input) && !via.undef($(input).attr('required') && $(input).attr('required') === true) && via.undef(value,true)){
+                failedVars.push(key);
+                return false;
+            }
+        });
+        if(failedVars.length > 0){
+            via.kendoAlert("Missing Value","Missing required values: "+failedVars.join(", "));
+            return;
+        }
+
+        //Encrypt the password
+        if(!via.undef(saveJson.password,true)) {
+            saveJson.password = CryptoJS.AES.encrypt(saveJson.password, via.ENCRYPT_KEY).toString();
+        }
+
+
+        //console.log('saveJson',saveJson);
+
+        //Perform the save.
+        via.saveWindow(odin.ODIN_LITE_APP_ID,3,JSON.stringify(saveJson),function(){
+            var win = $('#odinLite_dbTransferWindow').data('kendoWindow');
+            if(!via.undef(win)) {
+                win.close();
+            }
+        },false);
+    },
+
+    /**
+     * createFtpSettingsWindow
+     * Creates ftp window for ftp settings.
+     * @param data
+     */
+    createFtpSettingsWindow: function () {
+
+        //Get the window template
+        $.get("./html/ftpSettingsWindow.html", function (windowTemplate) {
+            $('#odinLite_ftpSettingsWindow').remove();
+            $('body').append(windowTemplate);
+
+            //Make the window.
+            var ftpWindow = $('#odinLite_ftpSettingsWindow').kendoWindow({
+                title: "FTP Settings",
+                draggable: false,
+                resizable: false,
+                width: "450px",
+                height: "420px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Close"
+                ],
+                close: function () {
+                    ftpWindow = null;
+                    $('#odinLite_ftpSettingsWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            ftpWindow.center();
+
+            //Style the combo
+            $("#odinLite_ftpTransfer_type").kendoDropDownList();
+
+            //Button Events
+            $(".odinLite_ftpTransfer_connect").on("click", function () {
+                odinLite_uploadFiles.createFtpTransferWindow(ftpWindow);
+            });
+
+        });
+    },
+
+    /**
+     * createFtpTransferWindow
+     * Creates ftp window for transferring files.
+     * @param data
+     */
+    createFtpTransferWindow: function (settingsWindow) {
+        kendo.ui.progress($('#odinLite_ftpSettingsWindow'), true);//Wait Message
+
+        //Get the window template
+        $.get("./html/ftpTransferWindow.html", function (ftpWindowTemplate) {
+            kendo.ui.progress($('#odinLite_ftpSettingsWindow'), false);//Wait Message
+
+            $('#odinLite_ftpTransferWindow').remove();
+            $('body').append(ftpWindowTemplate);
+
+            //Make the window.
+            var ftpWindow = $('#odinLite_ftpTransferWindow').kendoWindow({
+                title: "FTP Transfer",
+                draggable: false,
+                resizable: false,
+                width: "850px",
+                height: "590px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                close: function () {
+                    ftpWindow = null;
+                    $('#odinLite_ftpTransferWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            ftpWindow.center();
+
+            //Get the values for ftp connection
+            var formData = new FormData($('#odinLite_ftpTransferWindow_form')[0]);
+            var serverVars = {};
+            formData.forEach(function(value, key){
+                serverVars[key] = value;
+            });
+
+            //Call the grid functions
+            getFTPGrid(serverVars);
+            getFileManagerGrid();
+
+            //Button Events
+            $('#odinLite_ftpTransfer_directoryField').on('keyup',function(e){
+                if(e.keyCode === 13){
+                    serverVars.path = $('#odinLite_ftpTransfer_directoryField').val();
+                    getFTPGrid(serverVars);
+                }
+            });
+
+            //Set the button action
+            $('#odinLite_ftpFileManager_addButton').click(function(){
+                addItemToFileManager();
+            });
+            $('#odinLite_ftpFileManager_transferButton').click(function(){
+                transeferFtpFiles();
+            });
+
+            /* Functions */
+            //Transfer the ftp files
+            function transeferFtpFiles(){
+                var fileManagerGrid = $("#odinLite_ftpFileManager").data('kendoGrid');
+                var gridData = fileManagerGrid.dataSource.data();
+                if(gridData.length === 0){
+                    via.kendoAlert("FTP Transfer","There are no files in the list.");
+                    return;
+                }
+
+                ftpWindow.close();
+                odin.progressBar("FTP Transfer",100,"Transferring " + gridData.length + ((gridData.length>1)?" files.":" file."));
+
+                $.post(odin.SERVLET_PATH,
+                    $.extend(serverVars,{
+                        action: 'odinLite.uploadFiles.transferFtpFiles',
+                        overrideUser: odinLite.OVERRIDE_USER,
+                        ftpFiles: JSON.stringify(gridData)
+                    }),
+                    function (data, status) {
+                        odin.progressBar("FTP Transfer",100,null,true);
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.kendoAlert("FTP Transfer","Error: " + data.message);
+                            via.debug("FTP Transfer Error:", data.message);
+                        } else {//Success - FTP
+                            via.debug("FTP Transfer Success:", data.message);
+
+                            odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
+                            odinLite_fileFormat.init(data);
+                        }
+                    },
+                    'json');
+
+            }
+
+            //Add the item to the file manager grid.
+            function addItemToFileManager() {
+                var tree = $("#odinLite_ftpTreeview").data('kendoTreeList');
+                var selected = tree.select();
+                var dataItem = tree.dataItem(selected);
+                if (dataItem.isFolder === true) {
+                    return;
+                }
+                var fileManagerGrid = $("#odinLite_ftpFileManager").data('kendoGrid');
+
+                //Prevent Duplicates
+                var gridData = fileManagerGrid.dataSource.data();
+                for(var i=0;i<gridData.length;i++){
+                    if(dataItem.path === gridData[i].path){
+                        via.kendoAlert("FTP Transfer","\""+dataItem.name + "\" has already been added to the list.");
+                        return;
+                    }
+                }
+                //Add to grid
+                fileManagerGrid.dataSource.add(dataItem);
+            }
+
+            //Get the ftp transfer files
+            function getFileManagerGrid(){
+                $("#odinLite_ftpFileManager").empty();
+                $("#odinLite_ftpFileManager").kendoGrid({
+                    dataSource: {
+                        data: [],
+                        schema: {
+                            model: {
+                                fields: {
+                                    name: { field: "name"},
+                                    fileSize: { field: "fileSize",type: "number"},
+                                    lastModified: { field: "lastModified",type: "number"}
+                                }
+                            }
+                        }
+                    },
+                    scrollable: true,
+                    editable: false,
+                    columns: [
+                        {
+                            //template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            field: "name",
+                            expandable: true,
+                            title: "Selected Files",
+                            width: 400
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.fileSize)){
+                                    return "";
+                                }else{
+                                    return via.getReadableFileSizeString(dataItem.fileSize);
+                                }
+                            },
+                            field: "fileSize",
+                            title: "Size",
+                            attributes: { style:"text-align:right" },
+                            headerAttributes:  { style:"text-align:center" },
+                            width: 150
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.lastModified)){
+                                    return "";
+                                }else{
+                                    var d = new Date(dataItem.lastModified)
+                                    return kendo.toString(d,"g");
+                                }
+                            },
+                            field: "lastModified",
+                            title: "Last Modified",
+                            headerAttributes:  { style:"text-align:center" }
+                        },
+                        {
+                            title: "Delete",
+                            width: "80px",
+                            iconClass: "fa fa-trash",
+                            command: {
+                                text: " ",
+                                iconClass: "fa fa-trash",
+                                click: function(e){
+                                    e.preventDefault();
+                                    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                    this.dataSource.remove(dataItem);
+                                }
+                            }
+                        }
+
+                    ]
+                });
+            }
+
+            //Get the tree data
+            function getFTPGrid(serverVars){
+                $("#odinLite_ftpTreeview").empty();
+                $('#odinLite_ftpTransfer_directoryField').prop("disabled",true);
+
+                var dirStructure = new kendo.data.TreeListDataSource({
+                    transport: {
+                        read: function(options) {
+                            // make JSON request to server
+                            $.ajax({
+                                url: odin.SERVLET_PATH + "?action=odinLite.uploadFiles.getFtpFilesGrid",
+                                data: $.extend(serverVars,{
+                                    entityDir:odinLite.ENTITY_DIR,
+                                    path:options.data.id
+                                }),
+                                dataType: "json",
+                                success: function(result) {
+                                    $('#odinLite_ftpTransfer_directoryField').val("");
+                                    $('#odinLite_ftpTransfer_directoryField').prop("disabled",false);
+
+                                    if(result.success === false){
+                                        if(!via.undef(result.message)) {
+                                            via.kendoAlert("Error retrieving files",result.message);
+                                        }else{
+                                            via.kendoAlert("Error retrieving files", "Please check your connection.");
+                                        }
+                                        ftpWindow.close();
+                                    }else {
+                                        settingsWindow.close();
+                                        $('#odinLite_ftpTransfer_directoryField').val(result.path==="."?"./":result.path);
+
+                                        // notify the data source that the request succeeded
+                                        for(var i in result.childNodes){
+                                            if(via.undef(result.childNodes[i].parentId)) {
+                                                result.childNodes[i].parentId = null;
+                                            }
+                                        }
+
+                                        console.log("xxx",result);
+                                        $("#odinLite_ftpTreeview").data("maxSingleFileSize");
+                                        $("#odinLite_ftpTreeview").data("maxTotalFileSize");
+
+                                        options.success(result.childNodes);
+                                    }
+                                },
+                                error: function(result) {
+                                    $('#odinLite_ftpTransfer_directoryField').val("");
+                                    $('#odinLite_ftpTransfer_directoryField').prop("disabled",false);
+
+                                    // notify the data source that the request failed
+                                    options.error(result);
+                                }
+                            });
+                        }
+
+                    },
+                    schema: {
+                        model: {
+                            id: "path",
+                            hasChildren: "hasChildren",
+                            //parentId: "parentId",
+                            fields: {
+                                name: { field: "name"},
+                                fileSize: { field: "fileSize",type: "number"},
+                                lastModified: { field: "lastModified",type: "number"}
+                            }
+                        }
+                    }
+                });
+
+                var grid = $("#odinLite_ftpTreeview").kendoTreeList({
+                    dataSource: dirStructure,
+                    selectable: true,
+                    sortable:true,
+                    columns: [
+                        {
+                            //template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            field: "name",
+                            expandable: true,
+                            title: "Name",
+                            width: 400
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.fileSize)){
+                                    return "";
+                                }else{
+                                    return via.getReadableFileSizeString(dataItem.fileSize);
+                                }
+                            },
+                            field: "fileSize",
+                            title: "Size",
+                            attributes: { style:"text-align:right" },
+                            headerAttributes:  { style:"text-align:center" },
+                            width: 150
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.lastModified)){
+                                    return "";
+                                }else{
+                                    var d = new Date(dataItem.lastModified)
+                                    return kendo.toString(d,"g");
+                                }
+                            },
+                            field: "lastModified",
+                            title: "Last Modified",
+                            headerAttributes:  { style:"text-align:center" }
+                        }
+                    ],
+                    dataBound: function (e) {
+                        var grid = this;
+
+                        //for paging
+                        //if (this.dataSource.total() <= this.dataSource.pageSize) this.options.pageable = false;
+
+                        //For double clicking
+                        grid.tbody.find("tr").dblclick(function (e) {
+                            var dataItem = grid.dataItem(this);
+                            if(dataItem.isFolder === true){
+                                if(dataItem.path === ".."){
+                                    var currentPath = $('#odinLite_ftpTransfer_directoryField').val();
+                                    var pos = currentPath.lastIndexOf("/");
+                                    if(pos !== -1){
+                                        serverVars.path = currentPath.substring(0,pos);
+                                    }
+                                }else {
+                                    serverVars.path = dataItem.path;
+                                }
+                                getFTPGrid(serverVars);
+                            }else{
+                                addItemToFileManager();
+                            }
+                        });
+                    }
+                }).data('kendoTreeList');
+
+                //$("#odinLite_ftpTreeview").on("dblclick", "tr.k-state-selected", function () {
+                //    console.log(grid.select());
+                //});
+            }
+
+            /*
+            function getFileTree(serverVars){
+                $("#odinLite_ftpTreeview").empty();
+                var dirStructure = new kendo.data.HierarchicalDataSource({
+                    transport: {
+                        read: function(options) {
+                            console.log('options',options);
+                            $('#odinLite_ftpTransfer_directoryField').val("");
+
+                            // make JSON request to server
+                            $.ajax({
+                                url: odin.SERVLET_PATH + "?action=odinLite.uploadFiles.getFtpFilesGrid",
+                                data: $.extend(serverVars,{path:options.data.path}),
+                                dataType: "json",
+                                success: function(result) {
+                                    console.log('getFileTree',getFileTree);
+                                    if(result.success === false){
+                                        if(!via.undef(result.message)) {
+                                            via.kendoAlert("Error retrieving files",result.message);
+                                        }else{
+                                            via.kendoAlert("Error retrieving files", "Please check your connection.");
+                                        }
+                                        ftpWindow.close();
+                                    }else {
+                                        // notify the data source that the request succeeded
+                                        options.success(result.childNodes);
+                                        $('#odinLite_ftpTransfer_directoryField').val(result.path);
+                                        settingsWindow.close();
+                                    }
+                                },
+                                error: function(result) {
+                                    // notify the data source that the request failed
+                                    options.error(result);
+                                }
+                            });
+                        }
+                    },
+                    schema: {
+                        model: {
+                            id: "path",
+                            hasChildren: "hasChildren"
+                        }
+                    }
+                });
+
+                $("#odinLite_ftpTreeview").kendoTreeView({
+                    dataSource: dirStructure,
+                    dataTextField: "name"
+                });
+            }
+            */
+
+        });
+    },
+
+    /**
+     * loadFtpSettingsWindow
+     * This will load ftp settings.
+     */
+    loadFtpSettingsWindow: function(){
+        via.loadWindow(odin.ODIN_LITE_APP_ID,2,function(loadJson){
+            $.each(loadJson,function(key,value){
+                if(key === 'password' || key === 'keyfile'){
+                    value = CryptoJS.AES.decrypt(value, via.ENCRYPT_KEY).toString(CryptoJS.enc.Utf8);
+                }
+
+                if(key === 'type') {
+                    $("#odinLite_ftpTransfer_type").data('kendoDropDownList').value(value);
+                }else {
+                    var input = $("#odinLite_ftpTransferWindow_form [name='" + key + "']");
+                    if (!via.undef(input) && !via.undef(value, true)) {
+                        $(input).val(value);
+                    }
+                }
+            });
+        });
+    },
+
+    /**
+     * saveFtpSettingsWindow
+     * This will save ftp settings.
+     */
+    saveFtpSettingsWindow: function(){
+        var formData = new FormData($('#odinLite_ftpTransferWindow_form')[0]);
+        var saveJson = {};
+
+        var failedVars = [];
+        formData.forEach(function(value, key){
+            saveJson[key] = value;
+
+            var input = $("#odinLite_ftpTransferWindow_form [name='"+key+"']");
+            if(!via.undef(input) && !via.undef($(input).attr('required') && $(input).attr('required') === true) && via.undef(value,true)){
+                failedVars.push(key);
+                return false;
+            }
+        });
+        if(failedVars.length > 0){
+            via.kendoAlert("Missing Value","Missing required values: "+failedVars.join(", "));
+            return;
+        }
+
+        //Encrypt the password and key file
+        if(!via.undef(saveJson.password,true)) {
+            saveJson.password = CryptoJS.AES.encrypt(saveJson.password, via.ENCRYPT_KEY).toString();
+        }
+        if(!via.undef(saveJson.keyfile,true)) {
+            saveJson.keyfile = CryptoJS.AES.encrypt(saveJson.keyfile, via.ENCRYPT_KEY).toString();
+        }
+
+        console.log('saveJson',saveJson);
+
+        //Perform the save.
+        via.saveWindow(odin.ODIN_LITE_APP_ID,2,JSON.stringify(saveJson),function(){
+            var win = $('#odinLite_ftpTransferWindow').data('kendoWindow');
+            if(!via.undef(win)) {
+                win.close();
+            }
+        },false);
     },
 
     /**

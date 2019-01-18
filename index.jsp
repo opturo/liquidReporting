@@ -35,8 +35,8 @@
             <div class="navbar-header navbar-right">
                 <a title="Packages" id="home_yourPackagesButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-4 hideDMUser" href="#"><i
                class="fa fa-list-alt"></i></a>
-               <a title="Help" id="home_helpButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-5 hideDMUser" href="./help/index.html" target="_blank"><i
-              class="fa fa-question"></i></a>
+               <a title="Help" id="home_helpButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-5 hideDMUser" href="http://opturo.com/says-help/" target="_blank"><i
+              class="fa fa-question-circle"></i></a>
                <button id="home_systemNotificationButton" title="System Notifications" style="display:none;" class="btn navbar-btn btn-default tour-step home-tour-step-6 hideDMUser">
                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                <span class="badge" id="home_systemNotificationBadge"></span>
@@ -128,6 +128,7 @@
       <!-- End - Powered Panel -->
 
       <!-- Kickoff script -->
+      <script src="../js/aes.js"></script>
       <script src="../js/jquery-2.1.3.min.js"></script>
       <script src="../js/jquery.format-1.3.min.js"></script>
       <script src="../bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>

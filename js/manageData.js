@@ -47,7 +47,7 @@ var odinLite_manageData = {
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting model data:", data.message);
-                    via.alert("Load Failure", data.message);
+                    via.kendoAlert("Load Failure", data.message);
                 } else {
                     via.debug("Successful getting model data:", data);
 
@@ -56,7 +56,7 @@ var odinLite_manageData = {
 
                     var modelListLength = Object.keys(data.modelList).length;
                     if (modelListLength === 0) {
-                        via.alert("Load Failure", "User not permissioned for any models.");
+                        via.kendoAlert("Load Failure", "User not permissioned for any models.");
                         return;
                     }
 
@@ -167,7 +167,7 @@ var odinLite_manageData = {
 
                             if (!via.undef(data, true) && data.success === false) {
                                 via.debug("Failure deleting table:", data.message);
-                                via.alert("Delete Failure", data.message);
+                                via.kendoAlert("Delete Failure", data.message);
                             } else {
                                 via.debug("Successful delete:", data);
                                 odinLite_manageData.getItemTreeList();
@@ -657,7 +657,7 @@ var odinLite_manageData = {
 
                 if (!via.undef(data, true) && data.success === false && !isFilter && data.totalItems === 0) {
                     via.debug("Failure getting model items:", data.message);
-                    //via.alert("Load Failure", data.message);
+                    //via.kendoAlert("Load Failure", data.message);
                     $(".manageData_zeroTablesFound").html(data.message);
                     $(".manageData_zeroTablesFound").show();
                     $(".manageData_tableTreeview").hide();
@@ -874,7 +874,7 @@ var odinLite_manageData = {
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting data items:", data.message);
-                    via.alert("Get Data Items Failure", data.message);
+                    via.kendoAlert("Get Data Items Failure", data.message);
                 } else {
                     via.debug("Successful getting data item:", data);
 
@@ -922,7 +922,7 @@ var odinLite_manageData = {
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting data item:", data.message);
-                    via.alert("Get Data Item Failure", data.message);
+                    via.kendoAlert("Get Data Item Failure", data.message);
                 } else {
                     via.debug("Successful getting data item:", data);
 
@@ -1005,6 +1005,35 @@ var odinLite_manageData = {
         kendo.ui.progress($("body"), true);//Wait Message on
         //via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
 
+        var portDir = null;
+        if(odinLite_manageData.tableIndexType===3){
+            portDir = odinLite_manageData.parentVal;
+        }
+
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.manageData.exportFile',
+                modelId: odinLite_manageData.currentModel.value,
+                entityDir: odinLite.ENTITY_DIR,
+                dataItem: odinLite_manageData.currentDataItem,
+                portDir: portDir,
+                overrideUser: odinLite.OVERRIDE_USER
+            },
+            function (data, status) {
+                odinLite_manageData.hasBeenLoaded = true;//Set the loaded variable after first load.
+                kendo.ui.progress($("body"), false);//Wait Message off
+
+                if (!via.undef(data, true) && data.success === false) {
+                    via.debug("Failure downloading file:", data.message);
+                    via.kendoAlert("Download Failure", data.message);
+                } else {
+                    via.debug("Successful getting model data:", data);
+                    via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
+                }
+            },
+            'json');
+
+/*
         $.post(odin.SERVLET_PATH,
             {
                 action: 'admin.createFileFromGrid',
@@ -1018,13 +1047,213 @@ var odinLite_manageData = {
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure downloading file:", data.message);
-                    via.alert("Download Failure", data.message);
+                    via.kendoAlert("Download Failure", data.message);
                 } else {
                     via.debug("Successful getting model data:", data);
                     via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
                 }
             },
             'json');
+            */
+    },
+
+    /**
+     * getFolderStructure
+     * This will get the folder structure tree for manage data
+     */
+    getFolderStructure: function(){
+        kendo.ui.progress($("body"), true);//Wait Message
+        $.get("./html/fileStructureWindow.html", function (deleteTablesWindowTemplate) {
+            kendo.ui.progress($("body"), false);//Wait Message
+
+            $('#odinLite_fileStructureWindow').remove();
+            $('body').append(deleteTablesWindowTemplate);
+            //Make the window.
+            var deleteTablesWindow = $('#odinLite_fileStructureWindow').kendoWindow({
+                title: odinLite.ENTITY_NAME + " Entity Data Model",
+                draggable: false,
+                resizable: false,
+                width: "800px",
+                height: ($( window ).height() * .85) + "px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                resize: function(){
+                    $('#manageData_fileStructureTreeview').css("height",($('#odinLite_fileStructureWindow').height() - 40) + "px");
+                },
+                close: function () {
+                    deleteTablesWindow = null;
+                    $('#odinLite_deleteTablesWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            deleteTablesWindow.center();
+
+            //Set the size
+            $('#manageData_fileStructureTreeview').css("height",($('#odinLite_fileStructureWindow').height() - 40) + "px");
+
+            //Make the call to the tree
+            getFileTreeGrid();
+
+            //Set the button action
+            $('#manageData_downloadFileStructureButton').click(function(){
+                var tree = $("#manageData_fileStructureTreeview").data('kendoTreeList');
+                var selected = tree.select();
+                var dataItem = tree.dataItem(selected);
+                if(dataItem.hasChildren === true){ return; }
+
+                //download the file to csv
+                downloadFile(dataItem.path);
+            });
+
+            /*Functions*/
+            //Get the tree data
+            function getFileTreeGrid(){
+                var dirStructure = new kendo.data.TreeListDataSource({
+                    transport: {
+                        read: function(options) {
+                            // make JSON request to server
+                            $.ajax({
+                                url: odin.SERVLET_PATH + "?action=odinLite.manageData.getFolderStructure",
+                                data: {
+                                    entityDir:odinLite.ENTITY_DIR,
+                                    path:options.data.id
+                                },
+                                dataType: "json",
+                                success: function(result) {
+                                    if(result.success === false){
+                                        if(!via.undef(result.message)) {
+                                            via.kendoAlert("Error retrieving files",result.message);
+                                        }else{
+                                            via.kendoAlert("Error retrieving files", "Please check your connection.");
+                                        }
+                                    }else {
+                                        // notify the data source that the request succeeded
+                                        for(var i in result){
+                                            if(via.undef(result[i].parentId)) {
+                                                result[i].parentId = null;
+                                            }
+                                        }
+                                        options.success(result);
+                                    }
+                                },
+                                error: function(result) {
+                                    // notify the data source that the request failed
+                                    options.error(result);
+                                }
+                            });
+                        }
+
+                    },
+                    schema: {
+                        model: {
+                            id: "path",
+                            hasChildren: "hasChildren",
+                            //parentId: "parentId",
+                            fields: {
+                                name: { field: "name"},
+                                fileSize: { field: "fileSize",type: "number"},
+                                lastModified: { field: "lastModified",type: "number"}
+                            }
+                        }
+                    }
+                });
+
+                $("#manageData_fileStructureTreeview").kendoTreeList({
+                    dataSource: dirStructure,
+                    selectable: true,
+                    sortable:true,
+                    columns: [
+                        {
+                            //template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            field: "name",
+                            expandable: true,
+                            title: "Name",
+                            width: 400
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.fileSize)){
+                                    return "";
+                                }else{
+                                    return via.getReadableFileSizeString(dataItem.fileSize);
+                                }
+                            },
+                            field: "fileSize",
+                            title: "Size",
+                            attributes: { style:"text-align:right" },
+                            headerAttributes:  { style:"text-align:center" },
+                            width: 150
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.lastModified)){
+                                    return "";
+                                }else{
+                                    var d = new Date(dataItem.lastModified)
+                                    return kendo.toString(d,"g");
+                                }
+                            },
+                            field: "lastModified",
+                            title: "Last Modified",
+                            headerAttributes:  { style:"text-align:center" }
+                        }
+                    ]
+                });
+            }
+
+            /*
+            function getFileTree(){
+                var dirStructure = new kendo.data.HierarchicalDataSource({
+                    transport: {
+                        read: {
+                            url: odin.SERVLET_PATH + "?action=odinLite.manageData.getFolderStructure&entityDir=" + odinLite.ENTITY_DIR,
+                            dataType: "json"
+                        }
+                    },
+                    schema: {
+                        model: {
+                            id: "path",
+                            hasChildren: "hasChildren"
+                        }
+                    }
+                });
+
+                $("#manageData_fileStructureTreeview").kendoTreeView({
+                    dataSource: dirStructure,
+                    dataTextField: "name"
+                });
+            }
+             */
+            //Download the selected file
+            function downloadFile(filePath){
+                kendo.ui.progress($("#odinLite_fileStructureWindow"), true);//Wait Message on
+                $.post(odin.SERVLET_PATH,
+                    {
+                        action: 'odinLite.manageData.exportCacheFile',
+                        filePath: filePath,
+                        entityDir: odinLite.ENTITY_DIR,
+                        overrideUser: odinLite.OVERRIDE_USER
+                    },
+                    function (data, status) {
+                        kendo.ui.progress($("#odinLite_fileStructureWindow"), false);//Wait Message off
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.debug("Failure downloading file:", data.message);
+                            via.kendoAlert("Download Failure", data.message);
+                        } else {
+                            via.debug("Successful download:", data);
+                            via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
+                        }
+                    },
+                    'json');
+            }
+
+        });
     },
 
     /**
@@ -1053,7 +1282,7 @@ var odinLite_manageData = {
 
                             if (!via.undef(data, true) && data.success === false) {
                                 via.debug("Failure deleting model:", data.message);
-                                via.alert("Delete Failure", data.message);
+                                via.kendoAlert("Delete Failure", data.message);
                             } else {
                                 via.debug("Successful delete:", data);
 
@@ -1095,7 +1324,7 @@ var odinLite_manageData = {
 
                     if (!via.undef(data, true) && data.success === false) {
                         via.debug("Failure deleting table:", data.message);
-                        via.alert("Delete Failure", data.message);
+                        via.kendoAlert("Delete Failure", data.message);
                     } else {
                         via.debug("Successful delete:", data);
 
@@ -1184,11 +1413,11 @@ var odinLite_manageData = {
 
         //Check data
         if (via.undef(json.sheets) || json.sheets.length == 0 || via.undef(json.sheets[0].rows)) {
-            via.alert("Save Error", "Invalid sheet data.");
+            via.kendoAlert("Save Error", "Invalid sheet data.");
             return;
         }
         if (json.sheets[0].rows.length == 0) {
-            via.alert("Save Error", "Zero rows contained in data.");
+            via.kendoAlert("Save Error", "Zero rows contained in data.");
             return;
         }
 
@@ -1239,7 +1468,7 @@ var odinLite_manageData = {
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting data item:", data.message);
-                    via.alert("Get Data Item Failure", data.message);
+                    via.kendoAlert("Get Data Item Failure", data.message);
                 } else {
                     via.debug("Successful getting data item:", data);
 
