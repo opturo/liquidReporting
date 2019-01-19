@@ -1,0 +1,84 @@
+<div class="modal fade" id="billing_verifyModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Enter Your Billing Information</h4>
+        </div>
+        <div class="modal-body">
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <p>Update Billing Information</p>
+            </div>
+            <div class="panel-body">
+              <p>Please enter your credit card information to access demo reports. You won't be charged until you sign up for a reporting package.</p>
+              <form id="billing-form" action="" type=""  onsubmit="odinLite_billing.getBillingInfo()">
+                  <!-- merchant's input elements, as many as required -->
+                  <div class="form-group">
+                    <b>Full Name</b></br>
+                    <input type="text" name="name" class="form-control" required>
+                    <b>Email</b></br>
+                    <input type="text" name="email" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <b>Street Address</b></br>
+                    <input type="text" name="streetHouse" class="form-control" required>
+                    <b>City</b></br>
+                    <input type="text" name="city" class="form-control" required>
+                    <b>State</b></br>
+                    <input type="text" name="state" class="form-control" required>
+                    <b>State</b></br>
+                    <input type="text" name="zip" class="form-control" required>
+                    <b>Country</b></br>
+                    <input type="text" name="countryCode" class="form-control" required>
+                  </div>
+                  <!-- card related input elements: -->
+                  <div class="form-group">
+                    <b>Number</b></br>
+                    <input type="text" name="cardNumber" class="form-control" required>
+                    <b>CVV</b></br>
+                    <input type="text" name="cardCode" class="form-control" required>
+                    <b>Name on Card</b></br>
+                    <input type="text" name="nameOnCard" class="form-control" required>
+                  </div>
+
+                  <!-- please note that the expiry month/year elements can be simple inputs -->
+                  <div class="form-group">
+                      <b>Expiration Date</b></br>
+                  <!-- or they can be select nodes -->
+                      <select name="expirationMonth" class="form-control" required>
+                          <option value="01">January</option>
+                          <option value="02">February</option>
+                          <option value="03">March</option>
+                          <option value="04">April</option>
+                          <option value="05">May</option>
+                          <option value="06">June</option>
+                          <option value="07">July</option>
+                          <option value="08">August</option>
+                          <option value="09">September</option>
+                          <option value="10">October</option>
+                          <option value="11">November</option>
+                          <option value="12">December</option>
+                      </select>
+
+                      <select name="expirationYear" class="form-control" required>
+                          <option value="2018">2018</option>
+                          <option value="2019">2019</option>
+                          <option value="2020">2020</option>
+                          <option value="2021">2021</option>
+                          <option value="2022">2022</option>
+                          <option value="2023">2023</option>
+                      </select>
+                  </div>
+                <button class="btn btn-primary btn-block" type="submit" style="width:200px;display:block;margin:0 auto;">Update Billing</button>
+                <img src="../images/paylane-logo.png" class="pull-right" style="margin-top:-30px;"/>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
