@@ -57,3 +57,22 @@
 .application-selection-panel .panel-heading h3{
   color: white;
 }
+
+.importFolder {
+  background: #2e79b3;
+  color: white;
+}
+
+.importLeaf {
+  border: 1px solid #ccc !important;
+}
+
+.importSelected {
+  border: 3px solid black !important;
+}
+
+.CodeMirror {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  margin-bottom: 2px;
+}

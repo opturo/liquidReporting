@@ -1,33 +1,36 @@
-<div id="odinLite_ftpSettingsWindow" style="overflow:hidden;">
-	<form class="form-inline" id="odinLite_ftpTransferWindow_form">
-		<!-- Host -->
-	 	<label for="odinLite_ftpTransfer_server" class="tr">FTP Server Address:</label><br/>
-	 	<input required=true id="odinLite_ftpTransfer_server" name="server" class="k-textbox" style="width:100%"/>
-		<!-- User -->
-		<label style="margin-top:5px;" for="odinLite_ftpTransfer_user" class="tr">FTP User:</label><br/>
-		<input required=true id="odinLite_ftpTransfer_user" class="k-textbox" name="user" style="width:100%"/>
-		<!-- Password -->
-		<label style="margin-top:5px;" for="odinLite_ftpTransfer_password" class="tr">FTP Password:</label><br/>
-		<input type="password" id="odinLite_ftpTransfer_password" name="password" class="k-textbox" style="width:100%"/>
-		<!-- Type -->
-		<label style="margin-top:5px;" for="odinLite_ftpTransfer_type" class="tr">FTP Type:</label><br/>
-		<select id="odinLite_ftpTransfer_type" name="type" style="width:100%">
-			<option value="false">FTP</option>
-			<option value="true">sFTP</option>
-		</select>
-		<!-- Port -->
-		<label style="margin-top:5px;" for="odinLite_ftpTransfer_port" class="tr">FTP Port:</label><br/>
-		<input id="odinLite_ftpTransfer_port" class="k-textbox" name="port" style="width:100%"/>
-		<!-- Key File -->
-		<label style="margin-top:5px;" for="odinLite_ftpTransfer_keyfile" class="tr">FTP Key File:</label><br/>
-		<textarea rows="2" id="odinLite_ftpTransfer_keyfile" class="k-textbox" name="keyfile" style="width:100%"/>
-	</form>
+<div class="panel panel-default">
+	<div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - <span class="import_ftpName">FTP Settings</span></strong></div>
+	<div id="odinLite_ftpSettingsWindow" class="panel-body" style="overflow:hidden;">
+		<form class="form-inline" id="odinLite_ftpTransferWindow_form">
+			<!-- Host -->
+			<label for="odinLite_ftpTransfer_server" class="tr">FTP Server Address:</label><br/>
+			<input required=true id="odinLite_ftpTransfer_server" name="server" class="k-textbox" style="width:100%"/>
+			<!-- User -->
+			<label style="margin-top:5px;" for="odinLite_ftpTransfer_user" class="tr">FTP User:</label><br/>
+			<input required=true id="odinLite_ftpTransfer_user" class="k-textbox" name="user" style="width:100%"/>
+			<!-- Password -->
+			<label style="margin-top:5px;" for="odinLite_ftpTransfer_password" class="tr">FTP Password:</label><br/>
+			<input type="password" id="odinLite_ftpTransfer_password" name="password" class="k-textbox" style="width:100%"/>
+			<!-- Type -->
+			<label style="margin-top:5px;" for="odinLite_ftpTransfer_type" class="tr">FTP Type:</label><br/>
+			<select id="odinLite_ftpTransfer_type" name="type" style="width:100%">
+				<option value="false">FTP</option>
+				<option value="true">sFTP</option>
+			</select>
+			<!-- Port -->
+			<label style="margin-top:5px;" for="odinLite_ftpTransfer_port" class="tr">FTP Port:</label><br/>
+			<input id="odinLite_ftpTransfer_port" class="k-textbox" name="port" style="width:100%"/>
+			<!-- Key File -->
+			<label style="margin-top:5px;" for="odinLite_ftpTransfer_keyfile" class="tr">FTP Key File:</label><br/>
+			<textarea rows="2" id="odinLite_ftpTransfer_keyfile" class="k-textbox" name="keyfile" style="width:100%"/>
+		</form>
 
-	<button type="button" onclick="odinLite_uploadFiles.loadFtpSettingsWindow();" style="margin:10px 10px 10px 0;" title="Load Settings" class="tr btn btn-primary">
-		<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
-	</button>
-	<button type="button" onclick="odinLite_uploadFiles.saveFtpSettingsWindow();" style="margin:10px 10px 10px 0;" title="Save Settings" class="tr btn btn-primary">
-		<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-	</button>
-	<button type="button" style="float:right;margin-top:10px;" class="tr btn btn-success  odinLite_ftpTransfer_connect">Connect</button>
-</div>
+		<button type="button" onclick="odinLite_uploadFiles.loadFtpSettingsWindow();" style="margin:10px 10px 10px 0;" title="Load Settings" class="tr btn btn-primary">
+			<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+		</button>
+		<button type="button" onclick="odinLite_uploadFiles.saveFtpSettingsWindow();" style="margin:10px 10px 10px 0;" title="Save Settings" class="tr btn btn-primary">
+			<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+		</button>
+		<button type="button" style="float:right;margin-top:10px;" class="tr btn btn-success  odinLite_ftpTransfer_connect">Connect</button>
+	</div>
+	</div>

@@ -6,15 +6,17 @@
       <title>Software At Your Service</title>
       <link rel="shortcut icon" href="../../favicon.ico">
       <!-- Bootstrap core CSS -->
-      <link title="bootstrap" href="../bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="../font-awesome-4.5.0/css/font-awesome.min.css">
+      <link title="bootstrap" href="../bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet"/>
+      <link rel="stylesheet" href="../font-awesome-4.5.0/css/font-awesome.min.css"/>
       <!-- Opturo CSS -->
-      <link rel="stylesheet" href="css/odinLite.css">
+      <link rel="stylesheet" href="css/odinLite.css"/>
       <!-- Kendo UI CSS -->
       <link rel="stylesheet" href="../js/kendoui/styles/kendo.common-bootstrap.min.css" />
       <link rel="stylesheet" href="../js/kendoui/styles/kendo.bootstrap.min.css">
       <link rel="stylesheet" href="../js/kendoui/styles/kendo.bootstrap.mobile.min.css">
-
+      <!-- Code Mirror CSS -->
+      <link rel="stylesheet" href="../js/codemirror-5.43.0/lib/codemirror.css">
+      <link rel="stylesheet" href="../js/codemirror-5.43.0/addon/hint/show-hint.css" />
 	  <!-- Bootstrap Tour -->
 	  <link rel="stylesheet" href="css/bootstrap-tour.min.css" />
 
@@ -145,13 +147,20 @@
       <script src="js/manageData.js"></script>
       <script src="js/packageSelection.js"></script>
 
-   <!-- Liquid Reporting Tour -->
+      <!-- SAYS Tour -->
 	  <script src="../js/bootstrap-tour.min.js"></script>
       <script src="../js/mustache.min.js"></script>
 	  <script src="js/userTour.js"></script>
 	  
       <!-- Kendo UI -->
       <script src="../js/kendoui/js/kendo.all.min.js"></script>
+
+      <!-- Code Mirror -->
+      <script src="../js/codemirror-5.43.0/lib/codemirror.js"></script>
+      <script src="../js/codemirror-5.43.0/mode/sql/sql.js"></script>
+      <script src="../js/codemirror-5.43.0/addon/selection/active-line.js"></script>
+      <script src="../js/codemirror-5.43.0/addon/hint/show-hint.js"></script>
+      <script src="../js/codemirror-5.43.0/addon/hint/sql-hint.js"></script>
       
 	  <!-- Init ODIN Lite -->
       <script>

@@ -2,9 +2,17 @@
 <!-- Displays the form -->
 <div id="uploadPanel" class="container-fluid" style="display:none;">
    <div class="row">
-      <div class="col-md-3"></div>
-      <div class="col-md-6">
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
          <div class="panel panel-default">
+         <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Data Sources</strong></div>
+         <div class="panel-body" style="overflow:hidden;">
+               <div class="importTypesTree"></div>
+         </div>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div id="uploadFiles_localComputer" class="panel panel-default">
             <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Upload</strong> <span class="applicationAndModelName"></span></div>
             <div class="panel-body" style="margin:10px;">
                <!--This contains the form for uploading files-->
@@ -13,11 +21,9 @@
                   <div class="col-md-12">
                      <label class="tr">Select Files to Upload </label><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;left:3px;" onclick="odinLite_uploadFiles.displayHelpLink('UPLOAD_FILES','Upload Help');">
                      <input style="width:100%;" type="file" class="kendo-file" name="uploadFiles" id="uploadFiles">
-                     <!-- Previous -->
-                     <button onclick="odinLite.loadModelCacheApplication();" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary">< Previous</button>
 
                      <!-- Template -->
-                     <label style="margin: 20px 5px 0 20px;" for="uploadFiles_templateCheck" class="tr">Uploading a Template File: </label>
+                     <label style="margin: 20px 5px 0 0;" for="uploadFiles_templateCheck" class="tr">Uploading a Template File: </label>
                      <input style="margin: 20px 5px 0 0;" type="checkbox" id="uploadFiles_templateCheck" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TEMPLATE_FILE','Uploading a Template File');">
 					 <!--<input style="margin: 20px 5px 0 0;" type="checkbox" id="uploadFiles_templateCheck"><label for="uploadFiles_templateCheck">Uploading a Template File <img src="../images/help.png" style="cursor:pointer;" onclick="odinLite_uploadFiles.displayHelpLink('TEMPLATE_FILE','Uploading a Template File');"></label>-->
                      <!-- Upload Button -->
@@ -27,19 +33,12 @@
             </div>
          </div>
 
-         <div class="well">
-         <h4>Other Data Import Options: </h4>
-         <!-- FTP Button -->
-         <a title="Load Files from FTP Site" style="display:none;margin:10px 0 10px 0;" id="ftpDownloadButton" class="tr btn navbar-btn btn-default" href="#"><i
-                 class="fa fa-exchange"></i> FTP</a>
-         <!-- DB Button -->
-         <a title="Load Files from Database Server" style="display:none;margin:10px 0 10px 0;" id="dbDownloadButton" class="tr btn navbar-btn btn-default" href="#"><i
-                 class="fa fa-table"></i> Database</a>
-         <!-- Web Service Button -->
-         <a title="Load Files from a Web Service" style="display:none;margin:10px 10px 10px 0;" id="webServiceDownloadButton" class="tr btn navbar-btn btn-default" href="#"><i
-                 class="fa fa-table"></i> Web Service</a>
-         </div>
+         <div id="uploadFiles_otherSources" style="display:none;"></div>
+
+         <!-- Previous -->
+         <button title="Back to Data Model" onclick="odinLite.loadModelCacheApplication();" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary"><i class="fa fa-chevron-circle-left"></i>  Previous</button>
       </div>
-      <div class="col-md-3"></div>
+      <div class="col-md-2"></div>
+   </div>
    </div>
 </div>

@@ -1,17 +1,24 @@
-<div id="odinLite_ftpTransferWindow" style="overflow:hidden;">
-	<!-- FTP Session -->
-	<input class="k-textbox" style="width:100%;margin-bottom:2px;" id="odinLite_ftpTransfer_directoryField" />
-	<form class="form-inline" >
-		<div id="odinLite_ftpTreeview" style="clear:both;height:275px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
-	</form>
+<div class="panel panel-default">
+	<div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - <span class="import_ftpName">FTP Transfer</span></strong></div>
 
-	<!-- Add Button -->
-	<a style="margin:1px 0 1px 50%;" title="Add file"  id="odinLite_ftpFileManager_addButton" class="tr btn btn-primary" href="#"><i class="fa fa-arrow-down"></i> Add File</a>
+	<div id="odinLite_ftpTransferWindow" style="padding:10px;overflow:hidden;">
+		<!-- FTP Session -->
+		<input class="k-textbox" style="width:100%;margin-bottom:2px;" id="odinLite_ftpTransfer_directoryField" />
+		<form class="form-inline" >
+			<div id="odinLite_ftpTreeview" style="clear:both;height:275px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
+		</form>
 
-	<!-- File Manager -->
-	<div id="odinLite_ftpFileManager" style="clear:both;height:185px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
+		<!-- Add Button -->
+		<a style="margin:1px 0 1px 50%;" title="Add file"  id="odinLite_ftpFileManager_addButton" class="tr btn btn-primary" href="#"><i class="fa fa-arrow-down"></i> Add File</a>
 
-	<!-- Transfer Button -->
-	<a style="margin-top:5px;" title="Add file"  id="odinLite_ftpFileManager_transferButton" class="tr btn btn-primary pull-right" href="#"><i class="fa fa-exchange"></i> Transfer</a>
+		<!-- File Manager -->
+		<div id="odinLite_ftpFileManager" style="clear:both;height:185px;user-select: none;overflow-x:hidden;overflow-y:auto"></div>
 
+		<!-- Back Button -->
+		<a style="margin-top:5px;" title="Back to FTP Settings" onclick="odinLite_uploadFiles.createFtpSettingsWindow();" class="tr btn btn-primary" href="#"><i class="fa fa-chevron-circle-left"></i> Back</a>
+
+		<!-- Transfer Button -->
+		<a style="margin-top:5px;" title="Add file"  id="odinLite_ftpFileManager_transferButton" class="tr btn btn-primary pull-right" href="#"><i class="fa fa-exchange"></i> Transfer</a>
+
+	</div>
 </div>

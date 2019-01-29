@@ -1,5 +1,8 @@
 <div id="odinLite_advancedSettingsWindow" style="overflow-y: auto;overflow-x:hidden;">
-	<div id='advancedSettings_tabstrip'><ul><li class='k-state-active'>Data Management Plug-in</li><li>Map Column</li><li>Add Column</li><li>Filter Data</li><li>Validate Data</li><li>Data Merge Options</li></ul>
+	<div id='advancedSettings_tabstrip'><ul>
+        <li class='k-state-active'>Data Management Plug-in</li><li>Map Column</li><li>Add Column</li>
+        <li>Filter Data</li><li>Validate Data</li><li>SQL Engine</li><li>Data Merge Options</li>
+    </ul>
         <!-- Data Management Plug-in -->
         <div>
             <ul class="fieldlist">
@@ -256,16 +259,40 @@
             <div style="clear:both;" id="fileFormat_validateData_finalGrid"></div>
         </div>
 
+        <!-- SQL Query -->
+        <div>
+            <form class="form-inline row" >
+                <!-- Column List -->
+                <div class="col-md-2">
+                    <label for="fileFormat_sqlColumnNames">Column Names</label>
+                    <div id="fileFormat_sqlColumnNames"></div>
+                </div>
+
+                <!-- DB Query box -->
+                <div class="col-md-9">
+                    <label for="fileFormat_dbTransfer_sqlArea">SQL Query</label>
+                    <textarea style="margin-bottom:2px;" id="fileFormat_dbTransfer_sqlArea" />
+
+                    <!-- Run Query Button -->
+                    <a style="float:right" title="Run Query"  id="fileFormat_dbQueryButton" class="tr btn btn-primary" href="#"><i class="fa fa-arrow-right"></i> Run Query</a>
+                </div>
+
+                <!-- DB Results -->
+                <div id="fileFormat_dbResultGrid" style="clear:both;height:325px;user-select: none;overflow-x:hidden;overflow-y:auto;margin-top:2px;"></div>
+            </form>
+        </div>
+
         <!-- Data Merge Options -->
         <div>
             <form class="form-inline" >
                 <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_timeSeriesMerge" class="tr">Merge Static Data to Loaded Time Series Data: </label>
                 <input style="margin: 10px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_MERGE','Merge Static Data to Loaded Time Series Data');">
                 <hr/>
-                <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_timeSeriesToPortIndexMerge" class="tr">Merge Time Series Data to Loaded Portfolio Indexed Time Series Data: </label>
+                <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_timeSeriesToPortIndexMerge" class="tr">Merge Time Series Data to Loaded Folder Indexed Time Series Data: </label>
                 <input style="margin: 10px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesToPortIndexMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_PORTFOLIO_MERGE','Merge Time Series Data to Loaded Portfolio Indexed Time Series Data');">
             </form>
         </div>
+
 	</div>
 
     <!-- Apply Settings Button -->

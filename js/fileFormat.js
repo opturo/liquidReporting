@@ -59,8 +59,10 @@ var odinLite_fileFormat = {
         });
 
         //Check multiple sheets for excel
+        odinLite_fileFormat.isMultiSheet = false;
         if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames) && odinLite_fileFormat.FILE_DATA.sheetNames.length > 1
             && odinLite_fileFormat.FILE_DATA.files.length === 1) {
+            odinLite_fileFormat.isMultiSheet = true;
             odinLite_fileFormat.excelSheetChooser(function(){
                 //Go to step 1 of the import wizard using the new data
                 odinLite_fileFormat.initFilePreview(true);//Override the Initial Values
@@ -670,8 +672,6 @@ var odinLite_fileFormat = {
         setDateFormat();
 
         //Header List
-        console.log(headers);
-        console.log(odinLite_fileFormat.originalHeaders);
         $('#fileFormat_mapColumn_headerList').kendoDropDownList({
             dataTextField: "text",
             dataValueField: "text",
@@ -1975,15 +1975,92 @@ var odinLite_fileFormat = {
 
             addColumnWindow.center();
 
+            var isSqlLoaded = false;
             var tab = $("#advancedSettings_tabstrip").kendoTabStrip({
                 animation: {
                     open: {
                         effects: "fadeIn"
                     }
                 },
+                select: function(e){
+                    var selectedTab = $(e.item).find("> .k-link").text();
+                    if(selectedTab === 'Data Merge Options'){
+                        $('.fileFormat_runToAdvancedSettingsButton').hide();
+                    }else{
+                        $('.fileFormat_runToAdvancedSettingsButton').show();
+                    }
+                    //SQL Query
+                    if(selectedTab === 'SQL Engine'){
+
+                        //Get the file preview from the server based on the settings.
+                        $.post(odin.SERVLET_PATH,
+                            {
+                                action: 'odinLite.uploadFiles.getH2SqlDefaultQuery',
+                                columnHeaders: JSON.stringify(odinLite_fileFormat.FILE_DATA.tsEncoded.columnHeaders)
+                            },
+                            function(data, status){
+                                if(!via.undef(data,true) && data.success === false) {
+                                    via.debug("Failure getting deault query:", data.message);
+                                    via.kendoAlert("Failure getting deault query", data.message);
+                                }else{
+                                    //Populate the default query
+                                    console.log('isSqlLoaded',isSqlLoaded);
+                                    if(!via.undef(data.defaultQuery,true) && isSqlLoaded === false) {
+                                        $('#fileFormat_dbTransfer_sqlArea').val(data.defaultQuery);
+                                        odinLite_fileFormat.defaultSQLQuery = data.defaultQuery;
+
+                                        if(!via.undef(odinLite_fileFormat.FILE_DATA.tsEncoded)) {
+                                            odinTable.createTable("fileFormat_sqlDataTable", odinLite_fileFormat.FILE_DATA.tsEncoded, "#fileFormat_dbResultGrid");
+                                            $('#fileFormat_sqlDataTable').data('kendoGrid').setOptions({
+                                                groupable: false,
+                                                height: '99%'
+                                            });
+                                            $('#odinLite_dbResultGrid').css("padding", "0");
+                                        }
+                                    }
+                                    //Update the column list
+                                    if(!via.undef(data.columnHeaders)) {
+                                        var listBox = $("#fileFormat_sqlColumnNames").data('kendoListBox');
+                                        var colArr = [];
+                                        for (var i = 0; i < data.columnHeaders.length; i++) {
+                                            colArr.push({text: data.columnHeaders[i]});
+                                        }
+                                        listBox.setDataSource(colArr);
+                                    }
+
+                                    //Style the code editor
+                                    kendo.ui.progress($('#odinLite_advancedSettingsWindow'), true);//Wait Message
+                                    setTimeout(function(){
+                                        var editor = CodeMirror.fromTextArea(document.getElementById("fileFormat_dbTransfer_sqlArea"), {
+                                            mode: "text/x-sql",
+                                            indentWithTabs: true,
+                                            smartIndent: true,
+                                            lineWrapping: true,
+                                            lineNumbers: true,
+                                            matchBrackets : true,
+                                            autofocus: true,
+                                            extraKeys: {"Ctrl-Space": "autocomplete"}
+                                        });
+                                        editor.setSize("100%", 200);
+                                        kendo.ui.progress($('#odinLite_advancedSettingsWindow'), false);//Wait Message
+                                        // store it
+                                        $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance', editor);
+
+                                        if(!via.undef(odinLite_fileFormat.sqlQuery,true)){
+                                            //Setup the saved query
+                                            editor.setValue(odinLite_fileFormat.sqlQuery);
+                                        }
+                                    },500);
+
+
+                                    isSqlLoaded = true;
+                                }
+                            },
+                            'json');
+                    }
+                },
                 value: tabName
             });
-
 /*
             if(!via.undef(selectedTab,true)) {
                 console.log('selecting ' + selectedTab);
@@ -2000,6 +2077,11 @@ var odinLite_fileFormat = {
                 odinLite_fileFormat.dataManagementPlugin = $('#fileFormat_dataManagementPlugin').data('kendoDropDownList').value();
                 odinLite_fileFormat.dataMergeOptions.timeSeries = $('#modelMapping_timeSeriesMerge').prop("checked");
                 odinLite_fileFormat.dataMergeOptions.portIndex = $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked");
+                //SQL editor
+                var codeEditor = $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance');
+                if(!via.undef(codeEditor)) {
+                    odinLite_fileFormat.sqlQuery = codeEditor.getValue();
+                }
 
                 //Close the window
                 addColumnWindow.close();
@@ -2031,6 +2113,9 @@ var odinLite_fileFormat = {
                     case 'Validate Data':
                         settingTypes = ['dataManagementPlugin','mappedColumns','staticColumns','filterRules','validationRules'];
                         break;
+                    case 'SQL Engine':
+                        settingTypes = ['dataManagementPlugin','mappedColumns','staticColumns','filterRules','validationRules','sqlQuery'];
+                        break;
                 };
 
                 //Store the temp values
@@ -2042,6 +2127,12 @@ var odinLite_fileFormat = {
                 var tmpDataMergeOptions = {};
                 tmpDataMergeOptions.timeSeries = $('#modelMapping_timeSeriesMerge').prop("checked");
                 tmpDataMergeOptions.portIndex = $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked");
+                //SQL editor
+                var tmpSqlQuery = null;
+                var codeEditor = $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance');
+                if(!via.undef(codeEditor)) {
+                    tmpSqlQuery = codeEditor.getValue();
+                }
 
                 //Reset the Advanced Setting
                 odinLite_fileFormat.mappedColumns = [];
@@ -2050,6 +2141,7 @@ var odinLite_fileFormat = {
                 odinLite_fileFormat.validationRules = [];
                 odinLite_fileFormat.dataManagementPlugin = null;
                 odinLite_fileFormat.dataMergeOptions = {};
+                odinLite_fileFormat.sqlQuery = null;
 
                 //Build the Advanced Settings
                 if($.inArray('dataManagementPlugin',settingTypes)!== -1){
@@ -2066,6 +2158,9 @@ var odinLite_fileFormat = {
                 }
                 if($.inArray('validationRules',settingTypes)!== -1){
                     odinLite_fileFormat.validationRules = $("#fileFormat_validateData_finalGrid").data('kendoGrid').dataSource.data().toJSON();
+                }
+                if($.inArray('sqlQuery',settingTypes)!== -1){
+                    odinLite_fileFormat.sqlQuery = tmpSqlQuery + "";
                 }
                 odinLite_fileFormat.dataMergeOptions.timeSeries = $('#modelMapping_timeSeriesMerge').prop("checked");
                 odinLite_fileFormat.dataMergeOptions.portIndex = $('#modelMapping_timeSeriesToPortIndexMerge').prop("checked");
@@ -2087,6 +2182,7 @@ var odinLite_fileFormat = {
                 odinLite_fileFormat.validationRules = tmpValidationRules;
                 odinLite_fileFormat.dataManagementPlugin = tmpDataManagementPlugin;
                 odinLite_fileFormat.dataMergeOptions = tmpDataMergeOptions;
+                odinLite_fileFormat.sqlQuery = tmpSqlQuery + "";
             });
 
 
@@ -2108,9 +2204,64 @@ var odinLite_fileFormat = {
             /* Validate Data */
             odinLite_fileFormat.advancedSettingsWindow_validateData();
 
+            /* SQL Query */
+            isSqlLoaded = odinLite_fileFormat.advancedSettingsWindow_sqlQuery(isSqlLoaded);
+
             //Shut off the wait
             kendo.ui.progress($("body"), false);//Wait Message
         });//End Template fetch
+    },
+
+    /**
+     * advancedSettingsWindow_sqlQuery
+     * Setup the advanced settings for SQL query
+     */
+    advancedSettingsWindow_sqlQuery: function(isSqlLoaded){
+
+        //Setup the Column List
+        $("#fileFormat_sqlColumnNames").kendoListBox({
+            dataTextField: "text",
+            dataValueField: "text",
+            dataSource: [],
+            //toolbar: {
+            //    position: "right",
+            //    tools: ["transferTo"]
+            //},
+            //change: function(e){
+            //    console.log(e);
+            //}
+        });
+
+        //Button Event
+        $('#fileFormat_dbQueryButton').click(function(){
+            kendo.ui.progress($('#odinLite_advancedSettingsWindow'), true);//Wait Message
+            var tmpSql = odinLite_fileFormat.sqlQuery;
+            var codeeditor = $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance');
+            odinLite_fileFormat.sqlQuery = codeeditor.getValue(odinLite_fileFormat.sqlQuery);
+
+            odinLite_fileFormat.updateFilePreview(function(data){
+                kendo.ui.progress($('#odinLite_advancedSettingsWindow'), false);//Wait Message
+
+                $('#fileFormat_dbResultGrid').empty();
+                if(data.success === false && !via.undef(data.message)) {
+                    var dialog = $('.k-dialog').data('kendoDialog');
+                    if (!via.undef(dialog)) {
+                        dialog.close();
+                    }
+                    $('#fileFormat_dbResultGrid').html('<div class="well" style="color:red;margin-top:5px;">'+data.message+"</div>");
+                }else if(!via.undef(data.tsEncoded)) {
+                    odinLite_fileFormat.sqlQuery = tmpSql;
+                    odinTable.createTable("fileFormat_sqlDataTable", data.tsEncoded, "#fileFormat_dbResultGrid");
+                    $('#fileFormat_sqlDataTable').data('kendoGrid').setOptions({
+                        groupable: false,
+                        height: '99%'
+                    });
+                    $('#odinLite_dbResultGrid').css("padding", "0");
+                }
+            });
+        });
+
+        return isSqlLoaded;
     },
 
     /**
@@ -2119,134 +2270,166 @@ var odinLite_fileFormat = {
      */
     getAdvancedSettingsOptions: function() {
         var advancedSettingsOptions = {};
-
-        /** Static Columns **/
-        advancedSettingsOptions.staticColumns = null;
-        if(!via.undef(odinLite_fileFormat.staticColumns,true)){
-            //Rows: List of row they added. Save in format:
-            // Template Column 1; Operation Type 1; Assign Value; Prefix Value 1; Prefix Is RegEx Format 1; Suffix Value 1; Suffix Is RegEx Format 1; Value Date Format 1;Column Operation Type 1;Column List 1|||Template Column 2; Operation Type 2; Assign Value; Prefix Value 2; Prefix Is RegEx Format 2; Suffix Value 2; Suffix Is RegEx Format 2; Value Date Format 2;Column Operation Type 2;Column List 2
-            var addString = "";
-            for(var i in odinLite_fileFormat.staticColumns) {
-                var col = odinLite_fileFormat.staticColumns[i];
-
-                //Separate
-                if(addString.length > 0){
-                    addString+="|||";
-                }
-
-                //Template Column
-                addString += (via.undef(col.columnName)?"":col.columnName) + ";";
-
-                //Operation Type
-                addString += (via.undef(col.columnType)?"":col.columnType) + ";";
-
-                //Data Type
-                addString += (via.undef(col.dataType)?"":col.dataType) + ";";
-
-                //Assign Value
-                addString += (via.undef(col.value)?"":col.value) + ";";
-
-                //Prefix Value
-                addString += (via.undef(col.prefix)?"":col.prefix) + ";";
-
-                //Prefix Is RegEx Format
-                addString += (via.undef(col.prefixRegex)?"false":col.prefixRegex) + ";";
-
-                //Suffix Value
-                addString += (via.undef(col.suffix)?"":col.suffix) + ";";
-
-                //Suffix Is RegEx Format
-                addString += (via.undef(col.suffixRegex)?"false":col.suffixRegex) + ";";
-
-                //Value Date Format
-                addString += (via.undef(col.dateFormat)?"":col.dateFormat) + ";";
-
-                //Column Operation Type
-                addString += (via.undef(col.operationType)?"":col.operationType) + ";";
-
-                //Column List
-                addString += (via.undef(col.columnList)?"":col.columnList);
-            }
-            advancedSettingsOptions.staticColumns = addString;
-        }
-
-
-
-        /** Mapped Columns **/
-        advancedSettingsOptions.mappedColumns = null;
-        if(!via.undef(odinLite_fileFormat.mappedColumns,true)){
-            //Data Column 1;Template Column 1;Data Type 1;Date Format 1|||Data Column 2;Template Column 2;Data Type 2;Date Format 2
-            var mapString = "";
-            for(var i in odinLite_fileFormat.mappedColumns){
-                var col = odinLite_fileFormat.mappedColumns[i];
-                if(mapString.length > 0){
-                    mapString+="|||";
-                }
-                //Column and template col
-                mapString += col.dataColumn +";"+ col.templateColumn;
-                //Data Type
-                mapString += ";";
-                mapString += ((via.undef(col.dataType,true))?"":col.dataType);
-                //Date Format
-                mapString += ";";
-                mapString += ((via.undef(col.dateFormat,true))?"":col.dateFormat);
-            }
-            advancedSettingsOptions.mappedColumns = mapString;
-        }
-
-        /** Data Merge Options **/
+        //Add Column
+        advancedSettingsOptions.staticColumns = JSON.stringify(odinLite_fileFormat.staticColumns);
+        //Map Column
+        advancedSettingsOptions.mappedColumns = JSON.stringify(odinLite_fileFormat.mappedColumns);
+        //Data Merge Options
         advancedSettingsOptions.dataMergeTimeSeries = false;
         advancedSettingsOptions.dataMergePortfolioIndexed = false;
         if(!via.undef(odinLite_fileFormat.dataMergeOptions,true)){
             advancedSettingsOptions.dataMergeTimeSeries = via.undef(odinLite_fileFormat.dataMergeOptions.timeSeries,true)?false:odinLite_fileFormat.dataMergeOptions.timeSeries;
             advancedSettingsOptions.dataMergePortfolioIndexed = via.undef(odinLite_fileFormat.dataMergeOptions.portIndex,true)?false:odinLite_fileFormat.dataMergeOptions.portIndex;
         }
-
-        /** Data Management Plugin **/
+        //Data Management Plugin
         advancedSettingsOptions.dataManagementPlugin = null;
         if(!via.undef(odinLite_fileFormat.dataManagementPlugin,true)){
             advancedSettingsOptions.dataManagementPlugin = odinLite_fileFormat.dataManagementPlugin;
         }
-
-        /** Filter Rules **/
-        advancedSettingsOptions.filterRules = null;
-        if(!via.undef(odinLite_fileFormat.filterRules,true)){
-            //[Where Clause Type 1; Data Column 1;  Date Type 1; Operation 1; Comparison Type 1; Comparison Value 1; Comparison Column 1][Where Clause Type 2; Data Column 2; ; Date Type 2; Operation 2; Comparison Type 2; Comparison Value 2; Comparison Column 2]
-            var filterString = "";
-            for(var i in odinLite_fileFormat.filterRules){
-                //Seperate
-                if(i>0){
-                    filterString += "|||";
-                }
-                filterString += odinLite_fileFormat.filterRules[i].whereClause;
-            }
-            advancedSettingsOptions.filterRules = filterString;
+        //Filter Rules
+        advancedSettingsOptions.filterRules = JSON.stringify(odinLite_fileFormat.filterRules);
+        //Validation Rules
+        advancedSettingsOptions.validationRules = JSON.stringify(odinLite_fileFormat.validationRules);
+        //SQL Query
+        if(odinLite_fileFormat.sqlQuery !== odinLite_fileFormat.defaultSQLQuery) {
+            advancedSettingsOptions.sqlQuery = odinLite_fileFormat.sqlQuery;
         }
-
-        /** Validation Rules **/
-        advancedSettingsOptions.validationRules = null;
-        if(!via.undef(odinLite_fileFormat.validationRules,true)){
-            var validationString = "";
-            for(var i in odinLite_fileFormat.validationRules){
-                //Seperate
-                if(i>0){
-                    validationString += "|||";
-                }
-                //Add the where clause
-                validationString += odinLite_fileFormat.validationRules[i].whereClause;
-
-                //Add the Validation rules.
-                validationString += ":::";
-                validationString += odinLite_fileFormat.validationRules[i].validationOperation + ";";
-                validationString += odinLite_fileFormat.validationRules[i].validationColumn + ";";
-                validationString += (via.undef(odinLite_fileFormat.validationRules[i].validationValue,true))?";":(odinLite_fileFormat.validationRules[i].validationValue + ";");
-                validationString += (via.undef(odinLite_fileFormat.validationRules[i].validationFetchColumn,true))?";":(odinLite_fileFormat.validationRules[i].validationFetchColumn);
-            }
-            advancedSettingsOptions.validationRules = validationString;
-        }
-
+console.log('advancedSettingsOptions',advancedSettingsOptions);
         return advancedSettingsOptions;
     },
+
+
+    //getAdvancedSettingsOptionsOLD: function() {
+    //    var advancedSettingsOptions = {};
+    //
+    //    /** Static Columns **/
+    //    advancedSettingsOptions.staticColumns = null;
+    //    if(!via.undef(odinLite_fileFormat.staticColumns,true)){
+    //        //Rows: List of row they added. Save in format:
+    //        // Template Column 1; Operation Type 1; Assign Value; Prefix Value 1; Prefix Is RegEx Format 1; Suffix Value 1; Suffix Is RegEx Format 1; Value Date Format 1;Column Operation Type 1;Column List 1|||Template Column 2; Operation Type 2; Assign Value; Prefix Value 2; Prefix Is RegEx Format 2; Suffix Value 2; Suffix Is RegEx Format 2; Value Date Format 2;Column Operation Type 2;Column List 2
+    //        var addString = "";
+    //        for(var i in odinLite_fileFormat.staticColumns) {
+    //            var col = odinLite_fileFormat.staticColumns[i];
+    //
+    //            //Separate
+    //            if(addString.length > 0){
+    //                addString+="|||";
+    //            }
+    //
+    //            //Template Column
+    //            addString += (via.undef(col.columnName)?"":col.columnName) + ";";
+    //
+    //            //Operation Type
+    //            addString += (via.undef(col.columnType)?"":col.columnType) + ";";
+    //
+    //            //Data Type
+    //            addString += (via.undef(col.dataType)?"":col.dataType) + ";";
+    //
+    //            //Assign Value
+    //            addString += (via.undef(col.value)?"":col.value) + ";";
+    //
+    //            //Prefix Value
+    //            addString += (via.undef(col.prefix)?"":col.prefix) + ";";
+    //
+    //            //Prefix Is RegEx Format
+    //            addString += (via.undef(col.prefixRegex)?"false":col.prefixRegex) + ";";
+    //
+    //            //Suffix Value
+    //            addString += (via.undef(col.suffix)?"":col.suffix) + ";";
+    //
+    //            //Suffix Is RegEx Format
+    //            addString += (via.undef(col.suffixRegex)?"false":col.suffixRegex) + ";";
+    //
+    //            //Value Date Format
+    //            addString += (via.undef(col.dateFormat)?"":col.dateFormat) + ";";
+    //
+    //            //Column Operation Type
+    //            addString += (via.undef(col.operationType)?"":col.operationType) + ";";
+    //
+    //            //Column List
+    //            addString += (via.undef(col.columnList)?"":col.columnList);
+    //        }
+    //        advancedSettingsOptions.staticColumns = addString;
+    //    }
+    //
+    //
+    //
+    //    /** Mapped Columns **/
+    //    advancedSettingsOptions.mappedColumns = null;
+    //    if(!via.undef(odinLite_fileFormat.mappedColumns,true)){
+    //        //Data Column 1;Template Column 1;Data Type 1;Date Format 1|||Data Column 2;Template Column 2;Data Type 2;Date Format 2
+    //        var mapString = "";
+    //        for(var i in odinLite_fileFormat.mappedColumns){
+    //            var col = odinLite_fileFormat.mappedColumns[i];
+    //            if(mapString.length > 0){
+    //                mapString+="|||";
+    //            }
+    //            //Column and template col
+    //            mapString += col.dataColumn +";"+ col.templateColumn;
+    //            //Data Type
+    //            mapString += ";";
+    //            mapString += ((via.undef(col.dataType,true))?"":col.dataType);
+    //            //Date Format
+    //            mapString += ";";
+    //            mapString += ((via.undef(col.dateFormat,true))?"":col.dateFormat);
+    //        }
+    //        advancedSettingsOptions.mappedColumns = mapString;
+    //    }
+    //
+    //    /** Data Merge Options **/
+    //    advancedSettingsOptions.dataMergeTimeSeries = false;
+    //    advancedSettingsOptions.dataMergePortfolioIndexed = false;
+    //    if(!via.undef(odinLite_fileFormat.dataMergeOptions,true)){
+    //        advancedSettingsOptions.dataMergeTimeSeries = via.undef(odinLite_fileFormat.dataMergeOptions.timeSeries,true)?false:odinLite_fileFormat.dataMergeOptions.timeSeries;
+    //        advancedSettingsOptions.dataMergePortfolioIndexed = via.undef(odinLite_fileFormat.dataMergeOptions.portIndex,true)?false:odinLite_fileFormat.dataMergeOptions.portIndex;
+    //    }
+    //
+    //    /** Data Management Plugin **/
+    //    advancedSettingsOptions.dataManagementPlugin = null;
+    //    if(!via.undef(odinLite_fileFormat.dataManagementPlugin,true)){
+    //        advancedSettingsOptions.dataManagementPlugin = odinLite_fileFormat.dataManagementPlugin;
+    //    }
+    //
+    //    /** Filter Rules **/
+    //    advancedSettingsOptions.filterRules = null;
+    //    if(!via.undef(odinLite_fileFormat.filterRules,true)){
+    //        //[Where Clause Type 1; Data Column 1;  Date Type 1; Operation 1; Comparison Type 1; Comparison Value 1; Comparison Column 1][Where Clause Type 2; Data Column 2; ; Date Type 2; Operation 2; Comparison Type 2; Comparison Value 2; Comparison Column 2]
+    //        var filterString = "";
+    //        for(var i in odinLite_fileFormat.filterRules){
+    //            //Seperate
+    //            if(i>0){
+    //                filterString += "|||";
+    //            }
+    //            filterString += odinLite_fileFormat.filterRules[i].whereClause;
+    //        }
+    //        advancedSettingsOptions.filterRules = filterString;
+    //    }
+    //
+    //    /** Validation Rules **/
+    //    advancedSettingsOptions.validationRules = null;
+    //    if(!via.undef(odinLite_fileFormat.validationRules,true)){
+    //        var validationString = "";
+    //        for(var i in odinLite_fileFormat.validationRules){
+    //            //Seperate
+    //            if(i>0){
+    //                validationString += "|||";
+    //            }
+    //            //Add the where clause
+    //            validationString += odinLite_fileFormat.validationRules[i].whereClause;
+    //
+    //            //Add the Validation rules.
+    //            validationString += ":::";
+    //            validationString += odinLite_fileFormat.validationRules[i].validationOperation + ";";
+    //            validationString += odinLite_fileFormat.validationRules[i].validationColumn + ";";
+    //            validationString += (via.undef(odinLite_fileFormat.validationRules[i].validationValue,true))?";":(odinLite_fileFormat.validationRules[i].validationValue + ";");
+    //            validationString += (via.undef(odinLite_fileFormat.validationRules[i].validationFetchColumn,true))?";":(odinLite_fileFormat.validationRules[i].validationFetchColumn);
+    //        }
+    //        advancedSettingsOptions.validationRules = validationString;
+    //    }
+    //
+    //    console.log("advancedSettingsOptions old",advancedSettingsOptions);
+    //    return advancedSettingsOptions;
+    //},
 
     /**
      * saveSettings
@@ -2266,16 +2449,17 @@ var odinLite_fileFormat = {
             textQualifier:JSON.stringify(formattingObj.textQualifier),
 
             //Save the Advanced Settings
-            staticColumns: JSON.stringify(odinLite_fileFormat.staticColumns),
-            mappedColumns: JSON.stringify(odinLite_fileFormat.mappedColumns),
-            dataMergeOptions: JSON.stringify(odinLite_fileFormat.dataMergeOptions),
-            dataManagementPlugin: odinLite_fileFormat.dataManagementPlugin,
-            filterRules: JSON.stringify(odinLite_fileFormat.filterRules),
-            validationRules: JSON.stringify(odinLite_fileFormat.validationRules)
+            //staticColumns: JSON.stringify(odinLite_fileFormat.staticColumns),
+            //mappedColumns: JSON.stringify(odinLite_fileFormat.mappedColumns),
+            //dataMergeOptions: JSON.stringify(odinLite_fileFormat.dataMergeOptions),
+            //dataManagementPlugin: odinLite_fileFormat.dataManagementPlugin,
+            //filterRules: JSON.stringify(odinLite_fileFormat.filterRules),
+            //validationRules: JSON.stringify(odinLite_fileFormat.validationRules)
         };
+        $.extend(saveJson,odinLite_fileFormat.getAdvancedSettingsOptions());
 
-        console.log('saveJson',saveJson);
-        console.log('saveJsonStr',JSON.stringify(saveJson));
+        //console.log('saveJson',saveJson);
+        //console.log('saveJsonStr',JSON.stringify(saveJson));
         via.saveWindow(odin.ODIN_LITE_APP_ID,odinLite_modelCache.currentEntity.saveId,JSON.stringify(saveJson),null,true);
     },
 
@@ -2299,6 +2483,7 @@ var odinLite_fileFormat = {
             via.kendoAlert("Load Error","Report not found.");
             return;
         }
+        //console.log('loadJson',loadJson);
 
         //Display the name of the report.
         odinLite_fileFormat.loadedReport = null;
@@ -2321,11 +2506,15 @@ var odinLite_fileFormat = {
         //Load the Advanced Settings
         odinLite_fileFormat.staticColumns = JSON.parse(loadJson.staticColumns);
         odinLite_fileFormat.mappedColumns = JSON.parse(loadJson.mappedColumns);
-        odinLite_fileFormat.dataMergeOptions = JSON.parse(loadJson.dataMergeOptions);
+        odinLite_fileFormat.dataMergeOptions = {};
+        odinLite_fileFormat.dataMergeOptions.portIndex = via.undef(loadJson.dataMergePortfolioIndexed,true)?false:JSON.parse(loadJson.dataMergePortfolioIndexed);
+        odinLite_fileFormat.dataMergeOptions.timeSeries = via.undef(loadJson.dataMergeTimeSeries,true)?false:JSON.parse(loadJson.dataMergeTimeSeries);
         odinLite_fileFormat.dataManagementPlugin = loadJson.dataManagementPlugin;
         odinLite_fileFormat.filterRules = JSON.parse(loadJson.filterRules);
         odinLite_fileFormat.validationRules = JSON.parse(loadJson.validationRules);
+        odinLite_fileFormat.sqlQuery = loadJson.sqlQuery;
 
+        console.log(odinLite_fileFormat);
 
         //Set the formatting
         odinLite_fileFormat.setFormattingOptions();
@@ -2342,7 +2531,6 @@ var odinLite_fileFormat = {
      */
     initFilePreview: function(overrideInitialValues){
         kendo.ui.progress($("body"), true);//Wait Message
-
         //Show the panel
         $('#fileFormatPanel').fadeIn();
 
@@ -2440,8 +2628,9 @@ var odinLite_fileFormat = {
         //Setup the file drop down list - sheets or files.
         var dropDownList = odinLite_fileFormat.FILE_DATA.localFiles;//Default to files
         //Check for sheets
-        if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames) && odinLite_fileFormat.FILE_DATA.sheetNames.length > 1
-            && odinLite_fileFormat.FILE_DATA.files.length === 1){
+        //if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames) && odinLite_fileFormat.FILE_DATA.sheetNames.length > 1
+        //    && odinLite_fileFormat.FILE_DATA.files.length === 1){
+        if(odinLite_fileFormat.isMultiSheet === true){
             dropDownList = odinLite_fileFormat.FILE_DATA.sheetNames;
         }
         var fileData = [];
@@ -2592,9 +2781,9 @@ var odinLite_fileFormat = {
                     $("#import_fileFormat_spreadsheet .k-link").prop( "disabled", true );
                 }
 
-                //Callback function - used in model mapping
+                //Callback function - used in model mapping and in sql
                 if(!via.undef(callbackFn)) {
-                    callbackFn();
+                    callbackFn(data);
                 }
             },
             'text');
@@ -2879,12 +3068,19 @@ var odinLite_fileFormat = {
             return;
         }
 
+        var files = null;
+        if(odinLite_fileFormat.isMultiSheet === true){
+            files = odinLite_fileFormat.FILE_DATA.sheetNames;
+        }else{
+            files = odinLite_fileFormat.FILE_DATA.localFiles;
+        }
+
         //Get the file preview from the server based on the settings.
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.uploadFiles.testFileNameExtract',
                 settings: JSON.stringify(colObject),
-                fileJson: JSON.stringify(odinLite_fileFormat.FILE_DATA.localFiles)
+                fileJson: JSON.stringify(files)
             },
             function(data, status){
                 data = JSON.parse(data);
@@ -2892,12 +3088,13 @@ var odinLite_fileFormat = {
                     via.debug("Failure getting filename extract:", data.message);
                     via.kendoAlert("Failure getting filename extract", data.message);
                 }else{
+                    var idx = $('#fileFormat_fileList').data('kendoDropDownList').value();
                     if(!via.undef(data.fileNameExtract)){
-                        var fileNames = data.fileNameExtract.join(", ");
-                        via.kendoAlert("File Name Extract",fileNames);
+                        //var fileNames = data.fileNameExtract.join(", ");
+                        via.kendoAlert("File Name Extract",data.fileNameExtract[idx]);
                     }else if(!via.undef(data.dateFileNameExtract)){
-                        var fileNames = data.dateFileNameExtract.join(", ");
-                        via.kendoAlert("File Name Extract",fileNames);
+                        //var fileNames = data.dateFileNameExtract.join(", ");
+                        via.kendoAlert("File Name Extract",data.dateFileNameExtract[idx]);
                     }else{
                         via.kendoAlert("File Name Extract","No data contasined in extract.");
                     }

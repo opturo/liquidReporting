@@ -1,35 +1,39 @@
-<div id="odinLite_dbSettingsWindow" style="overflow:hidden;">
-	<form class="form-inline" id="odinLite_dbTransferWindow_form">
-		<!-- Type -->
-		<label style="margin-top:5px;" for="odinLite_database_type" class="tr">Database Type:</label><br/>
-		<select id="odinLite_database_type" name="type" style="width:100%">
-			<option value="sqlserver">Microsoft SQL Server</option>
-			<option value="mysql">MySQL</option>
-			<option value="oracle">Oracle</option>
-            <option value="db2">DB2</option>
-		</select>
-		<!-- Host -->
-	 	<label for="odinLite_database_server" class="tr">Database Server Address:</label><br/>
-	 	<input required=true id="odinLite_database_server" name="server" class="k-textbox" style="width:100%"/>
-		<!-- Port -->
-		<label style="margin-top:5px;" for="odinLite_database_port" class="tr">Database Port:</label><br/>
-		<input id="odinLite_database_port" class="k-textbox" name="port" style="width:100%"/>
-		<!-- Instance -->
-		<label for="odinLite_database_instance" class="tr">Database Instance:</label><br/>
-		<input id="odinLite_database_instance" name="instance" class="k-textbox" style="width:100%"/>
-		<!-- User -->
-		<label style="margin-top:5px;" for="odinLite_database_user" class="tr">Database User:</label><br/>
-		<input required=true id="odinLite_database_user" class="k-textbox" name="user" style="width:100%"/>
-		<!-- Password -->
-		<label style="margin-top:5px;" for="odinLite_database_password" class="tr">Database Password:</label><br/>
-		<input type="password" id="odinLite_database_password" name="password" class="k-textbox" style="width:100%"/>
-	</form>
+<div class="panel panel-default">
+    <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - <span class="import_dbName"></span> Settings</strong></div>
+    <div id="odinLite_dbSettingsWindow" class="panel-body" style="overflow:hidden;margin:10px;">
+        <form class="form-inline" id="odinLite_dbTransferWindow_form">
+            <!-- Type -->
+            <input required=true id="odinLite_database_type" name="type" type="hidden" value=""/>
+            <!--<label style="margin-top:5px;" for="odinLite_database_type" class="tr">Database Type:</label><br/>
+            <select id="odinLite_database_type" name="type" style="width:100%;">
+                <option value="sqlserver">Microsoft SQL Server</option>
+                <option value="mysql">MySQL</option>
+                <option value="oracle">Oracle</option>
+                <option value="db2">DB2</option>
+            </select>-->
+            <!-- Host -->
+            <label for="odinLite_database_server" class="tr">Database Server Address:</label><br/>
+            <input required=true id="odinLite_database_server" name="server" class="k-textbox" style="width:100%"/>
+            <!-- Port -->
+            <label style="margin-top:5px;" for="odinLite_database_port" class="tr">Database Port:</label><br/>
+            <input id="odinLite_database_port" class="k-textbox" name="port" style="width:100%"/>
+            <!-- Instance -->
+            <label for="odinLite_database_instance" class="tr">Database Instance:</label><br/>
+            <input id="odinLite_database_instance" name="instance" class="k-textbox" style="width:100%"/>
+            <!-- User -->
+            <label style="margin-top:5px;" for="odinLite_database_user" class="tr">Database User:</label><br/>
+            <input required=true id="odinLite_database_user" class="k-textbox" name="user" style="width:100%"/>
+            <!-- Password -->
+            <label style="margin-top:5px;" for="odinLite_database_password" class="tr">Database Password:</label><br/>
+            <input type="password" id="odinLite_database_password" name="password" class="k-textbox" style="width:100%"/>
+        </form>
 
-	<button type="button" onclick="odinLite_uploadFiles.loadDatabaseSettingsWindow();" style="margin:10px 10px 10px 0;" title="Load Settings" class="tr btn btn-primary">
-		<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
-	</button>
-	<button type="button" onclick="odinLite_uploadFiles.saveDatabaseSettingsWindow();" style="margin:10px 10px 10px 0;" title="Save Settings" class="tr btn btn-primary">
-		<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-	</button>
-	<button type="button" style="float:right;margin-top:10px;" class="tr btn btn-success  odinLite_dbTransfer_connect">Connect</button>
+        <button type="button" onclick="odinLite_uploadFiles.loadDatabaseSettingsWindow();" style="margin:10px 10px 10px 0;" title="Load Settings" class="tr btn btn-primary">
+            <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+        </button>
+        <button type="button" onclick="odinLite_uploadFiles.saveDatabaseSettingsWindow();" style="margin:10px 10px 10px 0;" title="Save Settings" class="tr btn btn-primary">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+        </button>
+        <button type="button" style="float:right;margin-top:10px;" class="tr btn btn-success  odinLite_dbTransfer_connect">Connect</button>
+    </div>
 </div>

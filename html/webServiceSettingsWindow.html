@@ -1,0 +1,18 @@
+<div class="panel panel-default">
+    <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - <span class="import_webServiceName">Web Service </span> Settings</strong></div>
+    <div id="odinLite_webServiceSettingsWindow" class="panel-body" style="overflow:hidden;margin:10px;">
+        <form class="form-inline" id="odinLite_webServiceTransferWindow_form">
+            <!-- URL -->
+            <label for="odinLite_webService_url" class="tr">Web Service URL:</label><br/>
+            <input required=true id="odinLite_webService_url" name="url" class="k-textbox" style="width:100%"/>
+        </form>
+
+        <button type="button" onclick="odinLite_uploadFiles.loadWebServiceSettingsWindow();" style="margin:10px 10px 10px 0;" title="Load Settings" class="tr btn btn-primary">
+            <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+        </button>
+        <button type="button" onclick="odinLite_uploadFiles.saveWebServiceSettingsWindow();" style="margin:10px 10px 10px 0;" title="Save Settings" class="tr btn btn-primary">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+        </button>
+        <button type="button" style="float:right;margin-top:10px;" class="tr btn btn-success  odinLite_webServiceTransfer_connect">Connect</button>
+    </div>
+</div>

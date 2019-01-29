@@ -443,7 +443,6 @@ var odinLite_modelMapping = {
         $.post(odin.SERVLET_PATH,
             serverParams,
             function(data, status){
-                console.log("done",data);
                 odin.progressBar(null,100,null,true);
                 clearInterval(intervalId);
                 if(!via.undef(data,true) && data.success === false){
@@ -472,9 +471,7 @@ var odinLite_modelMapping = {
                 action: 'odinLite.modelMapping.getCurrentProgress'
             },
             function(data){
-                console.log('getCurrentProgress',data);
                 if(!via.undef(data) && !via.undef(data.currentProgress)){
-                    console.log('here');
                     odin.progressBar("Persisting Data",data.currentProgress[1],data.currentProgress[0]);
                 }
             },
