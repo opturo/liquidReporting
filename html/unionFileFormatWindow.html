@@ -1,0 +1,115 @@
+<div id="odinLite_unionFileFormatWindow" style="">
+    <!-- Spreadsheet -->
+    <div class="col-md-1"></div>
+    <!-- Used for spacing. -->
+    <div class="col-md-10">
+        <div class="panel panel-default">
+            <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Format</strong> <span class="applicationAndModelName"></span> <span style="margin-left:10px;" class="fileFormat_reportName"></span>
+            </div>
+            <div class="panel-body" style="margin:10px;">
+                <form class="formattingForm">
+                    <p class="tr settingText">
+                        The settings below let you determine the format of your files. Check the preview below and adjust the settings as needed.
+                    </p>
+                    <div class="bs-callout bs-callout-info delimiterPanel" style="display:none;">
+                        <h4 class="tr">File Delimiter</h4>
+                        <div class="k-content">
+                            <b class="tr">Choose the data delimiter in your file:</b>
+                            <ul class="fieldlist" >
+                                <li style="list-style: none;">
+                                    <input type="radio" name="delimiterType" value="tab" class="delimiterTab k-radio" checked="checked"/>
+                                    <label class="tr k-radio-label" style="font-size:small">Tab</label>
+                                </li>
+                                <li style="list-style: none;">
+                                    <input type="radio" name="delimiterType" value=";" class="delimiterSemicolon k-radio"/>
+                                    <label class="tr k-radio-label" style="font-size:small">Semicolon (;)</label>
+                                </li>
+                                <li style="list-style: none;">
+                                    <input type="radio" name="delimiterType" value="," class="delimiterComma k-radio"/>
+                                    <label class="tr k-radio-label" style="font-size:small">Comma (,)</label>
+                                </li>
+                                <li style="list-style: none;">
+                                    <input type="radio" name="delimiterType" value="space" class="delimiterSpace k-radio"/>
+                                    <label class="tr k-radio-label" style="font-size:small">Space</label>
+                                </li>
+                                <li style="list-style: none;">
+                                    <input type="radio" name="delimiterType" value="|" class="delimiterPipe k-radio"/>
+                                    <label class="tr k-radio-label" style="font-size:small">Pipe (|)</label>
+                                </li>
+                                <li style="list-style: none;">
+                                    <input type="radio" name="delimiterType" value="other" class="delimiterOther k-radio"/>
+                                    <label class="tr k-radio-label" style="font-size:small">Other: <input class="k-textbox delimiterOther_textBox" type="text" name="delimiterOther_textBox" style="width:35px;" /></label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bs-callout bs-callout-info settingsPanel">
+                        <h4 class="tr" style="margin-bottom:10px;">File Formatting</h4>
+                        <div class="row">
+                            <div class="col-md-6" style="margin-bottom:10px;">
+                                <label style="font-size:small;width: 140px;" class="tr">Has Column Headers: </label><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('COLUMN_HEADERS','Column Headers');">
+                                <input type="checkbox" name="columnHeaders" class="columnHeaders" style="margin-bottom:10px;" checked />
+                            </div>
+
+                            <div class="col-md-5" style="margin-bottom:10px;height:25px;">
+                                <div class="textQualifierBox">
+                                    <label style="margin-bottom:10px;font-size:small;width: 150px;" class="tr">Text Qualifier: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TEXT_QUALIFIER','Text Qualifier');"></label>
+                                    <input name="textQualifier" type="text" class="textQualifier k-textbox" style="width: 75px;" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" style="margin-bottom:10px;">
+                                <label style="font-size:small;width: 150px;" class="tr">Start Row: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('START_ROW','Start Row');"></label>
+                                <input name="startRow" class="startRow" style="width: 75px;" value="1" />
+                            </div>
+
+                            <div class="col-md-5" style="margin-bottom:10px;">
+                                <label style="font-size:small;width: 150px;" class="tr">End Row: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('END_ROW','End Row');"></label>
+                                <input name="endRow" class="endRow" style="width: 75px;" value="" />
+                            </div>
+
+                            <div class="col-md-6" style="margin-bottom:10px;">
+                                <label style="font-size:small;width: 150px;" class="tr">Start Column: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('START_COLUMN','Start Column');"></label>
+                                <input name="startColumn" class="startColumn" style="width: 75px;" value="1"/>
+                            </div>
+
+                            <div class="col-md-5" style="margin-bottom:10px;">
+                                <label style="font-size:small;width: 150px;" class="tr">End Column: <img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('END_COLUMN','End Column');"></label>
+                                <input name="endColumn" class="endColumn" style="width: 75px;" value="0"/>
+                            </div>
+
+
+                            <!-- Button Row -->
+                            <div style="clear:both;">
+                                <button title="Update Preview" style="float:right;margin:10px 0 0 0;" type="button" class="tr btn btn-success updatePreviewButton"><i class="fa fa-refresh"></i> Update Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bs-callout bs-callout-info row">
+                        <div class="col-md-3" >
+                            <h4 class="tr">Data Preview <button title="Update Preview" style="margin:0;" type="button" class="tr btn btn-success btn-xs updatePreviewButton"><i class="fa fa-refresh"></i></button></h4>
+                        </div>
+
+                        <!-- Adding a static Column -->
+                        <div class="col-md-3" >
+                            <label>Rows: </label><input class="import_rows" style="width:105px;margin-left:5px;" />
+                            <span class="import_totalRows"></span>
+                        </div>
+
+                        <div class="col-md-4" >
+                            <button title="Download File" style="float:right;margin-left:4px;position:relative;top:5px;" type="button" class="tr btn btn-success btn-xs downloadButton"><i class="fa fa-file-excel-o"></i></button>
+                            <input style="float:right;width:300px;" class="fileList"/>
+                        </div>
+                        <div class="col-md-12" style="margin-top:10px;">
+                            <div class="import_spreadsheet" style="height:300px;width:100%;"></div>
+                        </div>
+                    </div>
+
+                    <button type="button" style="" onclick="odinLite_unionFiles.acceptUnionFileFormat();" class="tr pull-right btn btn-success unionFiles_addUnionFile"><i class="fa fa-plus"></i> Accept Format</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Used for spacing. -->
+    <div class="col-md-1"></div>
+</div>

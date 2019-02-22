@@ -1,0 +1,50 @@
+<div id="odinLite_unionRowHeaderWindow" style="overflow:hidden;">
+    <div>
+        <div style="width:400px;float:left;">
+            <div class="panel panel-default" style="margin-left:10px;">
+                <div class="tr panel-heading"><img src="../images/16_file.png"/> Original File</span>
+                </div>
+                <div class="panel-body">
+                    <img src="../images/arrow-left2right.png" alt="drag-indicator" style="padding: 8px 0 5px 0;margin-left:135px;"/>
+                    <br />
+                    <select id="originalRowHeaders_unselected"></select>
+                    <select id="originalRowHeaders_selected"></select>
+                    <label for="originalRowHeaders_unselected">Unselected</label>
+                    <label for="originalRowHeaders_selected" style="margin-left:99px;">Selected</label>
+                    <br />
+                    <img src="../images/arrow-right2left.png" alt="drag-indicator" style="padding-top:5px;clear:both;margin-left:135px;"/>
+                </div>
+            </div>
+        </div>
+        <div style="width:400px;float:left;">
+            <div class="panel panel-default" style="margin-left:10px;">
+                <div class="tr panel-heading"><img src="../images/16_file.png"/> Union File</span>
+                </div>
+                <div class="panel-body">
+                    <img src="../images/arrow-left2right.png" alt="drag-indicator" style="padding: 8px 0 5px 0;margin-left:135px;"/>
+                    <br />
+                    <select id="unionRowHeaders_unselected"></select>
+                    <select id="unionRowHeaders_selected"></select>
+                    <label for="unionRowHeaders_unselected">Unselected</label>
+                    <label for="unionRowHeaders_selected" style="margin-left:99px;">Selected</label>
+                    <br />
+                    <img src="../images/arrow-right2left.png" alt="drag-indicator" style="padding-top:5px;clear:both;margin-left:135px;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5" style="margin-left:15px;margin-bottom:10px;">
+            <label style="font-size:small;width: 100px;" class="tr">Inner Join: </label>
+            <input type="checkbox" name="innerJoin" class="innerJoin" style="margin-bottom:10px;" checked />
+        </div>
+        <div class="col-md-5" style="margin-left:15px;margin-bottom:10px;">
+            <label style="font-size:small;width: 100px;" class="tr">Override Value: </label>
+            <input type="checkbox" name="overrideValue" class="overrideValue" style="margin-bottom:10px;" checked />
+        </div>
+    </div>
+    <!-- Buttons -->
+    <p style="clear:both;margin-top:5px;">
+        <button type="button" style="margin-right:12px;" onclick="odinLite_unionFiles.completeUnion();" class="tr pull-right btn btn-success unionFiles_completeUnion"><i class="fa fa-plus"></i> Complete Union</button>
+    </p>
+</div>

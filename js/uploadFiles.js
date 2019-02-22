@@ -20,7 +20,14 @@ var odinLite_uploadFiles = {
      * init
      * This will initialize ODIN Lite Upload Files and set it up
      */
-    init: function () {
+    init: function (isUnionFile) {
+        if(!via.undef(isUnionFile) && isUnionFile===true) {
+            $('.upload_unionFileLabel').show();
+        }else{
+            $('.upload_unionFileLabel').hide();
+            odinLite_fileFormat.isUnionFile = false;
+        }
+
         kendo.ui.progress($("body"), true);//Wait Message
 
         //Make the call to get the settings for the platform
@@ -43,19 +50,21 @@ var odinLite_uploadFiles = {
                     odinLite_uploadFiles.maxSingleFile = via.getReadableFileSizeString(data.maxSingleFile);
                     odinLite_uploadFiles.maxTotalFiles = via.getReadableFileSizeString(data.maxTotalFiles);
 
-                    //Extension
-                    if (!via.undef(data.fileSelectionCriteria, true)) {
-                        var idx = data.fileSelectionCriteria.lastIndexOf(".");
-                        data.fileSelectionCriteria = data.fileSelectionCriteria.substring(idx);
-                        odinLite_uploadFiles.fileExtension = data.fileSelectionCriteria;
-                    }else{
-                        odinLite_uploadFiles.fileExtension = null;
-                    }
-                    //Save Report
-                    if (!via.undef(data.fileFormatReportSetting)) {
-                        odinLite_uploadFiles.fileSavedReport = data.fileFormatReportSetting;
-                    } else {
-                        odinLite_uploadFiles.fileSavedReport = null;
+                    //Extension - don't worry about if a union file
+                    if(odinLite_fileFormat.isUnionFile === false) {
+                        if (!via.undef(data.fileSelectionCriteria, true)) {
+                            var idx = data.fileSelectionCriteria.lastIndexOf(".");
+                            data.fileSelectionCriteria = data.fileSelectionCriteria.substring(idx);
+                            odinLite_uploadFiles.fileExtension = data.fileSelectionCriteria;
+                        } else {
+                            odinLite_uploadFiles.fileExtension = null;
+                        }
+                        //Save Report
+                        if (!via.undef(data.fileFormatReportSetting)) {
+                            odinLite_uploadFiles.fileSavedReport = data.fileFormatReportSetting;
+                        } else {
+                            odinLite_uploadFiles.fileSavedReport = null;
+                        }
                     }
 
                     //init ui and reset if it was accessed before.
@@ -133,9 +142,8 @@ var odinLite_uploadFiles = {
                 select: function(e){
                     var dataItem = this.dataItem(e.node);
                     if(dataItem.hasChildren === true){
-                        var treeControl = $(this).data("kendoTreeView");
-                        treeControl .select().find("span.k-state-selected")
-                            .removeClass("k-state-selected");
+                        //$(".k-state-selected")
+                            //.removeClass("k-state-selected");
                         return;
                     }
 
@@ -173,6 +181,7 @@ var odinLite_uploadFiles = {
                     }
                 }
             }).data('kendoTreeView');
+
             //Style the tree
             $.each($('.importTypesTree li'), function() {
                 var node = treeview.dataItem($(this));
@@ -289,6 +298,11 @@ var odinLite_uploadFiles = {
                 } catch (e) {
                 }
             }
+            //Reset selection
+            var treeview = $(".importTypesTree").data('kendoTreeView');
+            var node = treeview.findByText("Local Computer");
+            treeview.select(node);
+            treeview.trigger( 'select', {node: node} );
         }
     },
 
@@ -393,13 +407,13 @@ var odinLite_uploadFiles = {
                     } else {//Success - Files Uploaded
                         via.debug("Files Uploaded Successfully:", data);
 
-                        odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
-
                         $('#cancelUploadButton').prop("disabled", true);
                         $('#uploadProgressPanel').fadeOut(function () {
                             //Move onto the import wizard.
                             data.isTemplateFile = isTemplateFile;
-                            odinLite_fileFormat.init(data);
+
+                            //Import Data and move to file format
+                            odinLite_uploadFiles.importData(data);
                         });
                     }
                 },
@@ -486,8 +500,8 @@ var odinLite_uploadFiles = {
                         } else {//Success - FTP
                             via.debug("Web Service success:", data.message);
 
-                            odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
-                            odinLite_fileFormat.init(data);
+                            //Import Data and move to file format
+                            odinLite_uploadFiles.importData(data);
                         }
                     },
                     'json');
@@ -696,8 +710,8 @@ var odinLite_uploadFiles = {
                         } else {//Success - DB Query
                             via.debug("Database Import success:", data.message);
 
-                            odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
-                            odinLite_fileFormat.init(data);
+                            //Import Data and move to file format
+                            odinLite_uploadFiles.importData(data);
                         }
                     },
                     'json');
@@ -1007,15 +1021,15 @@ var odinLite_uploadFiles = {
                     }),
                     function (data, status) {
                         odin.progressBar("FTP Transfer",100,null,true);
-
+                        fileManagerGrid.dataSource.data([]);
                         if (!via.undef(data, true) && data.success === false) {
                             via.kendoAlert("FTP Transfer","Error: " + data.message);
                             via.debug("FTP Transfer Error:", data.message);
                         } else {//Success - FTP
                             via.debug("FTP Transfer Success:", data.message);
 
-                            odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
-                            odinLite_fileFormat.init(data);
+                            //Import Data and move to file format
+                            odinLite_uploadFiles.importData(data);
                         }
                     },
                     'json');
@@ -1026,22 +1040,28 @@ var odinLite_uploadFiles = {
             function addItemToFileManager() {
                 var tree = $("#odinLite_ftpTreeview").data('kendoTreeList');
                 var selected = tree.select();
-                var dataItem = tree.dataItem(selected);
-                if (dataItem.isFolder === true) {
-                    return;
-                }
-                var fileManagerGrid = $("#odinLite_ftpFileManager").data('kendoGrid');
+                console.log(selected);
+                for(var i=0;i<selected.length;i++) {
+                    var dataItem = tree.dataItem(selected[i]);
+                    if (dataItem.isFolder === true) {
+                        continue;
+                    }
+                    var fileManagerGrid = $("#odinLite_ftpFileManager").data('kendoGrid');
 
-                //Prevent Duplicates
-                var gridData = fileManagerGrid.dataSource.data();
-                for(var i=0;i<gridData.length;i++){
-                    if(dataItem.path === gridData[i].path){
-                        via.kendoAlert("FTP Transfer","\""+dataItem.name + "\" has already been added to the list.");
-                        return;
+                    //Prevent Duplicates
+                    var inGrid = false;
+                    var gridData = fileManagerGrid.dataSource.data();
+                    for (var i = 0; i < gridData.length; i++) {
+                        if (dataItem.path === gridData[i].path) {
+                            via.kendoAlert("FTP Transfer", "\"" + dataItem.name + "\" has already been added to the list.");
+                            inGrid = true;
+                        }
+                    }
+                    //Add to grid
+                    if(!inGrid) {
+                        fileManagerGrid.dataSource.add(dataItem);
                     }
                 }
-                //Add to grid
-                fileManagerGrid.dataSource.add(dataItem);
             }
 
             //Get the ftp transfer files
@@ -1186,7 +1206,7 @@ var odinLite_uploadFiles = {
 
                 var grid = $("#odinLite_ftpTreeview").kendoTreeList({
                     dataSource: dirStructure,
-                    selectable: true,
+                    selectable: "multiple, row",
                     sortable:true,
                     columns: [
                         {
@@ -1449,7 +1469,11 @@ var odinLite_uploadFiles = {
                 width = "600px";
                 height = "100px";
                 break;
-
+            case 'ATTRIBUTE_DATA':
+                content = "Generates attribute data set (Columns: Key Column, Start Date Column, End Date Column, Attribute Columns..) from time series account or security time series data. For instance, track the change in sector, industry and country for an account or security over a period of time. Map the Value Date to the Attribute Start Date column.";
+                width = "800px";
+                height = "200px";
+                break;
             default:
                 content = "";
         }
@@ -1472,18 +1496,43 @@ var odinLite_uploadFiles = {
      * This will cleanup the staging area. It does this silently.
      */
     deleteStagingAreaFiles: function () {
-        $.post(odin.SERVLET_PATH,
-            {
-                action: 'odinLite.uploadFiles.deleteStagingAreaFiles',
-                overrideUser: odinLite.OVERRIDE_USER
-            },
-            function (data, status) {
-                if (!via.undef(data, true) && data.success === false) {
-                    via.debug("Delete Files Error:", data.message);
-                } else {//Success - File Preview
-                    via.debug("Delete Files Success:", data.message);
-                }
-            },
-            'json');
+        if(odinLite_fileFormat.isUnionFile!==true) {
+            $.post(odin.SERVLET_PATH,
+                {
+                    action: 'odinLite.uploadFiles.deleteStagingAreaFiles',
+                    overrideUser: odinLite.OVERRIDE_USER
+                },
+                function (data, status) {
+                    if (!via.undef(data, true) && data.success === false) {
+                        via.debug("Delete Files Error:", data.message);
+                    } else {//Success - File Preview
+                        via.debug("Delete Files Success:", data.message);
+                    }
+                },
+                'json');
+        }
+    },
+
+    /**
+     * importData
+     * This method will init the next step of the upload process.
+     * It will also check if it is a union file.
+     * @param data - the data returned from the file upload.
+     */
+    importData: function(data){
+        if(odinLite_fileFormat.isUnionFile!==true) {
+            odinLite_uploadFiles.initialValues = JSON.parse(JSON.stringify(data));//Store the initial values for possible use later if loading a saved report fails.
+        }
+        odinLite_fileFormat.init(data);
+    },
+
+    previousButton: function(){
+        if(odinLite_fileFormat.isUnionFile!==true) {
+            odinLite.loadModelCacheApplication();
+        }else{
+            //Show the file format panel
+            odinLite_uploadFiles.hideUploadFiles();
+            $('#fileFormatPanel').fadeIn();
+        }
     },
 };

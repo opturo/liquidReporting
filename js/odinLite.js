@@ -226,7 +226,7 @@ var odinLite = {
         }
 
         //Switch User Button
-        if (odin.USER_INFO.isAdminUser === true && odin.USER_INFO.userName === "rocco") {
+        if (odin.USER_INFO.isAdminUser === true) {
             $('#switchUserButton').fadeIn();
             $('#switchUserButton').off();
             $('#switchUserButton').click(function () {

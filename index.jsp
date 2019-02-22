@@ -146,6 +146,10 @@
       <script src="js/support.js"></script>
       <script src="js/manageData.js"></script>
       <script src="js/packageSelection.js"></script>
+      <script src="js/unionFile.js"></script>
+
+      <!-- Classes -->
+      <script src="js/classes/UploadInfo.js"></script>
 
       <!-- SAYS Tour -->
 	  <script src="../js/bootstrap-tour.min.js"></script>
@@ -166,6 +170,16 @@
       <script>
          $(document).ready(function(){
             odinLite.init();
+
+            /** TESTING **/
+            //multi file
+            //var fileData = {"endColumn":6,"localFiles":["ReturnModel_20180409.xlsx","ReturnModel_20180410.xlsx"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["cR87PZvg.xlsx","qbDDRuPu.xlsx"],"sheetNames":["Sheet1"],"message":"Upload successful.","type":".xlsx","isTemplateFile":false};
+            //multi sheet
+            //var fileData = {"endColumn":3,"localFiles":["benchmarkData.xlsx"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["z7DYQ8OM.xlsx"],"sheetNames":["Return","Blend Definition","Starting Position","Blend Details","20170103","20170104","20170105","Sheet1"],"message":"Upload successful.","type":".xlsx","isTemplateFile":false};
+            //csv multi
+            //var fileData = {"endColumn":6,"localFiles":["ReturnModel_20180405.csv","ReturnModel_20180406.csv"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["jl3S7Pll.csv","LV8ybuzY.csv"],"message":"Upload successful.","type":".csv","isTemplateFile":false,"delimType":","};
+            //odinLite_fileFormat.FILE_DATA = {"endColumn":6,"localFiles":["ReturnModel_20180403.csv"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["ILhNrPvR.csv"],"message":"Upload successful.","type":".csv","isTemplateFile":false,"delimType":","};
+            //odinLite_unionFiles.getRowHeaderWindow(fileData);
          });
       </script>
    </body>

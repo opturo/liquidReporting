@@ -717,7 +717,6 @@ var packageSelection = {
 
 
             //Update text on submit button;
-            console.log(packageUpdates,$(updateTable).data('total'));
             if(packageUpdates.updates.length === 0 && packageUpdates.cancellations.length > 0) {//Just cancels
                 $('#payment-makePayment-button').html("Cancel Packages");
                 $('#payment-makePayment-button').css("width","140px");
@@ -728,6 +727,11 @@ var packageSelection = {
                 $('#payment-makePayment-button').html("Submit Payment");
                 $('#payment-makePayment-button').css("width","140px");
             }
+        },
+        function(){
+            odin.progressBar(null,100,null,true);
+            kendo.ui.progress($("#payment"), false);//Wait Message on
+            location.reload();
         });
     },
 

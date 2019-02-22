@@ -1,0 +1,24 @@
+<div id="odinLite_sqlQueryWindow" style="overflow-x:hidden;overflow-y:hidden;">
+	<form class="form-inline row" >
+		<!-- Column List -->
+		<div class="col-md-2">
+			<label for="manageData_sqlColumnNames">Table Structure</label>
+			<div id="manageData_sqlColumnNames" style="user-select:none;"></div>
+		</div>
+
+		<!-- DB Query box -->
+		<div class="col-md-9">
+			<label for="manageData_sqlQuery_sqlArea">SQL Query</label>
+			<textarea style="margin-bottom:2px;" id="manageData_sqlQuery_sqlArea" />
+
+			<!-- Run Query Button -->
+			<a style="float:right;margin-bottom:2px;" title="Run Query"  id="manageData_sqlQueryButton" class="tr btn btn-primary" href="#"><i class="fa fa-arrow-right"></i> Run Query</a>
+		</div>
+
+		<!-- DB Results -->
+		<div id="manageData_dbResultGrid" style="margin:10px;clear:both;height:325px;user-select: none;overflow-x:hidden;overflow-y:auto;"></div>
+
+		<!-- Export Query Button -->
+		<a style="float:right;margin:2px 15px 0 0;display:none;" title="Run Query"  id="manageData_exportSqlQueryButton" class="tr btn btn-primary" href="#"><i class="fa fa-arrow-down"></i> Export Data</a>
+	</form>
+</div>

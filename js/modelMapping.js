@@ -246,6 +246,7 @@ var odinLite_modelMapping = {
                 idx: odinLite_modelMapping.fileIdx,
                 sheetNames: sheetNames,
                 dateFormat: odinLite_modelMapping.dateFormat,
+                unionData: JSON.stringify(odinLite_unionFiles.getUnionData()),
                 overrideUser: odinLite.OVERRIDE_USER
             },formattingOptions,advancedSettingsOptions),
             function(data, status){
@@ -407,7 +408,9 @@ var odinLite_modelMapping = {
         serverParams.startColumn = odinLite_fileFormat.FILE_DATA.startColumn;
         serverParams.endColumn = odinLite_fileFormat.FILE_DATA.endColumn;
         serverParams.hasColumnHeader = odinLite_fileFormat.FILE_DATA.hasColumnHeader;
+        serverParams.unionData = JSON.stringify(odinLite_unionFiles.getUnionData());
         serverParams.overrideUser = odinLite.OVERRIDE_USER;
+
 
         //Model and Entity Info
         serverParams.entityDir = odinLite_modelCache.currentEntity.entityDir;
@@ -614,8 +617,8 @@ var odinLite_modelMapping = {
                 dataSource: comboArray,
                 value: odinLite_modelMapping.fileIdx,
                 change: function(a){
-                    odinLite_modelMapping.fileIdx = a.sender.value();
-                    odinLite_modelMapping.updateFilePreview(false);
+                    //odinLite_modelMapping.fileIdx = a.sender.value();
+                    //odinLite_modelMapping.updateFilePreview(false);
                     updateSheet(data.errorSetsEncoded[a.sender.value()]);
                 }
             });

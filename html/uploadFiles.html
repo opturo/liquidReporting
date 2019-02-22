@@ -5,7 +5,7 @@
       <div class="col-md-2"></div>
       <div class="col-md-2">
          <div class="panel panel-default">
-         <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Data Sources</strong></div>
+         <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Data Sources</strong> <span style="display:none;" class="label label-warning upload_unionFileLabel">Union File</span></div>
          <div class="panel-body" style="overflow:hidden;">
                <div class="importTypesTree"></div>
          </div>
@@ -13,6 +13,7 @@
       </div>
       <div class="col-md-6">
          <div id="uploadFiles_localComputer" class="panel panel-default">
+            <span class="label label-warning unionFileWarning" style="display:none;">Adding Union Files</span>
             <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Upload</strong> <span class="applicationAndModelName"></span></div>
             <div class="panel-body" style="margin:10px;">
                <!--This contains the form for uploading files-->
@@ -36,7 +37,7 @@
          <div id="uploadFiles_otherSources" style="display:none;"></div>
 
          <!-- Previous -->
-         <button title="Back to Data Model" onclick="odinLite.loadModelCacheApplication();" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary"><i class="fa fa-chevron-circle-left"></i>  Previous</button>
+         <button title="Back to Data Model" onclick="odinLite_uploadFiles.previousButton();" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary"><i class="fa fa-chevron-circle-left"></i>  Previous</button>
       </div>
       <div class="col-md-2"></div>
    </div>

@@ -22,7 +22,7 @@ var odinLite_billing = {
      * signupPackagePricing
      * This method gets the initial signup pricing.
      */
-    signupPackagePricing: function (packageList, discountCode, callbackFn) {
+    signupPackagePricing: function (packageList, discountCode, callbackFn,failCallbackFn) {
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.billing.getSignupPackagePricing',
@@ -34,8 +34,19 @@ var odinLite_billing = {
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting pricing info:", data.message);
-                    via.alert("Failure getting pricing info", data.message, function () {
-                    });
+
+                    if (!via.undef(data.failureType, true) &&
+                        (data.failureType === "billing_paylaneRequest" || data.failureType === "billing_paylaneResponse")) {
+                        via.alert("Billing Data Expired.", "Please update you billing information on the next screen. <br>Error: " + data.message, function () {
+                            location.reload();
+                        });
+                    }else {
+                        via.alert("Failure getting pricing info", data.message, function () {
+                            if(!via.undef(failCallbackFn)){
+                                failCallbackFn(data);
+                            }
+                        });
+                    }
                     return;
                 } else {//Success
                     via.debug("Pricing Success Info", data);
@@ -485,7 +496,7 @@ var odinLite_billing = {
             via.alert("Missing Arguments", "No packages specified.");
             return;
         }
-
+console.log('xxx here');
         kendo.ui.progress($("body"), true);//Wait Message on
         $.post(odin.SERVLET_PATH,
             {
@@ -507,8 +518,15 @@ var odinLite_billing = {
                     });
                     return;
                 } else {//Success
+                    console.log('data',data);
                     via.debug("Signup Billing Success Info", data);
-                    if(!via.undef(successCallbackFn)){
+                    if(!via.undef(data.message)){
+                        via.kendoAlert("Signup Message",data.message,function(){
+                            if(!via.undef(successCallbackFn)){
+                                successCallbackFn(data);
+                            }
+                        });
+                    }else if(!via.undef(successCallbackFn)){
                         successCallbackFn(data);
                     }
                 }

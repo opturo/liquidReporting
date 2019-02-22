@@ -3,7 +3,9 @@
 <!-- Used for spacing. -->
 <div class="col-md-10">
   <div class="panel panel-default">
-	 <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Format</strong> <span class="applicationAndModelName"></span> <span style="margin-left:10px;" class="fileFormat_reportName"></span></div>
+	 <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Format</strong> <span class="applicationAndModelName"></span> <span style="margin-left:10px;" class="fileFormat_reportName"></span>
+		 <button title="Configure Union Files" onclick="odinLite_unionFiles.getUnionWindow();" id="fileFormat_unionButton" type="button" title="Add Union" class="tr pull-right btn btn-primary btn-xs"><i class="fa fa-plus"></i> Union Additional Data</button>
+	 </div>
 	 <div class="panel-body" style="margin:10px;">
 		<p class="tr fileFormat_settingText">
 		   The settings below let you determine the format of your files. Check the preview below and adjust the settings as needed.
@@ -97,7 +99,7 @@
 
 			<!-- Adding a static Column -->
 			<div class="col-md-2" >
-				<b class="tr"><button title="Advanced Settings" onclick="odinLite_fileFormat.advancedSettingsWindow();" id="fileFormat_advancedSettingsButton" style="margin:0;" type="button" class="tr btn btn-primary btn-xs"><i class="fa fa-cog"></i></button><span style="cursor: pointer;" onclick="odinLite_fileFormat.advancedSettingsWindow();"> Advanced Settings</span></b>
+				<b class="tr"><button title="Advanced ETL Settings" onclick="odinLite_fileFormat.advancedSettingsWindow();" id="fileFormat_advancedSettingsButton" style="margin:0;" type="button" class="tr btn btn-primary btn-xs"><i class="fa fa-cog"></i></button><span style="cursor: pointer;" onclick="odinLite_fileFormat.advancedSettingsWindow();"> Advanced ETL Settings</span></b>
 			</div>
 			<div class="col-md-3" >
 				<label for="import_fileFormat_rows" >Rows: </label><input id="import_fileFormat_rows" style="width:105px;margin-left:5px;" />
@@ -120,9 +122,3 @@
 </div>
 <!-- Used for spacing. -->
 <div class="col-md-1"></div>
-<!-- Used for spacing. -->
-</div>
-<!-- /textImportWizard_Step_2 -->
-
-
-

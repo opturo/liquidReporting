@@ -366,6 +366,10 @@ var odinLite_modelCache = {
                     via.kendoAlert("Model Failure", data.message);
                 }else{
                     via.debug("Successful getting model:", data);
+                    if(!via.undef(data.modelInfo.errorString,true)){
+                        via.kendoAlert("Problem with data model",data.modelInfo.errorString);
+                        return;
+                    }
 
                     $("#entityList_message").hide();
                     $(".entityList_modelName").html(odinLite_modelCache.currentModel.text);
@@ -646,7 +650,7 @@ var odinLite_modelCache = {
             var modelData = odinLite_modelCache.currentEntity.columnInfo;
             if(odinLite_modelCache.currentEntity.savedModelExists === true &&
                 !via.undef(odinLite_modelCache.currentEntity.savedColumnInfo)){
-                modelData = updateSavedModelData( odinLite_modelCache.currentEntity.savedColumnInfo, odinLite_modelCache.currentEntity.columnInfo)
+                modelData = updateSavedModelData( odinLite_modelCache.currentEntity.savedColumnInfo, odinLite_modelCache.currentEntity.columnInfo);
                 isSavedModel = true;
             }
 
@@ -693,6 +697,9 @@ var odinLite_modelCache = {
                         columnModel.applyFXReturnList = $.extend({},colInfo.applyFXReturnList);
                         columnModel.applyFactorList = $.extend({},colInfo.applyFactorList);
                         columnModel.applyUseColumnList = $.extend({},colInfo.applyUseColumnList);
+                        columnModel.applyAllowableTextLengthList = $.extend({},colInfo.applyAllowableTextLengthList);
+                        columnModel.applyIsNullAllowedList = $.extend({},colInfo.applyIsNullAllowedList);
+
                         //Get the default Values
                         if(!via.undef(savedColumn.applyDataTypeList) && !via.undef(savedColumn.applyDataTypeList.options) && savedColumn.applyDataTypeList.options.length>0){
                             columnModel.applyDataTypeList.defaultValue = savedColumn.applyDataTypeList.options[0];
@@ -708,6 +715,15 @@ var odinLite_modelCache = {
                         }
                         if(!via.undef(savedColumn.applyUseColumnList) && !via.undef(savedColumn.applyUseColumnList.options) && savedColumn.applyUseColumnList.options.length>0){
                             columnModel.applyUseColumnList.defaultValue = savedColumn.applyUseColumnList.options[0];
+                        }
+                        if(!via.undef(savedColumn.applyAllowableTextLengthList) && !via.undef(savedColumn.applyAllowableTextLengthList.options) && savedColumn.applyAllowableTextLengthList.options.length>0){
+                            columnModel.applyAllowableTextLengthList.defaultValue = savedColumn.applyAllowableTextLengthList.options[0];
+                        }
+                        if(!via.undef(savedColumn.applyAllowableTextLengthList) && !via.undef(savedColumn.applyAllowableTextLengthList.defaultValue)){
+                            columnModel.applyAllowableTextLengthList.maxLength = savedColumn.applyAllowableTextLengthList.defaultValue;
+                        }
+                        if(!via.undef(savedColumn.applyIsNullAllowedList) && !via.undef(savedColumn.applyIsNullAllowedList.options) && savedColumn.applyIsNullAllowedList.options.length>0){
+                            columnModel.applyIsNullAllowedList.defaultValue = savedColumn.applyIsNullAllowedList.options[0];
                         }
                         break;
                     }
@@ -834,6 +850,73 @@ var odinLite_modelCache = {
             }
         }
 
+        //applyAllowableTextLengthList
+        if(via.undef(colObj.applyAllowableTextLengthList) || via.undef(colObj.applyAllowableTextLengthList.label) || via.undef(colObj.applyAllowableTextLengthList.comboOptions,true)){
+            newColumn.find(".applyAllowableTextLengthList_selector").hide();
+            newColumn.find(".applyAllowableTextLengthList_number_selector").hide();
+        }else {
+            newColumn.find(".applyAllowableTextLengthList_label").html(colObj.applyAllowableTextLengthList.label);
+            var ddList = newColumn.find(".applyAllowableTextLengthList_input").kendoDropDownList({
+                dataTextField: "text",
+                dataValueField: "value",
+                dataSource: colObj.applyAllowableTextLengthList.comboOptions,
+                index: 0,
+                change: function(e){
+                    if(e.sender.value()==='DEFINED LENGTH'){
+                        newColumn.find('.applyAllowableTextLengthList_number_selector').show();
+                    }else{
+                        newColumn.find('.applyAllowableTextLengthList_number_selector').hide();
+                    }
+                }
+            }).data('kendoDropDownList');
+
+            var numBox  = newColumn.find(".applyAllowableTextLengthList_number_input").kendoNumericTextBox({
+                format: 'n0',
+                min: 1,
+                max: 8000,
+                step: 1,
+                decimals: 0,
+                restrictDecimals: true
+            }).data('kendoNumericTextBox');
+            newColumn.data('numbox',numBox);
+            if(colObj.applyAllowableTextLengthList.comboOptions.length === 1 || allowEditOfExistingTemplateColumns===false){
+                ddList.enable(false);
+            }
+            if(!via.undef(colObj.applyAllowableTextLengthList.defaultValue)){
+                ddList.value(colObj.applyAllowableTextLengthList.defaultValue);
+                //Hide the numberic box
+                if(colObj.applyAllowableTextLengthList.defaultValue === "DEFINED LENGTH"){
+                    newColumn.find('.applyAllowableTextLengthList_number_selector').show();
+                    if(!via.undef(colObj.applyAllowableTextLengthList.maxLength)){
+                        numBox.value(colObj.applyAllowableTextLengthList.maxLength);
+                    }else if(!via.undef(colObj.applyAllowableTextLengthList.additionalDefaultValue)){
+                        numBox.value(colObj.applyAllowableTextLengthList.additionalDefaultValue);
+                    }
+                }else{
+                    newColumn.find('.applyAllowableTextLengthList_number_selector').hide();
+                }
+            }
+        }
+
+        //applyIsNullAllowedList
+        if(via.undef(colObj.applyIsNullAllowedList) || via.undef(colObj.applyIsNullAllowedList.label) || via.undef(colObj.applyIsNullAllowedList.comboOptions,true)){
+            newColumn.find(".applyIsNullAllowedList_selector").hide();
+        }else {
+            newColumn.find(".applyIsNullAllowedList_label").html(colObj.applyIsNullAllowedList.label);
+            var ddList = newColumn.find(".applyIsNullAllowedList_input").kendoDropDownList({
+                dataTextField: "text",
+                dataValueField: "value",
+                dataSource: colObj.applyIsNullAllowedList.comboOptions,
+                index: 0
+            }).data('kendoDropDownList');
+            if(colObj.applyIsNullAllowedList.comboOptions.length === 1 || allowEditOfExistingTemplateColumns===false){
+                ddList.enable(false);
+            }
+            if(!via.undef(colObj.applyIsNullAllowedList.defaultValue)){
+                ddList.value(colObj.applyIsNullAllowedList.defaultValue);
+            }
+        }
+
         //isCustom
         if(!via.undef(colObj.isCustom) && colObj.isCustom===true && allowEditOfExistingTemplateColumns === true){
             newColumn.find(".column_displayName").removeAttr("disabled");
@@ -915,7 +998,14 @@ var odinLite_modelCache = {
             var columnContainers = container.find("."+colInfo.id);
             for(var i=0;i<columnContainers.length;i++){
                 var colContainer = columnContainers[i];
-                saveColumns.push(odinLite_modelCache.getColumnSaveDefinition(colContainer));
+                var addColumn = odinLite_modelCache.getColumnSaveDefinition(colContainer);
+                if(!via.undef(addColumn.applyAllowableTextLength,true) && addColumn.applyAllowableTextLength.startsWith("DEFINED LENGTH") &&
+                    addColumn.applyAllowableTextLength.endsWith("null") ) {
+                    via.kendoAlert("Maximum Text Length", "Please define a maximum text length for "+addColumn.name+".");
+                    kendo.ui.progress($("body"), false);//Wait Message on
+                    return;
+                }
+                saveColumns.push(addColumn);
             }
         }
 
@@ -1031,6 +1121,26 @@ var odinLite_modelCache = {
         var applyFactorList_dd = $(colContainer).find('span .applyFactorList_input').data('kendoDropDownList');
         if(!via.undef(applyFactorList_dd) && !via.undef(applyFactorList_dd.value())){
             colObj.applyFactor = applyFactorList_dd.value();
+        };
+
+        //applyAllowableTextLengthList
+        var applyAllowableTextLengthList_dd = $(colContainer).find('span .applyAllowableTextLengthList_input').data('kendoDropDownList');
+        if(!via.undef(applyAllowableTextLengthList_dd) && !via.undef(applyAllowableTextLengthList_dd.value())){
+            var applyAllowableTextLengthListVal = applyAllowableTextLengthList_dd.value();
+            if(applyAllowableTextLengthListVal === "DEFINED LENGTH"){
+                //var applyAllowableTextLengthList_num_dd = $(colContainer).find('.applyAllowableTextLengthList_number_input').data('kendoNumericTextBox');
+                var applyAllowableTextLengthList_num_dd = $(colContainer).data('numbox');
+                var numericVal = applyAllowableTextLengthList_num_dd.value();
+                colObj.applyAllowableTextLength = applyAllowableTextLengthListVal+";"+numericVal;
+            }else{
+                colObj.applyAllowableTextLength = applyAllowableTextLengthListVal;
+            }
+        };
+
+        //applyIsNullAllowedList
+        var applyIsNullAllowedList_dd = $(colContainer).find('span .applyIsNullAllowedList_input').data('kendoDropDownList');
+        if(!via.undef(applyIsNullAllowedList_dd) && !via.undef(applyIsNullAllowedList_dd.value())){
+            colObj.applyIsNullAllowed = applyIsNullAllowedList_dd.value();
         };
 
         return colObj;

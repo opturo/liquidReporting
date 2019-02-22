@@ -1096,148 +1096,42 @@ var odinLite_manageData = {
             $('#manageData_fileStructureTreeview').css("height",($('#odinLite_fileStructureWindow').height() - 40) + "px");
 
             //Make the call to the tree
-            getFileTreeGrid();
+            odinLite_manageData.getFileTreeGrid("#manageData_fileStructureTreeview");
+            $("#manageData_fileStructureTreeview tbody").bind('dblclick', function (e) {
+                var tree = $("#manageData_fileStructureTreeview").data('kendoTreeList');
+                var selected = tree.select();
+                var dataItem = tree.dataItem(selected);
+                if (dataItem.hasChildren === true) {
+                    if(dataItem.expanded === true) {
+                        tree.collapse(selected);
+                    }else{
+                        tree.expand(selected);
+                    }
+                }
+            });
 
             //Set the button action
             $('#manageData_downloadFileStructureButton').click(function(){
                 var tree = $("#manageData_fileStructureTreeview").data('kendoTreeList');
                 var selected = tree.select();
                 var dataItem = tree.dataItem(selected);
-                if(dataItem.hasChildren === true){ return; }
+                //if(dataItem.hasChildren === true){ return; }
 
                 //download the file to csv
-                downloadFile(dataItem.path);
+                downloadFile(dataItem.path,dataItem.hasChildren);
             });
 
             /*Functions*/
-            //Get the tree data
-            function getFileTreeGrid(){
-                var dirStructure = new kendo.data.TreeListDataSource({
-                    transport: {
-                        read: function(options) {
-                            // make JSON request to server
-                            $.ajax({
-                                url: odin.SERVLET_PATH + "?action=odinLite.manageData.getFolderStructure",
-                                data: {
-                                    entityDir:odinLite.ENTITY_DIR,
-                                    path:options.data.id
-                                },
-                                dataType: "json",
-                                success: function(result) {
-                                    if(result.success === false){
-                                        if(!via.undef(result.message)) {
-                                            via.kendoAlert("Error retrieving files",result.message);
-                                        }else{
-                                            via.kendoAlert("Error retrieving files", "Please check your connection.");
-                                        }
-                                    }else {
-                                        // notify the data source that the request succeeded
-                                        for(var i in result){
-                                            if(via.undef(result[i].parentId)) {
-                                                result[i].parentId = null;
-                                            }
-                                        }
-                                        options.success(result);
-                                    }
-                                },
-                                error: function(result) {
-                                    // notify the data source that the request failed
-                                    options.error(result);
-                                }
-                            });
-                        }
-
-                    },
-                    schema: {
-                        model: {
-                            id: "path",
-                            hasChildren: "hasChildren",
-                            //parentId: "parentId",
-                            fields: {
-                                name: { field: "name"},
-                                fileSize: { field: "fileSize",type: "number"},
-                                lastModified: { field: "lastModified",type: "number"}
-                            }
-                        }
-                    }
-                });
-
-                $("#manageData_fileStructureTreeview").kendoTreeList({
-                    dataSource: dirStructure,
-                    selectable: true,
-                    sortable:true,
-                    columns: [
-                        {
-                            //template: "<img src='#:imageUrl#'/> " + "#: name #",
-                            template: "<img src='#:imageUrl#'/> " + "#: name #",
-                            field: "name",
-                            expandable: true,
-                            title: "Name",
-                            width: 400
-                        },
-                        {
-                            template: function(dataItem) {
-                                if(via.undef(dataItem.fileSize)){
-                                    return "";
-                                }else{
-                                    return via.getReadableFileSizeString(dataItem.fileSize);
-                                }
-                            },
-                            field: "fileSize",
-                            title: "Size",
-                            attributes: { style:"text-align:right" },
-                            headerAttributes:  { style:"text-align:center" },
-                            width: 150
-                        },
-                        {
-                            template: function(dataItem) {
-                                if(via.undef(dataItem.lastModified)){
-                                    return "";
-                                }else{
-                                    var d = new Date(dataItem.lastModified)
-                                    return kendo.toString(d,"g");
-                                }
-                            },
-                            field: "lastModified",
-                            title: "Last Modified",
-                            headerAttributes:  { style:"text-align:center" }
-                        }
-                    ]
-                });
-            }
-
-            /*
-            function getFileTree(){
-                var dirStructure = new kendo.data.HierarchicalDataSource({
-                    transport: {
-                        read: {
-                            url: odin.SERVLET_PATH + "?action=odinLite.manageData.getFolderStructure&entityDir=" + odinLite.ENTITY_DIR,
-                            dataType: "json"
-                        }
-                    },
-                    schema: {
-                        model: {
-                            id: "path",
-                            hasChildren: "hasChildren"
-                        }
-                    }
-                });
-
-                $("#manageData_fileStructureTreeview").kendoTreeView({
-                    dataSource: dirStructure,
-                    dataTextField: "name"
-                });
-            }
-             */
             //Download the selected file
-            function downloadFile(filePath){
+            function downloadFile(filePath,isFolder){
                 kendo.ui.progress($("#odinLite_fileStructureWindow"), true);//Wait Message on
                 $.post(odin.SERVLET_PATH,
                     {
                         action: 'odinLite.manageData.exportCacheFile',
                         filePath: filePath,
+                        isFolder: isFolder,
                         entityDir: odinLite.ENTITY_DIR,
-                        overrideUser: odinLite.OVERRIDE_USER
+                        overrideUser: odinLite.OVERRIDE_USER,
                     },
                     function (data, status) {
                         kendo.ui.progress($("#odinLite_fileStructureWindow"), false);//Wait Message off
@@ -1253,6 +1147,453 @@ var odinLite_manageData = {
                     'json');
             }
 
+        });
+    },
+
+    /**
+     * getSQLImportWindow
+     * This will import the sql tables
+     */
+    getSQLImportWindow: function(){
+        kendo.ui.progress($("body"), true);//Wait Message
+        $.get("./html/sqlTableChooserWindow.html", function (sqlWindowTemplate) {
+            kendo.ui.progress($("body"), false);//Wait Message
+
+            $('#odinLite_sqlTableWindow').remove();
+            $('body').append(sqlWindowTemplate);
+            //Make the window.
+            var sqlTablesWindow = $('#odinLite_sqlTableWindow').kendoWindow({
+                title: "Select Tables to Query",
+                draggable: false,
+                resizable: false,
+                width: "950px",
+                height: "580px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                close: function () {
+                    sqlTablesWindow = null;
+                    $('#odinLite_sqlTableWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            sqlTablesWindow.center();
+
+            //Make the call to the tree
+            odinLite_manageData.getFileTreeGrid("#odinLite_sqlFolderStructure");
+            $("#odinLite_sqlFolderStructure tbody").bind('dblclick', function (e) {
+                var tree = $("#odinLite_sqlFolderStructure").data('kendoTreeList');
+                var selected = tree.select();
+                var dataItem = tree.dataItem(selected);
+                if (dataItem.hasChildren === true) {
+                    if(dataItem.expanded === true) {
+                        tree.collapse(selected);
+                    }else{
+                        tree.expand(selected);
+                    }
+                }else {
+                    addItemToFileManager();
+                }
+            });
+            getFileManagerGrid();
+
+            //Set the button action
+            $('#odinLite_sqlTable_addButton').click(function(){
+                addItemToFileManager();
+            });
+            $('#odinLite_sqlManager_createButton').click(function(){
+                var fileManagerGrid = $("#odinLite_sqlFileManager").data('kendoGrid');
+                var gridData = fileManagerGrid.dataSource.data();
+                if(gridData.length === 0){
+                    via.kendoAlert("SQL Table Import","There are no files in the list.");
+                    return;
+                }
+
+                sqlTablesWindow.close();
+                odin.progressBar("SQL Table Import",100,"Importing " + gridData.length + ((gridData.length>1)?" files.":" file."));
+
+                var records = JSON.stringify(gridData);
+
+
+                $.post(odin.SERVLET_PATH,
+                    {
+                        action: 'odinLite.manageData.importDatabaseTables',
+                        overrideUser: odinLite.OVERRIDE_USER,
+                        records: records,
+                        entityDir:odinLite.ENTITY_DIR
+                    },
+                    function (data, status) {
+                        odin.progressBar("SQL Table Import",100,null,true);
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.kendoAlert("SQL Table Import","Error: " + data.message);
+                            via.debug("SQL Table Import", data.message);
+                        } else {//Success - SQL Import
+                            via.debug("SQL Table Import Success:", data.message);
+
+                            odinLite_manageData.getSQLQueryWindow(data);
+                        }
+                    },
+                    'json');
+            });
+
+            /*Functions*/
+            //Add the item to the file manager grid.
+            function addItemToFileManager() {
+                var tree = $("#odinLite_sqlFolderStructure").data('kendoTreeList');
+                var selected = tree.select();
+                var dataItem = tree.dataItem(selected);
+                if (dataItem.hasChildren === true) {
+                    return;
+                }
+                var fileManagerGrid = $("#odinLite_sqlFileManager").data('kendoGrid');
+
+                //Prevent Duplicates
+                var gridData = fileManagerGrid.dataSource.data();
+                for(var i=0;i<gridData.length;i++){
+                    if(dataItem.path === gridData[i].path){
+                        via.kendoAlert("SQL Import","\""+dataItem.name + "\" has already been added to the list.");
+                        return;
+                    }
+                }
+                //Add to grid
+                fileManagerGrid.dataSource.add(dataItem);
+            }
+
+            //Get the ftp transfer files
+            function getFileManagerGrid(){
+                $("#odinLite_sqlFileManager").empty();
+                $("#odinLite_sqlFileManager").kendoGrid({
+                    dataSource: {
+                        data: [],
+                        schema: {
+                            model: {
+                                fields: {
+                                    path: { field: "path"},
+                                    fileSize: { field: "fileSize",type: "number"},
+                                    lastModified: { field: "lastModified",type: "number"}
+                                }
+                            }
+                        }
+                    },
+                    scrollable: true,
+                    editable: false,
+                    columns: [
+                        {
+                            //template: "<img src='#:imageUrl#'/> " + "#: name #",
+                            template: "<img src='#:imageUrl#'/> " + "#: path #",
+                            field: "path",
+                            expandable: true,
+                            title: "Selected Tables",
+                            width: 550
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.fileSize)){
+                                    return "";
+                                }else{
+                                    return via.getReadableFileSizeString(dataItem.fileSize);
+                                }
+                            },
+                            field: "fileSize",
+                            title: "Size",
+                            attributes: { style:"text-align:right" },
+                            headerAttributes:  { style:"text-align:center" },
+                            width: 100
+                        },
+                        {
+                            template: function(dataItem) {
+                                if(via.undef(dataItem.lastModified)){
+                                    return "";
+                                }else{
+                                    var d = new Date(dataItem.lastModified)
+                                    return kendo.toString(d,"g");
+                                }
+                            },
+                            field: "lastModified",
+                            title: "Last Modified",
+                            headerAttributes:  { style:"text-align:center" },
+                            width: 180
+                        },
+                        {
+                            title: "Delete",
+                            width: "80px",
+                            iconClass: "fa fa-trash",
+                            command: {
+                                text: " ",
+                                iconClass: "fa fa-trash",
+                                click: function(e){
+                                    e.preventDefault();
+                                    var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                    this.dataSource.remove(dataItem);
+                                }
+                            }
+                        }
+
+                    ]
+                });
+            }
+
+        });
+    },
+
+    /**
+     * getSQLImportWindow
+     * This will import the sql tables
+     */
+    getSQLQueryWindow: function(data){
+
+        kendo.ui.progress($("body"), true);//Wait Message
+        $.get("./html/sqlQueryWindow.html", function (sqlWindowTemplate) {
+            kendo.ui.progress($("body"), false);//Wait Message
+
+            $('#odinLite_sqlQueryWindow').remove();
+            $('body').append(sqlWindowTemplate);
+            //Make the window.
+            var sqlTablesWindow = $('#odinLite_sqlQueryWindow').kendoWindow({
+                title: "Select Tables to Query",
+                draggable: false,
+                resizable: false,
+                width: "950px",
+                height: "650px",
+                modal: true,
+                close: false,
+                actions: [
+                    "Maximize",
+                    "Close"
+                ],
+                close: function () {
+                    sqlTablesWindow = null;
+                    $('#odinLite_sqlQueryWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            sqlTablesWindow.center();
+
+            //Style the code editor
+            var editor = CodeMirror.fromTextArea(document.getElementById("manageData_sqlQuery_sqlArea"), {
+                mode: "text/x-sql",
+                indentWithTabs: true,
+                smartIndent: true,
+                lineWrapping: true,
+                lineNumbers: true,
+                matchBrackets: true,
+                autofocus: true,
+                extraKeys: {"Ctrl-Space": "autocomplete"}
+            });
+            editor.setSize("100%", 200);
+            // store it
+            $('#manageData_sqlQuery_sqlArea').data('CodeMirrorInstance', editor);
+
+            //Setup the treeview
+            var tableData = [];
+            $.each(data.tableColMap,function(t,c){
+                var obj = {text: "["+t+"]",items:[]};
+                for(var i in c){
+                    obj.items.push({text:"["+c[i]+"]"});
+                }
+                tableData.push(obj);
+            });
+            var dataSource = new kendo.data.HierarchicalDataSource({
+                data: tableData
+            });
+            //Treeview init
+            $("#manageData_sqlColumnNames").kendoTreeView({
+                dataSource: dataSource
+            });
+            $("#manageData_sqlColumnNames li").bind('dblclick', function (e) {
+                var tree = $("#manageData_sqlColumnNames").data('kendoTreeView');
+                var selected = tree.select();
+                var dataItem = tree.dataItem(selected);
+
+                var cm = $('#manageData_sqlQuery_sqlArea').data('CodeMirrorInstance');
+                var doc = cm.getDoc();
+                doc.replaceRange(dataItem.text, {line: Infinity}); // adds a new line
+            });
+
+            //Add Button Events
+            $('#manageData_sqlQueryButton').click(function(){
+                var codeeditor = $('#manageData_sqlQuery_sqlArea').data('CodeMirrorInstance');
+                var sql = codeeditor.getValue();
+                if(via.undef(sql,true)){
+                    via.kendoAlert("Define Query","Specify a query.");
+                    return;
+                }
+
+                kendo.ui.progress($("#odinLite_sqlQueryWindow"), true);//Wait Message off
+                $('#manageData_dbResultGrid').empty();
+                $('#manageData_exportSqlQueryButton').hide();
+                $.post(odin.SERVLET_PATH,
+                    {
+                        action: 'odinLite.manageData.queryDatabaseTables',
+                        schema: data.schema,
+                        query: sql,
+                        overrideUser: odinLite.OVERRIDE_USER
+                    },
+                    function (data, status) {
+                        kendo.ui.progress($("#odinLite_sqlQueryWindow"), false);//Wait Message off
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.debug("Failure running query:", data.message);
+                            via.kendoAlert("Query Failure", data.message);
+                            $('#manageData_dbResultGrid').html('<div class="well" style="color:red;margin-top:5px;">'+data.message+"</div>");
+                        } else {
+                            via.debug("Successful Query:", data);
+
+                            if(via.undef(data.tableData)){
+                                via.kendoAlert("Query Failure", "No data found.");
+                                return;
+                            }
+
+                            odinTable.createTable("sqlQueryTable",data.tableData,"#manageData_dbResultGrid");
+                            $('#sqlQueryTable').data('kendoGrid').setOptions({
+                                groupable:false,
+                                height:'99%',
+                                width:'99%'
+                            });
+                            $('#manageData_dbResultGrid').css("padding","0");
+                            $('#manageData_dbResultGrid').data("gridSql",sql);
+                            $('#manageData_dbResultGrid').data("schema",data.schema);
+                            $('#manageData_exportSqlQueryButton').show();
+                        }
+                    },
+                    'json');
+            });
+            //Export Data Button
+            $('#manageData_exportSqlQueryButton').click(function(){
+                var sqlString = $('#manageData_dbResultGrid').data("gridSql");
+                var schema = $('#manageData_dbResultGrid').data("schema");
+                if(via.undef(sqlString,true)){
+                    via.kendoAlert("Define Query","Specify a query.");
+                    return;
+                }
+
+                kendo.ui.progress($("#odinLite_sqlQueryWindow"), true);//Wait Message off
+                $.post(odin.SERVLET_PATH,
+                    {
+                        action: 'odinLite.manageData.exportDatabaseQuery',
+                        schema: schema,
+                        query: sqlString,
+                        overrideUser: odinLite.OVERRIDE_USER
+                    },
+                    function (data, status) {
+                        kendo.ui.progress($("#odinLite_sqlQueryWindow"), false);//Wait Message off
+
+                        console.log('queryDatabaseTables',data);
+
+                        if (!via.undef(data, true) && data.success === false) {
+                            via.debug("Failure downloading file:", data.message);
+                            via.kendoAlert("Download Failure", data.message);
+                        } else {
+                            via.debug("Successful Download:", data);
+
+                            via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
+                        }
+                    },
+                    'json');
+            });
+        });
+    },
+
+    /**
+     * getFileTreeGrid
+     * This will populate the file tree in the selector.
+     */
+    getFileTreeGrid: function(selector){
+        var dirStructure = new kendo.data.TreeListDataSource({
+            transport: {
+                read: function(options) {
+                    // make JSON request to server
+                    $.ajax({
+                        url: odin.SERVLET_PATH + "?action=odinLite.manageData.getFolderStructure",
+                        data: {
+                            entityDir:odinLite.ENTITY_DIR,
+                            path:options.data.id
+                        },
+                        dataType: "json",
+                        success: function(result) {
+                            if(result.success === false){
+                                if(!via.undef(result.message)) {
+                                    via.kendoAlert("Error retrieving files",result.message);
+                                }else{
+                                    via.kendoAlert("Error retrieving files", "Please check your connection.");
+                                }
+                            }else {
+                                // notify the data source that the request succeeded
+                                for(var i in result){
+                                    if(via.undef(result[i].parentId)) {
+                                        result[i].parentId = null;
+                                    }
+                                }
+                                options.success(result);
+                            }
+                        },
+                        error: function(result) {
+                            // notify the data source that the request failed
+                            options.error(result);
+                        }
+                    });
+                }
+
+            },
+            schema: {
+                model: {
+                    id: "path",
+                    hasChildren: "hasChildren",
+                    //parentId: "parentId",
+                    fields: {
+                        name: { field: "name"},
+                        fileSize: { field: "fileSize",type: "number"},
+                        lastModified: { field: "lastModified",type: "number"}
+                    }
+                }
+            }
+        });
+
+        $(selector).kendoTreeList({
+            dataSource: dirStructure,
+            selectable: true,
+            sortable:true,
+            columns: [
+                {
+                    //template: "<img src='#:imageUrl#'/> " + "#: name #",
+                    template: "<img src='#:imageUrl#'/> " + "#: name #",
+                    field: "name",
+                    expandable: true,
+                    title: "Name",
+                    width: 400
+                },
+                {
+                    template: function(dataItem) {
+                        if(via.undef(dataItem.fileSize)){
+                            return "";
+                        }else{
+                            return via.getReadableFileSizeString(dataItem.fileSize);
+                        }
+                    },
+                    field: "fileSize",
+                    title: "Size",
+                    attributes: { style:"text-align:right" },
+                    headerAttributes:  { style:"text-align:center" },
+                    width: 150
+                },
+                {
+                    template: function(dataItem) {
+                        if(via.undef(dataItem.lastModified)){
+                            return "";
+                        }else{
+                            var d = new Date(dataItem.lastModified)
+                            return kendo.toString(d,"g");
+                        }
+                    },
+                    field: "lastModified",
+                    title: "Last Modified",
+                    headerAttributes:  { style:"text-align:center" }
+                }
+            ]
         });
     },
 
@@ -1353,6 +1694,12 @@ var odinLite_manageData = {
 
 
         if (!via.undef(sheetData.rows) && !via.undef(sheetData.rows[0])) {
+
+            console.log(sheetData);
+            sheetData.rows.push({
+                cells:[{},{},{}]
+            });
+
             //First row is not editable
             for (var i = 0; i < sheetData.rows[0].cells.length; i++) {
                 sheetData.rows[0].cells[i].enable = false;
@@ -1368,7 +1715,7 @@ var odinLite_manageData = {
 
                     //Loop through all the rows and shut off required columns
                     if (isRequired) {
-                        for (var j = 1; j < sheetData.rows.length; j++) {
+                        for (var j = 1; j < sheetData.rows.length-1; j++) {
                             sheetData.rows[j].cells[i].enable = false;
                             sheetData.rows[j].cells[i].color = "#888888";
                         }
@@ -1434,7 +1781,7 @@ var odinLite_manageData = {
         }
 
         //Set the data
-        for (var r = 1; r < json.sheets[0].rows.length; r++) {
+        for (var r = 1; r < json.sheets[0].rows.length -1; r++) {//Don't add last row.
             var cells = json.sheets[0].rows[r].cells;
             var rowIdx = r - 1;
             for (var c = 0; c < cells.length; c++) {
@@ -1445,6 +1792,27 @@ var odinLite_manageData = {
                 }
             }
         }
+
+        //Check to see if we should add a new row.
+        if(json.sheets[0].rows.length > (ts.data.length+1)) {
+            var lastRow = json.sheets[0].rows[json.sheets[0].rows.length - 1].cells;
+            var isValid = true;
+            for(var i in requiredMap){
+                var idx = requiredMap[i];
+                if(via.undef(lastRow[idx],true)){
+                    isValid = false;
+                }
+            }
+            if(isValid === true) {
+                var row = [];
+                for(var j in lastRow){
+                    row.push(lastRow[j].value+"");
+                }
+                ts.data.push(row);
+            }
+        }
+
+
 
         //Get the variables
         var dataItem = odinLite_manageData.currentDataItem + "";

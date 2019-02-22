@@ -265,7 +265,7 @@
                 <!-- Column List -->
                 <div class="col-md-2">
                     <label for="fileFormat_sqlColumnNames">Column Names</label>
-                    <div id="fileFormat_sqlColumnNames"></div>
+                    <div id="fileFormat_sqlColumnNames" class="fileFormat_sqlColumnNames"></div>
                 </div>
 
                 <!-- DB Query box -->
@@ -290,6 +290,9 @@
                 <hr/>
                 <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_timeSeriesToPortIndexMerge" class="tr">Merge Time Series Data to Loaded Folder Indexed Time Series Data: </label>
                 <input style="margin: 10px 5px 0 0;" type="checkbox" id="modelMapping_timeSeriesToPortIndexMerge" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('TIME_SERIES_PORTFOLIO_MERGE','Merge Time Series Data to Loaded Portfolio Indexed Time Series Data');">
+                <hr/>
+                <label style="font-weight: bold;font-size: 12px;color: #444;margin: 10px 5px 0 20px;" for="modelMapping_attributeData" class="tr">Generate Unique Start and End Date Attribute Data From Time Series Data: </label>
+                <input style="margin: 10px 5px 0 0;" type="checkbox" id="modelMapping_attributeData" /><img src="../images/help.png" style="cursor:pointer;position:relative;top:-7px;" onclick="odinLite_uploadFiles.displayHelpLink('ATTRIBUTE_DATA','Attribute Data From Time Series Data');">
             </form>
         </div>
 

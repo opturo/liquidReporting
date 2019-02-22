@@ -1,6 +1,6 @@
-<div data-colId="{column_idName}" class="well {column_idName}" style="background-color:#fff;width:400px;height:385px;float:left;margin-right:2px;">
-	<button title="Delete Custom Column" onclick="odinLite_modelCache.deleteCustomColumn('{column_idName}',this);" style="float:right;display:none;margin-left:4px;" type="button" class="tr btn btn-danger deleteCustomButton"><i class="fa fa-trash"></i></button>
-	<button title="Column Information" onclick="odinLite_modelCache.getHelpLink('{column_idName}',this);" style="float:right;" type="button" class="tr btn btn-primary"><i class="fa fa-question-circle"></i></button>
+<div data-colId="{column_idName}" class="well {column_idName}" style="overflow:auto;background-color:#fff;width:400px;height:385px;float:left;margin-right:2px;">
+	<button title="Delete Custom Column" onclick="odinLite_modelCache.deleteCustomColumn('{column_idName}',this);" style="float:right;display:none;margin-left:4px;margin-bottom:2px;" type="button" class="tr btn btn-danger deleteCustomButton"><i class="fa fa-trash"></i></button>
+	<button title="Column Information" onclick="odinLite_modelCache.getHelpLink('{column_idName}',this);" style="float:right;margin-bottom:2px;" type="button" class="tr btn btn-primary"><i class="fa fa-question-circle"></i></button>
 	<!-- Display Name -->
 	<p><label>Column Name</label><br/><input disabled class="column_displayName k-textbox" type="text" value="{column_displayName}" class="k-textbox" style="width:300px;"/></p>
 	<!-- Apply Use Column List -->
@@ -13,4 +13,14 @@
 	<p class="applyFXReturnList_selector" ><label class="applyFXReturnList_label" ></label><br/><input class="applyFXReturnList_input" style="width:300px;"/></p>
 	<!-- Apply Factor List -->
 	<p class="applyFactorList_selector" ><label class="applyFactorList_label" ></label><br/><input class="applyFactorList_input" style="width:300px;"/></p>
+	<!-- Apply Is Null Allowed List -->
+	<p class="applyIsNullAllowedList_selector" ><label class="applyIsNullAllowedList_label" ></label><br/><input class="applyIsNullAllowedList_input" style="width:300px;"/></p>
+	<!-- Apply Allowable Text Length List -->
+	<p class="applyAllowableTextLengthList_selector" >
+		<label class="applyAllowableTextLengthList_label" ></label><br/><input class="applyAllowableTextLengthList_input" style="width:300px;"/>
+	</p>
+	<p class="applyAllowableTextLengthList_number_selector">
+		<input class="applyAllowableTextLengthList_number_input" style="width:300px;"/>
+	</p>
 </div>
+
