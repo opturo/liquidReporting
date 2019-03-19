@@ -186,6 +186,7 @@ var packageSelection = {
             var setUpFee = packageArr[2];
             var monthlyCost = packageArr[3];
             var description = packageArr[4];
+            var isNonFree = packageArr[6];
             var application = [];
             if (applicationName in applications) {
                 application = applications[applicationName];
@@ -200,6 +201,9 @@ var packageSelection = {
             packageInfo["setUpFee"] = setUpFee;
             packageInfo["monthlyCost"] = monthlyCost;
             packageInfo["description"] = description;
+            if(odinLite.isFreeOnlyUser===true && isNonFree === "1"){
+                packageInfo["disable"] = true;
+            }
             //Push onto the application
             application.push(packageInfo);
             applications[applicationName] = application;
@@ -272,10 +276,13 @@ var packageSelection = {
         var disabled = "";
         if($.inArray(packageView.packageId,odinLite.subscribedPackageList) !== -1){
             disabled = "disabled ";
+        }else if(packageView["disable"] === true){
+            disabled = "disabled ";
         }
 
-        var html = "<div class='well package-description'>" +
-            "<input "+disabled+"type='radio' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> {{packageName}}" +
+        var html = "<div class='well package-description' style='user-select:none;' >" +
+            "<input "+disabled+"type='radio' id='applicationRadio_{{applicationId}}' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> " +
+            "<label for='applicationRadio_{{applicationId}}'>{{packageName}}</label>" +
             "<br>" +
             "<p>{{description}}</p>" +
             "<a href='http://says.opturo.com/index.php?appId={{applicationId}}' target='_blank'>See More Details</a>" +
@@ -532,10 +539,14 @@ var packageSelection = {
             var updateTable = $("#package-update-table tbody");
 
             /* Gather all the variables */
-            var description = updateTable.data("billingInfodescription");
-            description = JSON.parse(description);
+            var description = null;
+            var countryCode = null;
+            if(!via.undef(updateTable.data("billingInfodescription"))) {
+                description = updateTable.data("billingInfodescription");
+                description = JSON.parse(description);
+                countryCode = description.country_code;
+            }
 
-            var countryCode = description.country_code;
             var addPackageList = $(updateTable).data('addPackageIds');
             var discountCode = $(updateTable).data('discountCode');
             //Get the cancellations//
@@ -621,7 +632,9 @@ var packageSelection = {
             packageSelection.displayBillingInfo(data.billingInfo);
 
             //Store some variables for use duting payment submit.
-            $(updateTable).data('billingInfodescription',data.billingInfo.description);
+            if(!via.undef(data.billingInfo)) {
+                $(updateTable).data('billingInfodescription', data.billingInfo.description);
+            }
             $(updateTable).data('discountCode',data.discountCode);
 
             /* Update Add Packages */
@@ -740,15 +753,24 @@ var packageSelection = {
         var billingInfo = $("#billing-info-display");
         billingInfo.empty();
 
-        var cardNumber = (billingInfoData.card.number.length>4)?billingInfoData.card.number.substring(0,4):billingInfoData.card.number;
-        var data = {"cardType": billingInfoData.payment_method, "ccDigits": cardNumber, "expirationMonth": kendo.toString(parseInt(billingInfoData.card.expiration_month),"00"), "expirationYear": billingInfoData.card.expiration_year};
+        if(!via.undef(billingInfoData)) {
+            var cardNumber = (billingInfoData.card.number.length > 4) ? billingInfoData.card.number.substring(billingInfoData.card.number.length - 4, billingInfoData.card.number.length) : billingInfoData.card.number;
+            var data = {
+                "cardType": billingInfoData.payment_method,
+                "ccDigits": cardNumber,
+                "expirationMonth": kendo.toString(parseInt(billingInfoData.card.expiration_month), "00"),
+                "expirationYear": billingInfoData.card.expiration_year
+            };
 
-        var html = "<p><b >{{cardType}}</b> ending in <b >{{ccDigits}}</b><p>" +
-            "Expires: <b class='label label-info'>{{expirationMonth}}/{{expirationYear}}</b>";
+            var html = "<p><b >{{cardType}}</b> ending in <b >{{ccDigits}}</b><p>" +
+                "Expires: <b class='label label-info'>{{expirationMonth}}/{{expirationYear}}</b>";
 
-        var output = Mustache.render(html, data);
+            var output = Mustache.render(html, data);
+            billingInfo.append(output);
+        }else if(odinLite.isFreeOnlyUser === true){
+            billingInfo.append("Billing is not setup. You can only subscribe to Free and Demo Reports.");
+        }
 
-        billingInfo.append(output);
     },
 
     /* Apply discount code and sees if the code is valid or not */

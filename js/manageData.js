@@ -1482,8 +1482,6 @@ var odinLite_manageData = {
                     function (data, status) {
                         kendo.ui.progress($("#odinLite_sqlQueryWindow"), false);//Wait Message off
 
-                        console.log('queryDatabaseTables',data);
-
                         if (!via.undef(data, true) && data.success === false) {
                             via.debug("Failure downloading file:", data.message);
                             via.kendoAlert("Download Failure", data.message);

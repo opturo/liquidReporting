@@ -106,7 +106,6 @@ var odinLite_unionFiles = {
             //Process the upload info
             var form = $('#odinLite_unionFileFormatWindow').find('form')[0];
             var uploadInfo = new UploadInfo(form,data);
-            uploadInfo.printData();
             uploadInfo.initUI();
 
             $('#odinLite_unionFileFormatWindow').data("uploadInfo",uploadInfo);
@@ -184,8 +183,9 @@ var odinLite_unionFiles = {
 
             //Row Headers
             var headers = [];
-            for(var i=0;i<odinLite_fileFormat.originalHeaders.length;i++){
-                var col = odinLite_fileFormat.originalHeaders[i];
+            var headerArr = (!via.undef(odinLite_fileFormat.unionHeaders))?odinLite_fileFormat.unionHeaders:odinLite_fileFormat.originalHeaders;
+            for(var i=0;i<headerArr.length;i++){
+                var col = headerArr[i];
                 headers.push({ text: col, value: col });
             }
             $("#originalRowHeaders_unselected").kendoListBox({

@@ -644,6 +644,31 @@ var odinLite_fileFormat = {
         }
     },
 
+    advancedSettingsWindow_addColumn_regexHelp: function(){
+        kendo.ui.progress($("body"), true);
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.uploadFiles.getRegexExamples'
+            },
+            function(data, status){
+                kendo.ui.progress($("body"), false);//wait off
+
+                if(!via.undef(data,true) && data.success === false){
+                    via.debug("Regex Help Error:", data.message);
+                    via.alert("Regex Help Error",data.message);
+                }else{//Success - RegEx
+                    via.debug("Regex Help Successful:", data);
+                    if(!via.undef(data.tsEncoded)) {
+                        var grid = via.displayPopupGrid("Regex Help", data.tsEncoded, 400, 900);
+                        grid.setOptions({
+                            groupable: false
+                        });
+                    }
+                }
+            },
+            'json');
+    },
+
     /**
      * advancedSettingsWindow_mapColumn
      * This is for the map column tab
@@ -652,9 +677,10 @@ var odinLite_fileFormat = {
         //Header List
         //var headers = odinLite_modelMapping.getColumnListFromTableSet();
         //headers.splice(0,1);
+        var headerArr = (!via.undef(odinLite_fileFormat.unionHeaders))?odinLite_fileFormat.unionHeaders:odinLite_fileFormat.originalHeaders;
         var headers = [];
-        for(var i=0;i<odinLite_fileFormat.originalHeaders.length;i++){
-            var col = odinLite_fileFormat.originalHeaders[i];
+        for(var i=0;i<headerArr.length;i++){
+            var col = headerArr[i];
             headers.push({ text: col, value: col });
         }
 
@@ -2785,6 +2811,7 @@ var odinLite_fileFormat = {
 
                     via.debug("Successful generating preview:", data);
                     odinLite_fileFormat.originalHeaders = data.originalHeaders;
+                    odinLite_fileFormat.unionHeaders = data.unionHeaders;
                     odinLite_fileFormat.FILE_DATA.tsEncoded = data.tsEncoded;
                     //if(via.undef(data.tsEncoded)){//Clear the advanced settings if the tableset is null
                     //    odinLite_fileFormat.clearAdvancedSettings();

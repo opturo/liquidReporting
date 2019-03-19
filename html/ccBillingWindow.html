@@ -5,6 +5,7 @@
         </div>
         <div class="panel-body">
             <p>Please enter your credit card information to access demo reports. This is for verification purposes only. You will not be charged until you choose to sign up for a reporting package.</p>
+            <button class="btn btn-warning btn-block skip-billing-button" style="float:right;width:100px;position:relative;top:-98px;display:none;">Skip this step</button>
             <form id="cc-billing-form" action="" type=""  onsubmit="odinLite_billing.getBillingInfo();">
                 <!-- merchant's input elements, as many as required -->
                 <div class="form-group">
@@ -18,8 +19,10 @@
                     <input type="text" name="address" class="k-textbox" style="width:100%;margin-bottom:5px;" required>
                     <b>City</b></br>
                     <input type="text" name="city" class="k-textbox" style="width:100%;margin-bottom:5px;" required>
-                    <b>State</b></br>
-                    <input name="state" style="width:100%" required>
+                    <span class="ccBillingSpan">
+                        <b>State</b></br>
+                        <input name="state" style="width:100%" required>
+                    </span>
                     <b>Zip Code</b></br>
                     <input type="text" name="zip" class="k-textbox" style="width:100%;margin-bottom:5px;">
                     <b>Country</b></br>
@@ -54,6 +57,7 @@
                 <button class="btn btn-primary btn-block cc-billing-button" type="submit" style="width:200px;display:block;margin:0 auto;">Authorize Card</button>
                 <img src="../images/acceptedCards.png" style="width:250px;height:auto;margin-top:-30px;" class="pull-right"/>
                 <br/>
+                <button class="btn btn-warning btn-block skip-billing-button" style="float:left;width:100px;position:relative;top:-50px;display:none;">Skip this step</button>
                 <img src="../images/paylane-logo.png" class="pull-right" style="clear:both;margin-top:-10px;"/>
             </form>
         </div>

@@ -16,6 +16,12 @@ var odinLite = {
     subscribedPackageList: null,//holds the list of subscribed packages.
     isDataManagerUser: false,
 
+    //Variables used for free only users.
+    MAX_SIGNUP_WITHOUT_CARD: null,
+    ALLOW_SUB_WITHOUT_CARD: null,
+    userSignupMap: null,
+    isFreeOnlyUser: false,
+
     /**
      * init
      * This will initialize ODIN Lite and check if a user is properly logged in.
@@ -105,7 +111,13 @@ var odinLite = {
                     //via.downloadLocalTableSet(JSON.parse(localTs));
                     /**END TESTING**/
 
-                    odinLite_billing.checkBillingIsVerified(function () {//Check to make sure they have verified billing if they are a billing client.
+                    //Set some billing vars
+                    odinLite.MAX_SIGNUP_WITHOUT_CARD = data.maxSignupWithoutCard;
+                    odinLite.ALLOW_SUB_WITHOUT_CARD = data.allowSubWithoutCard;
+                    odinLite.userSignupMap = data.userSignupMap;
+
+                    //Check to make sure they have verified billing if they are a billing client.
+                    odinLite_billing.checkBillingIsVerified(function () {
                         //Check if an entity was passed from appbuilder
                         if (!via.undef(via.getParamsValue("entityname")) && !via.undef(via.getParamsValue("entitydir"))) {
                             odinLite.ENTITY_DIR = via.getParamsValue("entitydir");

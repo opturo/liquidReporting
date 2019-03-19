@@ -30,7 +30,6 @@ var odinLite_billing = {
                 discountCode: discountCode
             },
             function (data, status) {
-                console.log('signupPackagePricing',data);
 
                 if (!via.undef(data, true) && data.success === false) {
                     via.debug("Failure getting pricing info:", data.message);
@@ -149,7 +148,7 @@ var odinLite_billing = {
             }
             /** Not verified popup billing window. **/
             console.log("checkBillingIsVerified: Not verified. Make them enter credit card info.");
-            odinLite_billing.billingWindowPopup(popupType,callbackFn);
+            odinLite_billing.billingWindowPopup(popupType,callbackFn,false,odinLite.ALLOW_SUB_WITHOUT_CARD);
         } else {//They are verified. Call the function to continue the login.
             console.log("checkBillingIsVerified: They are verified. Call the function to continue the login.");
 
@@ -291,7 +290,7 @@ var odinLite_billing = {
      * billingWindowPopup
      * This is used for initial billing, expired or failed billing as well as updating a payment type.
      */
-    billingWindowPopup: function (popupType,callbackFn,allowClosing) {
+    billingWindowPopup: function (popupType,callbackFn,allowClosing,allowSubWithoutCard) {
 
         kendo.ui.progress($("body"), true);//Wait Message on
         $.post(odin.SERVLET_PATH,
@@ -317,12 +316,21 @@ var odinLite_billing = {
                         $("#cc-billing-form input[name='email']").val(odin.USER_INFO.userName);
 
                         //Add Country Box
-                        $("#cc-billing-form input[name='countryCode']").kendoDropDownList({
+                        var ccDropDown = $("#cc-billing-form input[name='countryCode']").kendoDropDownList({
                             dataTextField: "text",
                             dataValueField: "value",
                             dataSource: data.countryCombo,
-                            index: 0
-                        });
+                            value: 'US',
+                            change: function(e){
+                                var value = e.sender.value();
+                                if(value === 'US'){
+                                    $('.ccBillingSpan').show();
+                                }else{
+                                    $('.ccBillingSpan').hide();
+                                }
+                            }
+                        }).data('kendoDropDownList');
+                        ccDropDown.trigger('change');
 
                         //Add State Box
                         $("#cc-billing-form input[name='state']").kendoDropDownList({
@@ -407,6 +415,36 @@ var odinLite_billing = {
                         billingWindow.wrapper.find('.k-window-title').html("<div class='creditCardIcon'></div> Credit Card Authorization");
 
                         /** Button Events **/
+                        if(!via.undef(allowSubWithoutCard) && allowSubWithoutCard === "true") {//Check to make sure they can subscribe without cards.
+                            //Check to make sure their number if subscriptions are less then the max amount allowed.
+                            var isMaxSignupAttempts = false;
+                            if(!via.undef(odinLite.MAX_SIGNUP_WITHOUT_CARD) ){
+                                odinLite.MAX_SIGNUP_WITHOUT_CARD = parseInt(odinLite.MAX_SIGNUP_WITHOUT_CARD+"");
+                                if(!via.undef(odinLite.userSignupMap) && !via.undef(odinLite.userSignupMap['SignUp Attempts'])) {
+                                    odinLite.userSignupMap['SignUp Attempts'] = parseInt(odinLite.userSignupMap['SignUp Attempts'] + "");
+                                    if(odinLite.userSignupMap['SignUp Attempts'] > odinLite.MAX_SIGNUP_WITHOUT_CARD){
+                                        isMaxSignupAttempts = true;
+                                    }
+                                }
+                            }
+
+                            if(isMaxSignupAttempts === false) {
+                                $(".skip-billing-button").show();
+                                $(".skip-billing-button").click(function (e) {
+                                    e.preventDefault();
+                                    via.kendoConfirm("Skip this step", "Please confirm that you would like to skip this step. <br/>" +
+                                        "Without a credit card on file, you can only subscribe to Free and Demo Reports.", function () {
+                                        billingWindow.close();
+                                        odinLite.isFreeOnlyUser = true;
+
+                                        if (!via.undef(callbackFn)) {
+                                            callbackFn(isFirstTimeUser);//Continue with the login
+                                        }
+                                    })
+                                });
+                            }
+                        }
+
                         $('#cc-billing-form').submit(function (e) {
                             //Don't submit
                             e.preventDefault();
@@ -496,7 +534,7 @@ var odinLite_billing = {
             via.alert("Missing Arguments", "No packages specified.");
             return;
         }
-console.log('xxx here');
+
         kendo.ui.progress($("body"), true);//Wait Message on
         $.post(odin.SERVLET_PATH,
             {
@@ -518,7 +556,6 @@ console.log('xxx here');
                     });
                     return;
                 } else {//Success
-                    console.log('data',data);
                     via.debug("Signup Billing Success Info", data);
                     if(!via.undef(data.message)){
                         via.kendoAlert("Signup Message",data.message,function(){

@@ -43,7 +43,6 @@
                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
                <span class="badge" id="home_systemNotificationBadge"></span>
                </button>
-               <!--<span id="home_systemNotificationBadge" class="badge nav-badge-notify">42</span>-->
 
                <a title="My Account" style="display:none;" id="accountButton" class="tr btn navbar-btn btn-default tour-step home-tour-step-7" href="#"><i
                   class="fa fa-user"></i></a>
