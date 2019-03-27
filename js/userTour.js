@@ -397,6 +397,20 @@ var userTour = {
         title: "Viewing Data",
         content: "Data that has been loaded in to the system, both static and time series data, will be displayed here. Time-series data will be listed by date.",
         animation: true
+      },
+      {
+        element: ".tour-step.tour-step-manage-data-3",
+        placement: "right",
+        title: "Run SQL Queries On Data",
+        content: "Click this icon to run simple SQL queries against the data that you've loaded. The data models will be stored as temporary databases that you can then query.",
+        animation: true
+      },
+      {
+        element: ".tour-step.tour-step-manage-data-4",
+        placement: "right",
+        title: "Zip & Export Data to CSV Files",
+        content: "Click this icon to see the file structure of your data models. This allows you to easily zip and export the data you have loaded into the system.",
+        animation: true
       }
     ]);
 
