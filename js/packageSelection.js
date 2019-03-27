@@ -186,6 +186,7 @@ var packageSelection = {
             var setUpFee = packageArr[2];
             var monthlyCost = packageArr[3];
             var description = packageArr[4];
+            var webLink = packageArr[5];
             var isNonFree = packageArr[6];
             var application = [];
             if (applicationName in applications) {
@@ -201,8 +202,11 @@ var packageSelection = {
             packageInfo["setUpFee"] = setUpFee;
             packageInfo["monthlyCost"] = monthlyCost;
             packageInfo["description"] = description;
+            packageInfo["webLink"] = webLink;
             if(odinLite.isFreeOnlyUser===true && isNonFree === "1"){
                 packageInfo["disable"] = true;
+                var infoMessage = $('.packages_noCreditCardOnFile');
+                infoMessage.show();
             }
             //Push onto the application
             application.push(packageInfo);
@@ -234,7 +238,6 @@ var packageSelection = {
 
             //For each package we will append its information under that application
             $.each(packages, function (index, packageInfo) {
-
                 var packagePanel = packageSelection.getPackageDescriptionHtml(packageInfo);
                 applicationPanel.append(packagePanel);
             });
@@ -281,11 +284,18 @@ var packageSelection = {
         }
 
         var html = "<div class='well package-description' style='user-select:none;' >" +
-            "<input "+disabled+"type='radio' id='applicationRadio_{{applicationId}}' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> " +
-            "<label for='applicationRadio_{{applicationId}}'>{{packageName}}</label>" +
-            "<br>" +
+            "<input "+disabled+"type='radio' id='applicationRadio_{{applicationId}}' name='{{applicationId}}' value='{{packageId}}' data-package-name='{{packageName}}'> ";
+
+        if(packageView["disable"] === true || $.inArray(packageView.packageId,odinLite.subscribedPackageList) !== -1) {
+            html += "<label style='color:gray;' for='applicationRadio_{{applicationId}}'>{{packageName}}</label>";
+        }else{
+            html += "<label for='applicationRadio_{{applicationId}}'>{{packageName}}</label>";
+        }
+
+
+        html += "<br>" +
             "<p>{{description}}</p>" +
-            "<a href='http://says.opturo.com/index.php?appId={{applicationId}}' target='_blank'>See More Details</a>" +
+            "<a href='{{webLink}}' target='_blank'>See More Details</a>" +
             "<br>" +
             "<p>Monthly Cost (USD): <span> {{monthlyCost}} per month </span></p>" +
             "<p>One-time Set Up Fee (USD): <span>{{setUpFee}}</span></p>" +

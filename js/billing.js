@@ -148,7 +148,11 @@ var odinLite_billing = {
             }
             /** Not verified popup billing window. **/
             console.log("checkBillingIsVerified: Not verified. Make them enter credit card info.");
-            odinLite_billing.billingWindowPopup(popupType,callbackFn,false,odinLite.ALLOW_SUB_WITHOUT_CARD);
+            if (via.undef(via.getParamsValue("entityname")) && via.undef(via.getParamsValue("entitydir"))) {
+                odinLite_billing.billingWindowPopup(popupType, callbackFn, false, odinLite.ALLOW_SUB_WITHOUT_CARD);
+            }else if(!via.undef(callbackFn)){
+                callbackFn();
+            }
         } else {//They are verified. Call the function to continue the login.
             console.log("checkBillingIsVerified: They are verified. Call the function to continue the login.");
 
@@ -428,7 +432,16 @@ var odinLite_billing = {
                                 }
                             }
 
-                            if(isMaxSignupAttempts === false) {
+                            //Check to make sure they do not have a past due bill.
+                            var hasPastDueBill = false;
+                            var billingDataSet = odin.getUserSpecificSetting("billingDataSet");
+                            var billingFailureDate = odin.getUserSpecificSetting("billingFailureDate");
+                            if(!via.undef(billingDataSet,true) && !via.undef(billingFailureDate,true)){
+                                hasPastDueBill = true;
+                            }
+
+                            //Enable the skip if needed.
+                            if(isMaxSignupAttempts === false && hasPastDueBill === false) {
                                 $(".skip-billing-button").show();
                                 $(".skip-billing-button").click(function (e) {
                                     e.preventDefault();

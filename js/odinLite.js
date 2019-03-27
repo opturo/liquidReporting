@@ -127,6 +127,7 @@ var odinLite = {
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
                             odinLite.subscribedPackageList = data.packageList;
+                            odinLite.isFromAppBuilder = true;
 
                             //Hide the query string
                             window.history.replaceState("From App Builder", data.appName, "./");
@@ -1132,8 +1133,14 @@ var odinLite = {
      * Reporting Application
      */
     loadReportingApplication: function () {
+        var params = via.getQueryParams();
+        var debug = "";
+        if(!via.undef(params.debug,true)){
+            debug = "&debug=true";
+        }
         $('body').fadeOut(function () {
-            window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME + "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER);
+            window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME +
+                "&overrideUser=" + ((via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser);
         });
     },
 

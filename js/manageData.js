@@ -1779,7 +1779,7 @@ var odinLite_manageData = {
         }
 
         //Set the data
-        for (var r = 1; r < json.sheets[0].rows.length -1; r++) {//Don't add last row.
+        for (var r = 1; r < (ts.data.length+1); r++) {//Don't add last row.
             var cells = json.sheets[0].rows[r].cells;
             var rowIdx = r - 1;
             for (var c = 0; c < cells.length; c++) {
@@ -1793,6 +1793,7 @@ var odinLite_manageData = {
 
         //Check to see if we should add a new row.
         if(json.sheets[0].rows.length > (ts.data.length+1)) {
+            console.log('here');
             var lastRow = json.sheets[0].rows[json.sheets[0].rows.length - 1].cells;
             var isValid = true;
             for(var i in requiredMap){
@@ -1820,6 +1821,9 @@ var odinLite_manageData = {
 
         //Make the call to update
         via.debug("Saving JSON TS:", ts);
+
+        console.log("Saving JSON TS:", ts);
+
         $.post(odin.SERVLET_PATH,
             {
                 action: 'odinLite.manageData.persistSheetEditToCache',

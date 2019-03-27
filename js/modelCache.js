@@ -60,7 +60,7 @@ var odinLite_modelCache = {
                             optionalModelsLength = Object.keys(data.optionalModels).length;
                         }
                         if (optionalModelsLength === 0 && requiredModelsLength === 0) {
-                            via.kendoAlert("Load Failure", "Processes do not contain Required or optional models.");
+                            via.kendoAlert("Load Failure", "No Data Models defined for Reports in your Profile.");
                             return;
                         }
                     }
