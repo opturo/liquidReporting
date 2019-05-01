@@ -22,6 +22,10 @@ var odinLite = {
     userSignupMap: null,
     isFreeOnlyUser: false,
 
+    //For tracking the application
+    appList: null, //This contains the list of applications a user is permissioned for.
+    currentApplication: null,
+
     /**
      * init
      * This will initialize ODIN Lite and check if a user is properly logged in.
@@ -115,6 +119,9 @@ var odinLite = {
                     odinLite.MAX_SIGNUP_WITHOUT_CARD = data.maxSignupWithoutCard;
                     odinLite.ALLOW_SUB_WITHOUT_CARD = data.allowSubWithoutCard;
                     odinLite.userSignupMap = data.userSignupMap;
+                    odinLite.appList = data.appList;
+                    odinLite.dataMgmtModel = data.dataMgmtModel;
+                    odinLite.dataMgmtAppId = data.dataMgmtAppId;
 
                     //Check to make sure they have verified billing if they are a billing client.
                     odinLite_billing.checkBillingIsVerified(function () {
@@ -254,6 +261,7 @@ var odinLite = {
                 odinLite.navigateToOption('HOME');
             }).fadeIn();
         }
+        odinLite.resetHomeApplications();
         $('#homePanel').fadeIn();
 
         //Show the Opturo logo
@@ -299,6 +307,81 @@ var odinLite = {
         kendo.ui.progress($("body"), false);//Wait Message off
 
 
+    },
+
+    /**
+     * resetHomeApplications
+     */
+    resetHomeApplications: function(allApps){
+        var homePanel = $('.applicationHomePanel');
+
+        homePanel.empty();
+
+        //Display a message if the user has no applications.
+        if(via.undef(odinLite.appList)){
+            homePanel.html(`<h4>You are not currently subscribed to any applications. Start by adding packages by clicking <a href="#" onclick="odinLite.loadAccountPackages();">here</a>.</h4>`);
+            return;
+        }
+
+        //Order the Groups
+        const orderedGroups = {};
+        Object.keys({...odinLite.appList}).sort().forEach(function(key) {
+            orderedGroups[key] = JSON.parse(JSON.stringify(odinLite.appList[key]));
+        });
+
+        //Loop the app groups.
+        if(allApps === true) {//List application groups.
+            $.each(orderedGroups, function (group, apps) {
+                homePanel.append(`<div style="clear:both;padding-bottom: 10px;border-bottom: 1px solid #ccc;" />`);
+                homePanel.append(`<h3 style="clear:both;"><i class="fa fa-list-alt" aria-hidden="true"></i> ${group}</h3>`);
+                var unorderedApps = {};
+                $.each(apps, function (appId, appArr) {
+                        var appName = appArr[0];
+                        appArr.unshift(appId);
+                        unorderedApps[appName] = appArr;
+                });
+                const orderedApps = {};
+                Object.keys(unorderedApps).sort().forEach(function(key) {
+                    orderedApps[key] = unorderedApps[key];
+                });
+
+                $.each(orderedApps, function (appName, appArr) {
+                    var appId = appArr[0];
+                    var appImage = appArr[3];
+                    homePanel.append(`
+                 <div class="well appContainer" onclick="odinLite.selectApplication('${appId}');">
+                 <h4>${appName}</h4>
+                 <hr/>
+                 <img src="${appImage}" alt="${appName}" />
+                 </div>`);
+                });
+            });
+        }else{//List all applications.
+            //Order the applications
+            var unorderedApps = {};
+            $.each(orderedGroups, function (group, apps) {
+                $.each(apps, function (appId, appArr) {
+                    var appName = appArr[0];
+                    appArr.unshift(appId);
+                    unorderedApps[appName] = appArr;
+                });
+            });
+
+            const orderedApps = {};
+            Object.keys(unorderedApps).sort().forEach(function(key) {
+                orderedApps[key] = unorderedApps[key];
+            });
+            $.each(orderedApps, function (appName, appArr) {
+                var appId = appArr[0];
+                var appImage = appArr[3];
+                homePanel.append(`
+                 <div class="well appContainer" onclick="odinLite.selectApplication('${appId}');">
+                 <h4>${appName}</h4>
+                 <hr/>
+                 <img src="${appImage}" alt="${appName}" />
+                 </div>`);
+            });
+        }
     },
 
     /**
@@ -378,6 +461,72 @@ var odinLite = {
             });
         });
     },
+
+    /**
+     * getUnionWindow
+     * This will open the union files window.
+     */
+    getExportFilesWindow: function (callbackFn) {
+        kendo.ui.progress($("body"), true);//Wait Message
+
+        //Get the window template
+        $.get("./html/exportFilesWindow.html", function (unionWindowTemplate) {
+            $('#odinLite_exportFilesWindow').remove();
+            $('body').append(unionWindowTemplate);
+            //Make the window.
+            var exportFilesWindow = $('#odinLite_exportFilesWindow').kendoWindow({
+                title: "Export File Format",
+                draggable: false,
+                resizable: false,
+                width: "310px",
+                height: "250px",
+                modal: true,
+                close: true,
+                animation: false,
+                actions: [
+                    "Minimize",
+                    "Close"
+                ],
+                close: function () {
+                    exportFilesWindow = null;
+                    $('#odinLite_exportFilesWindow').remove();
+                }
+            }).data("kendoWindow");
+
+            exportFilesWindow.center();
+
+            $( "#odinLite_exportFilesWindow input[name='fileExportFormat_type']" ).change(function(){
+                var selected = $(this).val();
+                if(selected === 'delimited'){
+                    $('#fileExportFormat_delimiterTypeSpan').show();
+                }else{
+                    $('#fileExportFormat_delimiterTypeSpan').hide();
+                }
+            });
+
+
+            //Shut off the wait
+            kendo.ui.progress($("body"), false);//Wait Message
+
+            $('.exportFiles_exportButton').click(function(){
+                var fileType = $( "#odinLite_exportFilesWindow input[name='fileExportFormat_type']:checked" ).val();
+                var delimiter = null;
+                if(fileType === 'delimited'){
+                    delimiter = $('#fileExportFormat_delimiterType').val();
+                    if(via.undef(delimiter,true)){
+                        via.kendoAlert("Delimiter","Please enter a delimiter.");
+                        return;
+                    }
+                }
+                if(!via.undef(callbackFn)){
+                    exportFilesWindow.close();
+                    callbackFn(fileType,delimiter);
+                }
+            });
+
+        });//End Template fetch
+    },
+
 
     /**
      * createSwitchUserWindow
@@ -674,7 +823,6 @@ var odinLite = {
                                 var grid = null;
                                 function updateTransactionData(transactionsTs) {
                                     if(via.undef(transactionsTs)){return;}
-                                    console.log('updating TransactionData',transactionsTs);
                                     $('#userInfo_transactions span').empty();
                                     odinTable.createTable("odinLite_userInfoTransactionTable", transactionsTs, '#userInfo_transactions span');
                                     grid = $('#odinLite_userInfoTransactionTable').data('kendoGrid');
@@ -1057,7 +1205,90 @@ var odinLite = {
         //Hide the other panels
         odinLite.hideAllApplications();
 
+        //Update Breadcrumb
+        $('.breadcrumbNav').empty();
+
         $('#homePanel').fadeIn();
+    },
+
+    /**
+     * selectApplication
+     * This will select a new application
+     */
+    selectApplication: function (appId) {
+        if(!via.undef(odinLite.appList)) {
+            $.each(odinLite.appList, function (group, app) {
+                if(!via.undef(app)) {
+                    $.each(app, function (currAppId, arr) {
+                        if(appId === currAppId && !via.undef(arr)){
+                            odinLite.currentApplicationName = arr[0];
+                            return;
+                        }
+                    });
+                }
+            });
+        }
+
+        odinLite.currentApplication = appId;
+
+        $(".appHome_upload").show();
+        $(".appHome_manage").show();
+        $(".appHome_reporting").show();
+        $(".appHome_extraSpacer").hide();
+
+        kendo.ui.progress($("body"), true);
+        $.post(odin.SERVLET_PATH,
+            {
+                action: 'odinLite.manageData.init',
+                entityDir: odinLite.ENTITY_DIR,
+                overrideUser: odinLite.OVERRIDE_USER,
+                isDataManagerUser: odinLite.isDataManagerUser,
+                appId: odinLite.currentApplication
+            },
+            function (data, status) {
+                kendo.ui.progress($("body"), false);//Wait Message off
+
+                if (!via.undef(data, true) && data.success === false) {
+                    via.debug("Failure checking application:", data.message);
+                    via.alert("Failure checking application", data.message);
+                } else {
+                    via.debug("Successful checking application:", data);
+
+                    //Hide Interface
+                    if(via.undef(data.jobInfo) || Object.keys(data.jobInfo).length === 0){
+                        $(".appHome_reporting").hide();
+                    }
+                    //Hide Manage and Upload
+                    if((via.undef(data.requiredModels) || data.requiredModels.length === 0) && (via.undef(data.optionalModels) || data.optionalModels.length === 0)){
+                        $(".appHome_upload").hide();
+                        $(".appHome_manage").hide();
+                    }
+                    //For Data Management
+                    if(odinLite.dataMgmtAppId === odinLite.currentApplication){
+                        $(".appHome_extraSpacer").show();
+                        $(".appHome_reporting").hide();
+                        $(".appHome_manage").hide();
+                    }
+
+
+                    odinLite.loadApplicationHome();
+                }
+            },
+            'json');
+    },
+
+    /**
+     * loadApplicationHome
+     * This will bring a user to the application homepage.
+     */
+    loadApplicationHome: function () {
+        //Hide the other panels
+        odinLite.hideAllApplications();
+
+        //Update Breadcrumb
+        $('.breadcrumbNav').html(`<a href="#" onclick="odinLite.loadApplicationHome();"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i> ${odinLite.currentApplicationName}</a>`);
+
+        $('#appHomePanel').fadeIn();
     },
 
     /**
@@ -1071,6 +1302,7 @@ var odinLite = {
         odinLite.hideAccountPackages();
         odinLite.hidePaymentPage();
 
+        $('#appHomePanel').hide();
         $('#homePanel').hide();
     },
 
@@ -1139,8 +1371,12 @@ var odinLite = {
             debug = "&debug=true";
         }
         $('body').fadeOut(function () {
+            //console.log("../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME +
+            //    "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser
+            //    + "&appId=" + odinLite.currentApplication);
             window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME +
-                "&overrideUser=" + ((via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser);
+                "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser
+                + "&appId=" + odinLite.currentApplication;
         });
     },
 

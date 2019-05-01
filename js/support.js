@@ -44,12 +44,19 @@ var odinLite_support = {
                         }
                     });
 
-                    //DD List - Applications
+                    //DD List - Applications - sort
+                    var apps = [];
+                    for (var property in data.applications) {
+                        if (data.applications.hasOwnProperty(property)) {
+                            apps.push(data.applications[property]);
+                        }
+                    }
+                    apps.sort();
                     var appList = [];
-                    $.each(data.applications,function(key,value){
+                    $.each(apps,function(i){
                         appList.push({
-                            text: value,
-                            value: value
+                            text: apps[i],
+                            value: apps[i]
                         });
                     });
                     $("#accountSettings_support_application").kendoDropDownList({

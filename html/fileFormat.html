@@ -4,7 +4,8 @@
 <div class="col-md-10">
   <div class="panel panel-default">
 	 <div class="tr panel-heading"><img src="../../viaCommon/images/desktopIcons/16_data.png"/> <strong>Import Wizard - File Format</strong> <span class="applicationAndModelName"></span> <span style="margin-left:10px;" class="fileFormat_reportName"></span>
-		 <button title="Configure Union Files" onclick="odinLite_unionFiles.getUnionWindow();" id="fileFormat_unionButton" type="button" title="Add Union" class="tr pull-right btn btn-primary btn-xs"><i class="fa fa-plus"></i> Union Additional Data</button>
+		 <button title="Configure Union Files" onclick="odinLite_unionFiles.getUnionWindow();" id="fileFormat_unionButton" type="button" class="tr pull-right btn btn-primary btn-xs"><i class="fa fa-plus"></i> Union Additional Data</button>
+		 <button title="Export Formatted Data" onclick="odinLite_fileFormat.getExportFilesWindow();" id="fileFormat_exportFilesButton" type="button" class="tr pull-right btn btn-default btn-xs" style="margin-right:10px;"><i class="fa fa-file-archive-o"></i> Export Formatted Data</button>
 	 </div>
 	 <div class="panel-body" style="margin:10px;">
 		<p class="tr fileFormat_settingText">
@@ -116,7 +117,8 @@
 		   </div>
 		</div>
 		 <button onclick="odinLite_fileFormat.showUploadFiles();" id="fileFormat_previousButton" style="margin:10px 0 10px 0;" type="button" class="tr btn btn-primary">< Previous</button>
-		 <button id="fileFormat_nextButton" style="float:right;margin:10px 0 10px 0;" onclick="odinLite_modelMapping.init();" type="button" class="tr btn btn-primary">Next ></button>
+         <button id="fileFormat_exportFilesButton_bottom" title="Export Formatted Data" style="float:right;margin:10px 0 10px 0;display:none;" onclick="odinLite_fileFormat.getExportFilesWindow();" type="button" class="tr btn btn-default"><i class="fa fa-file-archive-o"></i> Export Formatted Data</button>
+         <button id="fileFormat_nextButton" style="float:right;margin:10px 0 10px 0;" onclick="odinLite_modelMapping.init();" type="button" class="tr btn btn-primary">Next ></button>
 	 </div>
   </div>
 </div>

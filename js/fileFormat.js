@@ -75,6 +75,17 @@ var odinLite_fileFormat = {
             }
         });
 
+        //Hide the next button if it is a data management model
+        if(odinLite_modelCache.dataMgmtModel === odinLite_modelCache.currentEntity.modelId){
+            $('#fileFormat_nextButton').hide();
+            $('#fileFormat_exportFilesButton_bottom').show();
+            $('#fileFormat_exportFilesButton').show();
+        }else{
+            $('#fileFormat_exportFilesButton_bottom').hide();
+            $('#fileFormat_exportFilesButton').hide();
+            $('#fileFormat_nextButton').show();
+        }
+
         //Check multiple sheets for excel
         odinLite_fileFormat.isMultiSheet = false;
         if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames) && odinLite_fileFormat.FILE_DATA.sheetNames.length > 1
@@ -186,6 +197,13 @@ var odinLite_fileFormat = {
             var col = odinLite_modelCache.currentEntity.mappedColumnDisplay[i];
             columnList.push({ text: col, value: col });
         }
+
+        //Check for data management
+        if(odinLite_modelCache.dataMgmtModel === odinLite_modelCache.currentEntity.modelId){
+            columnList = [];
+        }
+
+
         $('#fileFormat_addColumn_columnList').kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
@@ -197,8 +215,9 @@ var odinLite_fileFormat = {
                 addInputBox(a.sender.value());
             }
         });
-        addInputBox(columnList[0].text);
-
+        if(!via.undef(columnList) && columnList.length > 0) {
+            addInputBox(columnList[0].text);
+        }
         //Column Type
         $("#fileFormat_addColumn_columnType").kendoDropDownList({
             dataTextField: "text",
@@ -690,6 +709,11 @@ var odinLite_fileFormat = {
             var col = odinLite_modelCache.currentEntity.mappedColumnDisplay[i];
             columnList.push({ text: col, value: col });
         }
+        //Check for data management
+        if(odinLite_modelCache.dataMgmtModel === odinLite_modelCache.currentEntity.modelId){
+            columnList = [];
+        }
+
         $('#fileFormat_mapColumn_columnList').kendoComboBox({
             dataTextField: "text",
             dataValueField: "value",
@@ -2099,26 +2123,28 @@ var odinLite_fileFormat = {
                                     }
 
                                     //Style the code editor
-                                    kendo.ui.progress($('#odinLite_advancedSettingsWindow'), true);//Wait Message
-                                    $("#fileFormat_dbTransfer_sqlArea").hide();
-                                    setTimeout(function(){
-                                        $("#fileFormat_dbTransfer_sqlArea").show();
-                                        var editor = CodeMirror.fromTextArea(document.getElementById("fileFormat_dbTransfer_sqlArea"), {
-                                            mode: "text/x-sql",
-                                            indentWithTabs: true,
-                                            smartIndent: true,
-                                            lineWrapping: true,
-                                            lineNumbers: true,
-                                            matchBrackets : true,
-                                            autofocus: true,
-                                            extraKeys: {"Ctrl-Space": "autocomplete"},
-                                            value: (via.undef(odinLite_fileFormat.sqlQuery,true))?"":odinLite_fileFormat.sqlQuery
-                                        });
-                                        editor.setSize("100%", 200);
-                                        kendo.ui.progress($('#odinLite_advancedSettingsWindow'), false);//Wait Message
-                                        // store it
-                                        $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance', editor);
-                                    },500);
+                                    if(via.undef($('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance'))){
+                                        kendo.ui.progress($('#odinLite_advancedSettingsWindow'), true);//Wait Message
+                                        $("#fileFormat_dbTransfer_sqlArea").hide();
+                                        setTimeout(function () {
+                                            $("#fileFormat_dbTransfer_sqlArea").show();
+                                            var editor = CodeMirror.fromTextArea(document.getElementById("fileFormat_dbTransfer_sqlArea"), {
+                                                mode: "text/x-sql",
+                                                indentWithTabs: true,
+                                                smartIndent: true,
+                                                lineWrapping: true,
+                                                lineNumbers: true,
+                                                matchBrackets: true,
+                                                autofocus: true,
+                                                extraKeys: {"Ctrl-Space": "autocomplete"},
+                                                value: (via.undef(odinLite_fileFormat.sqlQuery, true)) ? "" : odinLite_fileFormat.sqlQuery
+                                            });
+                                            editor.setSize("100%", 200);
+                                            kendo.ui.progress($('#odinLite_advancedSettingsWindow'), false);//Wait Message
+                                            // store it
+                                            $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance', editor);
+                                        }, 500);
+                                    }
 
                                     isSqlLoaded = true;
                                 }
@@ -2295,7 +2321,13 @@ var odinLite_fileFormat = {
             dataSource: []
         });
 
-        //Button Event
+        //Button Events
+        $('.fileFormat_sqlQuery_refresh').click(function(){
+            console.log('here!!!');
+            var codeeditor = $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance');
+            codeeditor.setValue(via.undef(odinLite_fileFormat.defaultSQLQuery)?"":odinLite_fileFormat.defaultSQLQuery);
+        });
+
         $('#fileFormat_dbQueryButton').click(function(){
             kendo.ui.progress($('#odinLite_advancedSettingsWindow'), true);//Wait Message
             var tmpSql = odinLite_fileFormat.sqlQuery;
@@ -2320,6 +2352,10 @@ var odinLite_fileFormat = {
                         height: '99%'
                     });
                     $('#odinLite_dbResultGrid').css("padding", "0");
+                }
+
+                if(!via.undef($('#odinLite_advancedSettingsWindow').data('kendoWindow'))) {
+                    $('#odinLite_advancedSettingsWindow').data('kendoWindow').center();
                 }
             });
         });
@@ -2740,7 +2776,6 @@ var odinLite_fileFormat = {
 
         //Get the advanced settings options
         var advancedSettingsOptions = odinLite_fileFormat.getAdvancedSettingsOptions();
-
         //Sheet Names
         var sheetNames = null;
         if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames,true)){
@@ -2860,6 +2895,59 @@ var odinLite_fileFormat = {
                 }
             },
             'text');
+    },
+
+    /**
+     * This will get the file export window that will export the files and figure out the type.
+     */
+    getExportFilesWindow: function(){
+        odinLite.getExportFilesWindow(function(fileType,delimiter){
+
+            kendo.ui.progress($("body"), true);//Wait Message
+
+            //Update the formatting options.
+            var formattingOptions = odinLite_fileFormat.getFormattingOptions();
+            $.extend(odinLite_fileFormat.FILE_DATA,formattingOptions);
+
+            //Get the advanced settings options
+            var advancedSettingsOptions = odinLite_fileFormat.getAdvancedSettingsOptions();
+
+            //Sheet Names
+            var sheetNames = null;
+            if(!via.undef(odinLite_fileFormat.FILE_DATA.sheetNames,true)){
+                sheetNames = JSON.stringify(odinLite_fileFormat.FILE_DATA.sheetNames);
+            }
+
+            var serverVars = $.extend({
+                action: 'odinLite.uploadFilesExport.exportFiles',
+                type: odinLite_fileFormat.FILE_DATA.type,
+                files: JSON.stringify(odinLite_fileFormat.FILE_DATA.files),
+                localFiles: JSON.stringify(odinLite_fileFormat.FILE_DATA.localFiles),
+                idx: odinLite_fileFormat.FILE_DATA.fileIdx,
+                sheetNames: sheetNames,
+                unionData: JSON.stringify(odinLite_unionFiles.getUnionData()),
+                overrideUser: odinLite.OVERRIDE_USER,
+                fileType: fileType,
+                fileDelimiter: delimiter
+            },formattingOptions,advancedSettingsOptions);
+
+            $.post(odin.SERVLET_PATH,
+                serverVars,
+                function(data, status){
+                    kendo.ui.progress($("body"), false);//wait off
+
+                    if(!via.undef(data,true) && data.success === false){
+                        via.debug("File Export Error:", data.message);
+                        via.alert("File Export Error",data.message);
+                    }else{//Success - export
+                        via.debug("File Export Successful:", data);
+                        via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.fileName));
+                    }
+                },
+                'json');
+
+            console.log(serverVars);
+        });
     },
 
     /**

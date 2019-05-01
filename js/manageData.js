@@ -39,7 +39,8 @@ var odinLite_manageData = {
                 action: 'odinLite.manageData.init',
                 entityDir: odinLite.ENTITY_DIR,
                 overrideUser: odinLite.OVERRIDE_USER,
-                isDataManagerUser: odinLite.isDataManagerUser
+                isDataManagerUser: odinLite.isDataManagerUser,
+                appId: odinLite.currentApplication
             },
             function (data, status) {
                 odinLite_manageData.hasBeenLoaded = true;//Set the loaded variable after first load.
@@ -1124,27 +1125,32 @@ var odinLite_manageData = {
             /*Functions*/
             //Download the selected file
             function downloadFile(filePath,isFolder){
-                kendo.ui.progress($("#odinLite_fileStructureWindow"), true);//Wait Message on
-                $.post(odin.SERVLET_PATH,
-                    {
-                        action: 'odinLite.manageData.exportCacheFile',
-                        filePath: filePath,
-                        isFolder: isFolder,
-                        entityDir: odinLite.ENTITY_DIR,
-                        overrideUser: odinLite.OVERRIDE_USER,
-                    },
-                    function (data, status) {
-                        kendo.ui.progress($("#odinLite_fileStructureWindow"), false);//Wait Message off
+                odinLite.getExportFilesWindow(function(fileType,delimiter) {
+                    kendo.ui.progress($("#odinLite_fileStructureWindow"), true);//Wait Message on
+                    $.post(odin.SERVLET_PATH,
+                        {
+                            action: 'odinLite.manageData.exportCacheFile',
+                            filePath: filePath,
+                            isFolder: isFolder,
+                            entityDir: odinLite.ENTITY_DIR,
+                            overrideUser: odinLite.OVERRIDE_USER,
+                            fileType: fileType,
+                            fileDelimiter: delimiter
+                        },
+                        function (data, status) {
+                            kendo.ui.progress($("#odinLite_fileStructureWindow"), false);//Wait Message off
 
-                        if (!via.undef(data, true) && data.success === false) {
-                            via.debug("Failure downloading file:", data.message);
-                            via.kendoAlert("Download Failure", data.message);
-                        } else {
-                            via.debug("Successful download:", data);
-                            via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
-                        }
-                    },
-                    'json');
+                            if (!via.undef(data, true) && data.success === false) {
+                                via.debug("Failure downloading file:", data.message);
+                                via.kendoAlert("Download Failure", data.message);
+                            } else {
+                                via.debug("Successful download:", data);
+                                console.log();
+                                via.downloadFile(odin.SERVLET_PATH + "?action=admin.streamFile&reportName=" + encodeURIComponent(data.reportName));
+                            }
+                        },
+                        'json');
+                });
             }
 
         });

@@ -1,87 +1,21 @@
 <div class="row" style="padding-bottom:10px;">
-   <div class="col-md-4">
+   <div class="col-md-2">
       <a title="Switch User" style="display:none;" id="switchUserButton" class="tr btn navbar-btn btn-default" href="#"><i
               class="fa fa-users"></i></a>
    </div>
-   <div class="col-md-4">
-      <h3 style="text-align:center;" class="tr">
-         <!-- title -->
+   <div class="col-md-8">
+      <h3 style="text-align:left;" class="tr">
+         Application List <small>( <a href="#" onclick="odinLite.resetHomeApplications(false);">All</a> |  <a href="#" onclick="odinLite.resetHomeApplications(true);">Grouped</a> )</small>
       </h3>
+      <hr style="float:left;width:400px;"/>
    </div>
-   <div class="col-md-4"></div>
-</div>
-
-<div class="row">
-   <div class="col-md-4"></div>
-   <div class="col-md-4">
-      <h3 class="tr">
-         <button type="button" class="tr btn btn-success hideDMUser" onclick="userTour.initTour()" style="display:block;margin: 0 auto;"><i class="fa fa-play"></i> Tour</button>
-      </h3>
-   </div>
-   <div class="col-md-4"></div>
+   <div class="col-md-2"></div>
 </div>
 
 <div class="row padded-row">
-   <div class="col-md-3 home_sideSpacers"></div>
-   <div class="col-md-2">
-     <div class="main-step-description">
-       <div class="top-panel">
-          <a href="#" class="tour-step home-tour-step-1 home-tour-step-8 tour-step-five thumbnail" style="background-color: transparent;border-color: transparent;" onClick="odinLite.loadModelCacheApplication();">
-             <img src="../../viaCommon/images/desktopIcons/128_data.png" alt="...">
-             <h4 style="text-align:center;" class="tr">Upload Data</h4>
-          </a>
-       </div>
-       <div class="bottom-panel">
-         <div class="panel panel-info">
-           <div class="panel-heading">
-             <p>Load Your Data</p>
-           </div>
-           <div class="panel-body">
-             <p>Upload data from any custom Text/Excel files or our easy to use Excel templates using our proprietary Data Management Tool.</p>
-           </div>
-         </div>
-       </div>
-     </div>
+   <div class="col-md-2 home_sideSpacers"></div>
+   <div class="col-md-8 applicationHomePanel">
+
    </div>
-   <div class="col-md-2">
-     <div class="main-step-description">
-       <div class="top-panel">
-         <a href="#" class="tour-step home-tour-step-2 thumbnail" style="background-color: transparent;border-color: transparent;" onClick="odinLite.loadViewApplication();">
-            <img src="../../viaCommon/images/desktopIcons/128_database.png" alt="...">
-            <h4 style="text-align:center;" class="tr">Manage Data</h4>
-         </a>
-       </div>
-       <div class="bottom-panel">
-         <div class="panel panel-info">
-           <div class="panel-heading">
-             <p>Check and Edit Your Data</p>
-           </div>
-           <div class="panel-body">
-             <p>Review, modify or delete data that has been loaded to your user profile.</p>
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>
-   <div class="col-md-2 hideDMUser">
-     <div class="main-step-description">
-       <div class="top-panel">
-         <a href="#" class="tour-step home-tour-step-3 thumbnail" style="background-color: transparent;border-color: transparent;" onClick="odinLite.loadReportingApplication();">
-            <img src="../../viaCommon/images/desktopIcons/128_reporting.png" alt="...">
-            <h4 style="text-align:center;" class="tr">Reports</h4>
-         </a>
-       </div>
-       <div class="bottom-panel">
-         <div class="panel panel-info">
-           <div class="panel-heading">
-             <p>Run Your Reports</p>
-           </div>
-           <div class="panel-body">
-             <p>Customize, run, and download your reports.</p>
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>
-   <div class="col-md-3"></div>
+   <div class="col-md-2"></div>
 </div>

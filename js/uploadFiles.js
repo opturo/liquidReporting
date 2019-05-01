@@ -96,6 +96,13 @@ var odinLite_uploadFiles = {
         $("#uploadProgressPanel").hide();
         $("#uploadFilesPanel").hide();
 
+        //Hide Template
+        if(odinLite_modelCache.currentPlatform.platform !== 'Custom'){
+            $('.templateCheckContainer').hide();
+        }else{
+            $('.templateCheckContainer').show();
+        }
+
         //Setup the events if they have not been setup
         if (!odinLite_uploadFiles.hasBeenLoaded) {
             $("#fileUpload_form").submit(function (e) {

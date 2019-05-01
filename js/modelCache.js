@@ -8,7 +8,8 @@ var odinLite_modelCache = {
     currentModel: null, //Placeholder for the currently selected model.
     currentEntity: null, //Placeholder for the currently selected entity.
     columnTemplate: null, //Placeholder for the html template for each column
-    currentPlatform: null, //PLaceholder for the current platform
+    currentPlatform: null, //Placeholder for the current platform
+    dataMgmtModel: null, //PLaceholder for the data management model
 
     /**
      * init
@@ -22,7 +23,8 @@ var odinLite_modelCache = {
             {
                 action: 'odinLite.cacheModel.init',
                 overrideUser: odinLite.OVERRIDE_USER,
-                isDataManagerUser: odinLite.isDataManagerUser
+                isDataManagerUser: odinLite.isDataManagerUser,
+                appId: odinLite.currentApplication
             },
             function(data, status){
                 kendo.ui.progress($("body"), false);//Wait Message off
@@ -71,6 +73,9 @@ var odinLite_modelCache = {
                     $('#entityList_existingEntity').hide();
                     $('#modelDefinition_existingModel').hide();
                     $('#modelDefinition_editModel').hide();
+
+                    //Check for data management model
+                    odinLite_modelCache.dataMgmtModel = data.dataMgmtModel;
 
                     if(via.undef(odinLite.isDataManagerUser) || odinLite.isDataManagerUser !== true) {
                         odinLite_modelCache.createModelTree(data.modelList, data.requiredModels, data.optionalModels);
@@ -364,30 +369,31 @@ var odinLite_modelCache = {
                 if(!via.undef(data,true) && data.success === false){
                     via.debug("Failure getting model:", data.message);
                     via.kendoAlert("Model Failure", data.message);
-                }else{
+                }else {
                     via.debug("Successful getting model:", data);
-                    if(!via.undef(data.modelInfo.errorString,true)){
-                        via.kendoAlert("Problem with data model",data.modelInfo.errorString);
+                    if (!via.undef(data.modelInfo.errorString, true)) {
+                        via.kendoAlert("Problem with data model", data.modelInfo.errorString);
                         return;
                     }
 
                     $("#entityList_message").hide();
                     $(".entityList_modelName").html(odinLite_modelCache.currentModel.text);
                     $(".entityList_modelDescription").empty();
-                    if(!via.undef(odinLite_modelCache.currentModel.description)){
+                    if (!via.undef(odinLite_modelCache.currentModel.description)) {
                         $(".entityList_modelDescription").html(odinLite_modelCache.currentModel.description);
                     }
-
                     $("#entityList_existingEntity").fadeIn();
 
                     //Save the modelInfo
+                    data.modelInfo.modelId = modelId;
                     odinLite_modelCache.currentEntity = data.modelInfo;
+
                     //Display the selected model and get the template to use.
                     $.get('./html/modelCache_columnTemplate.html', function(data) {
                         odinLite_modelCache.columnTemplate = data;
 
                         //Launch the Platform Chooser or display the saved model.
-                        if(!via.undef(isSkipPlatform,true) && isSkipPlatform===true){
+                        if((!via.undef(isSkipPlatform,true) && isSkipPlatform===true) || (odinLite_modelCache.dataMgmtModel === odinLite_modelCache.currentEntity.modelId)){
                             odinLite_modelCache.displaySelectedModelTemplate();
                         }else {
                             odinLite_modelCache.displayPlatformChooser();
@@ -496,10 +502,10 @@ var odinLite_modelCache = {
 
         //Create the inputs
         $(".modelDefinition_platformNameContainer").empty();
-        $(".modelDefinition_platformNameContainer").append('<input style="width:300px;" class="modelDefinition_platformNameInput" />');
+        $(".modelDefinition_platformNameContainer").append('<input style="width:350px;" class="modelDefinition_platformNameInput" />');
 
         $(".modelDefinition_platformSpecContainer").empty();
-        $(".modelDefinition_platformSpecContainer").append('<input style="width:300px;" class="modelDefinition_platformSpecInput" />');
+        $(".modelDefinition_platformSpecContainer").append('<input style="width:350px;" class="modelDefinition_platformSpecInput" />');
 
         //Platform Specs
         var platformSpecInput = $(".modelDefinition_platformSpecInput").kendoDropDownList({
@@ -510,6 +516,14 @@ var odinLite_modelCache = {
                 var dataItem = e.sender.dataItem();
                 //Update the description
                 $('.modelDefinition_platformSpecDefinition').html(dataItem.description);
+                if(!via.undef(dataItem.helpLink)) {
+                    $(".modelDefinition_platformSpecContainer_helpLink").empty();
+                    $(".modelDefinition_platformSpecContainer_helpLink").append(`<button title="Additional Information"
+                        onclick="via.displayHelpLink('${dataItem.specification}','${dataItem.helpLink}');"
+                        style="margin-left:10px;margin-bottom:2px;" type="button" class="tr btn btn-primary">
+                        <i class="fa fa-question-circle"></i></button>
+                    `);
+                }
             }
         }).data('kendoDropDownList');
 
@@ -549,6 +563,13 @@ var odinLite_modelCache = {
         $(".modelDefinition_choosePlatformButton").click(function(){
             var dataItem = platformSpecInput.dataItem().toJSON();
             odinLite_modelCache.currentPlatform = dataItem;
+
+            //Hide Template
+            if(odinLite_modelCache.currentPlatform.platform !== 'Custom'){
+                $('.exampleTemplateFile').hide();
+            }else{
+                $('.exampleTemplateFile').show();
+            }
 
             //Check to see if the model is already a saved model
             var platform = odinLite_modelCache.currentPlatform.platform;
@@ -605,7 +626,8 @@ var odinLite_modelCache = {
                 if(via.undef(platform)){ continue; }
                 platforms.push({
                     platform: platform[0],
-                    description: platform[1]
+                    description: platform[1],
+                    helpLink: platform.length>3?platform[3]:null
                 });
             }
             return platforms;
@@ -624,7 +646,8 @@ var odinLite_modelCache = {
                 platformSpecs.push({
                     platform: spec[0],
                     specification: spec[1],
-                    description: spec[2]
+                    description: spec[2],
+                    helpLink: spec.length>3?spec[3]:null
                 });
             }
             return platformSpecs;
@@ -641,8 +664,20 @@ var odinLite_modelCache = {
         if(odinLite_modelCache.currentEntity.savedModelExists === false || edit === true){
             $("#modelDefinition_editModel").fadeIn();
             buildColumnModel();
+
+            //Check to see id it is the data management model.
+            if((odinLite_modelCache.dataMgmtModel === odinLite_modelCache.currentEntity.modelId) &&
+                (odinLite_modelCache.currentEntity.savedModelExists === false)){
+                odinLite_modelCache.saveModelDefinition();
+            }
         }else{
             $("#modelDefinition_existingModel").fadeIn();
+            if(odinLite_modelCache.dataMgmtModel === odinLite_modelCache.currentEntity.modelId){
+                $('.dataMgmtHide').hide();
+                odinLite_modelCache.currentPlatform = {"platform":"Custom","specification":"Custom Upload"};
+            }else{
+                $('.dataMgmtHide').show();
+            }
         }
 
         function buildColumnModel(){
@@ -1170,5 +1205,75 @@ var odinLite_modelCache = {
             odinLite_uploadFiles.init();
         });
 
+    },
+
+    displayColumnListInfo: function(){
+        $.ajax({
+            url: '/ODIN/ODINServlet/ODIN_LITE/GET_DISPLAY_COLUMN_LIST?modelId=' + odinLite_modelCache.currentModel.value,
+            method: 'POST', // or GET
+            success: function (response) {
+                var sampleDataJSON = JSON.parse(response);
+
+                odinLite_modelCache.displayGridWindow(sampleDataJSON.columnListSet);
+            }
+        });
+    },
+
+    displaySampleData: function(){
+        $.ajax({
+            url: '/ODIN/ODINServlet/ODIN_LITE/MODEL_SAMPLE_DATA?modelId=' + odinLite_modelCache.currentModel.value,
+            method: 'POST', // or GET
+            success: function (response) {
+                var sampleDataJSON = JSON.parse(response);
+                console.log(sampleDataJSON);
+
+                odinLite_modelCache.displayGridWindow(sampleDataJSON.modelTemplate);
+            }
+        });
+    },
+
+    /** Displays sample input table data in modal **/
+    displayGridWindow: function(sampleData) {
+        var columnHeaders = sampleData['columnHeaders'];
+        var tableSet = sampleData['data'];
+        var sampleDataTitle = sampleData['tableLabel'];
+
+        sampleData['columnWidths'] = [];
+
+        $('body').append('<div id="sample-data-modal"><div id="sample-data-table"></div></div>');
+
+        odinTable.createTable("sample-table", sampleData, '#sample-data-table', null);
+
+        var grid = $('#sample-table').data("kendoGrid");
+        grid.setOptions({
+            pageable: false,
+            groupable: false,
+            scrollable: false
+        });
+
+        var dialog = $('#sample-data-modal');
+
+        var window;
+
+        //Make the window.
+        window = dialog.kendoWindow({
+            title: sampleDataTitle,
+            draggable: false,
+            modal:true,
+            width: "75%",
+            height: "75%",
+            actions: [
+                "Maximize",
+                "Close"
+            ],
+            resize: function () {
+            },
+            close: function () {
+                window = null;
+                $('#sample-data-modal').remove();
+            }
+        }).data("kendoWindow");
+
+        window.center();
     }
 };

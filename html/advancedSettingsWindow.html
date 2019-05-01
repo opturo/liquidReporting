@@ -273,7 +273,19 @@
 
                 <!-- DB Query box -->
                 <div class="col-md-9">
-                    <label for="fileFormat_dbTransfer_sqlArea">SQL Query</label>
+                    <label for="fileFormat_dbTransfer_sqlArea">
+                        SQL Query
+                        <button title="Refresh Default Query" type="button" style="margin-left:5px;" class="tr btn btn-primary btn-xs fileFormat_sqlQuery_refresh"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                    </label>
+
+                    <!-- Help Button -->
+                    <button title="Additional Information"
+                            style="margin-left:15px;"
+                            onclick="via.displayHelpLink('SQL Help','http://odin.opturo.com/help-links/ReportDescription/SQLEngineHelp.html');"
+                            type="button" class="tr btn btn-primary btn-xs"><i class="fa fa-question-circle"></i>
+                    </button>
+
+                    <!-- SQL Editor -->
                     <textarea style="margin-bottom:2px;" id="fileFormat_dbTransfer_sqlArea" />
 
                     <!-- Run Query Button -->

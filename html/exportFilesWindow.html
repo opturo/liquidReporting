@@ -1,0 +1,27 @@
+<div id="odinLite_exportFilesWindow" style="overflow:hidden;">
+    <p>
+        <strong>Select File Export Type</strong>
+        <br/>
+        <small>Files will be exported as a zip file if there is more than one file.</small>
+    </p>
+    <hr/>
+    <p style="text-align:center;">
+        <input type="radio" name="fileExportFormat_type" id="fileExportFormat_excel" value="excel" class="k-radio" checked="checked">
+        <label class="tr k-radio-label" for="fileExportFormat_excel" style="font-size:small;margin-right:10px;">Excel</label>
+        | <input type="radio" name="fileExportFormat_type" id="fileExportFormat_csv" value="csv" class="k-radio">
+        <label class="tr k-radio-label" for="fileExportFormat_csv" style="font-size:small;margin-right:10px;">CSV</label>
+        | <input type="radio" name="fileExportFormat_type" id="fileExportFormat_delimited" value="delimited" class="k-radio">
+        <label class="tr k-radio-label" for="fileExportFormat_delimited" style="font-size:small">Delimited</label>
+    </p>
+    <div style="height:30px;">
+        <span style="display:none;margin-left:25px;" id="fileExportFormat_delimiterTypeSpan">
+            <label style="margin-top:10px;" class="tr" for="fileExportFormat_delimiterType" style="font-size:small">Delimiter Type</label>
+            <input type="text"  style="margin-left:10px;width:35px;" name="fileExportFormat_delimiterType" id="fileExportFormat_delimiterType" value="|" class="k-textbox">
+        </span>
+    </div>
+    <hr/>
+    <!-- Buttons -->
+    <p style="margin-top:10px;">
+        <button type="button" style="" class="tr btn btn-primary exportFiles_exportButton pull-right"><i class="fa fa-plus"></i> Export Files</button>
+    </p>
+</div>

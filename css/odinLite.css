@@ -127,3 +127,28 @@
     line-height: 16px;
     vertical-align: top;
 }
+
+
+.appContainer{
+    float:left;
+    text-align:center;
+    margin-right:10px;
+    width:256px;
+    height:256px;
+    cursor:pointer;
+}
+
+.appContainer:hover{
+    border-color: #00a2eb;
+}
+
+.appHomeButton{
+    border: 1px solid transparent;
+}
+.appHomeButton:hover{
+    border-radius: 5px;
+    border: 1px solid #00a2eb;
+    background-color:#f0ffff;
+    text-decoration:none;
+}
+.appHomeButton a{text-decoration:none;}

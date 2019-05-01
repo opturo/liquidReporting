@@ -34,6 +34,8 @@
                   class="fa fa-home"></i></a>
             </div>
             <a style="margin-left: 5px;" class="appTitle navbar-brand" href="#"></a>
+            <!-- Breadcrumb Nav -->
+            <p class="navbar-text breadcrumbNav"></p>
             <div class="navbar-header navbar-right">
                 <a title="Packages" id="home_yourPackagesButton" style="display:none;" class="tr btn navbar-btn btn-default tour-step home-tour-step-4 hideDMUser" href="#"><i
                class="fa fa-list-alt"></i></a>
@@ -60,6 +62,12 @@
             <jsp:include page="./html/home.html" />
       </div>
       <!-- End - Home Panel -->
+
+      <!-- App Home Panel -->
+      <div id="appHomePanel" class="container-fluid" style="display:none;">
+         <jsp:include page="./html/applicationHome.html" />
+      </div>
+      <!-- End - App Home Panel -->
 
       <!-- Account Settings -->
       <div id="accountSettings" class="container-fluid" style="display:none;">

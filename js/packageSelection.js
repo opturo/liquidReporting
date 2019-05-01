@@ -102,11 +102,9 @@ var packageSelection = {
             for(var i=0;i<applications.length;i++){
                 var appPanel = applications[i];
                 var packages = $(appPanel).find(".package-description");
-                console.log(appPanel,packages);
                 var isHidden = true;
                 for(var j=0;j<packages.length;j++){
                     var packageDiv = packages[j];
-                    console.log(packageDiv,$(packageDiv).is(":hidden"));
                     if($(packageDiv).data("hidden")!=="true"){
                         isHidden = false;
                         break;
@@ -178,6 +176,7 @@ var packageSelection = {
         var packagePricing = data["packagePricing"];
         var pricingData = packagePricing["data"];
 
+        var isDisabled = {};
         var applications = {};
         $.each(pricingData, function (idx, packageArr) {
             var applicationName = packageArr[0];
@@ -203,10 +202,12 @@ var packageSelection = {
             packageInfo["monthlyCost"] = monthlyCost;
             packageInfo["description"] = description;
             packageInfo["webLink"] = webLink;
-            if(odinLite.isFreeOnlyUser===true && isNonFree === "1"){
+
+            if(odin.USER_INFO.userSettings.isBillingVerified!=="true" && isNonFree === "1"){
                 packageInfo["disable"] = true;
                 var infoMessage = $('.packages_noCreditCardOnFile');
                 infoMessage.show();
+                isDisabled[applicationName] = true;
             }
             //Push onto the application
             application.push(packageInfo);
@@ -221,7 +222,6 @@ var packageSelection = {
         // Get all the packages for each application
         var i = 0;
         $.each(applications, function (key, packages) {
-
             var applicationView = {};
 
             //Used for accordion collapsing
@@ -229,7 +229,7 @@ var packageSelection = {
 
             applicationView["appId"] = appId;
             applicationView["applicationName"] = key;
-            applicationInfo = packageSelection.getApplicationPanelHtml(applicationView);
+            applicationInfo = packageSelection.getApplicationPanelHtml(applicationView,isDisabled);
 
             packageSelectionForm.append(applicationInfo);
 
@@ -252,12 +252,20 @@ var packageSelection = {
     },
 
     /* Collapsible panel for each application */
-    getApplicationPanelHtml: function (applicationView) {
+    getApplicationPanelHtml: function (applicationView,isDisabled) {
+        var name = applicationView.applicationName;
+        var disable = isDisabled[name];
 
-        var html = "<div class='form-group'>" +
-            "<div class='panel-group' id='accordion_{{appId}}'>" +
-            "<div class='panel panel-primary application-selection-panel'>" +
-            "<div class='panel-heading'>" +
+         var html = "<div class='form-group'>" +
+            "<div class='panel-group' id='accordion_{{appId}}'>";
+
+        if(disable === true) {
+            html += "<div class='panel panel-warning application-selection-panel'>";
+        }else{
+            html += "<div class='panel panel-primary application-selection-panel'>";
+        }
+
+        html += "<div class='panel-heading'>" +
             "<h4 class='panel-title'>" +
             "<a data-toggle='collapse' data-parent='#accordion_{{appId}}' href='#collapse_{{appId}}'>" +
             "<i class='tr fa fa-plus fa-fw'></i> {{applicationName}}</a>" +
@@ -594,7 +602,9 @@ var packageSelection = {
 
                     //Update packages and load home
                     odinLite.subscribedPackageList = data.packageList;
+                    odinLite.resetHomeApplications();
                     odinLite.loadHome();
+
                 }
             );
         });
