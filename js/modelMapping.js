@@ -457,7 +457,7 @@ var odinLite_modelMapping = {
                     //Review the errors and return home when done.
                     $('#modelMappingPanel').hide();
                     odinLite_modelMapping.reviewPersistErrors(data, function(){
-                        odinLite.loadHome();
+                        odinLite.loadApplicationHome();
                     });
                 }
             },

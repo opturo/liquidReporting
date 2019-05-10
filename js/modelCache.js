@@ -67,7 +67,6 @@ var odinLite_modelCache = {
                         }
                     }
 
-
                     //Reset in case they were accessed before:
                     $('#entityList_message').fadeIn();
                     $('#entityList_existingEntity').hide();
@@ -502,10 +501,10 @@ var odinLite_modelCache = {
 
         //Create the inputs
         $(".modelDefinition_platformNameContainer").empty();
-        $(".modelDefinition_platformNameContainer").append('<input style="width:350px;" class="modelDefinition_platformNameInput" />');
+        $(".modelDefinition_platformNameContainer").append('<input style="width:450px;" class="modelDefinition_platformNameInput" />');
 
         $(".modelDefinition_platformSpecContainer").empty();
-        $(".modelDefinition_platformSpecContainer").append('<input style="width:350px;" class="modelDefinition_platformSpecInput" />');
+        $(".modelDefinition_platformSpecContainer").append('<input style="width:450px;" class="modelDefinition_platformSpecInput" />');
 
         //Platform Specs
         var platformSpecInput = $(".modelDefinition_platformSpecInput").kendoDropDownList({
@@ -1245,7 +1244,16 @@ var odinLite_modelCache = {
         odinTable.createTable("sample-table", sampleData, '#sample-data-table', null);
 
         var grid = $('#sample-table').data("kendoGrid");
+        if(grid.columns.length > 6 && grid.columns[6].title === 'Column Description'){
+            var col = grid.columns[6];
+            col.template = function(dataItem) {
+                console.log(dataItem['_Column_Description6']);
+                return dataItem['_Column_Description6'];
+            }
+            grid.columns[6] = col;
+        }
         grid.setOptions({
+            columns: grid.columns,
             pageable: false,
             groupable: false,
             scrollable: false

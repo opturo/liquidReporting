@@ -83,6 +83,14 @@ var odinLite = {
         //Fix home page spacing
         $('.home_sideSpacers').removeClass("col-md-3");
         $('.home_sideSpacers').addClass("col-md-4");
+
+        odinLite.loadApplicationHome();
+        $(".breadcrumbNav").hide();
+        $("#homeButton").click(function(){
+            odinLite.loadApplicationHome();
+        });
+
+
     },
 
     /**
@@ -1216,12 +1224,15 @@ var odinLite = {
      * This will select a new application
      */
     selectApplication: function (appId) {
+
+        var appInfo = null;
         if(!via.undef(odinLite.appList)) {
             $.each(odinLite.appList, function (group, app) {
                 if(!via.undef(app)) {
                     $.each(app, function (currAppId, arr) {
                         if(appId === currAppId && !via.undef(arr)){
                             odinLite.currentApplicationName = arr[0];
+                            appInfo = arr;
                             return;
                         }
                     });
@@ -1229,6 +1240,12 @@ var odinLite = {
             });
         }
 
+        var appDisplayList = null;
+        if(!via.undef(appInfo) && appInfo.length >= 4){
+            appDisplayList = appInfo[3];
+        }
+
+        console.log(appDisplayList);
         odinLite.currentApplication = appId;
 
         $(".appHome_upload").show();
@@ -1236,45 +1253,27 @@ var odinLite = {
         $(".appHome_reporting").show();
         $(".appHome_extraSpacer").hide();
 
-        kendo.ui.progress($("body"), true);
-        $.post(odin.SERVLET_PATH,
-            {
-                action: 'odinLite.manageData.init',
-                entityDir: odinLite.ENTITY_DIR,
-                overrideUser: odinLite.OVERRIDE_USER,
-                isDataManagerUser: odinLite.isDataManagerUser,
-                appId: odinLite.currentApplication
-            },
-            function (data, status) {
-                kendo.ui.progress($("body"), false);//Wait Message off
+        //Hide Interface
+        if (!via.undef(appDisplayList) && appDisplayList.indexOf("I")===-1) {
+            $(".appHome_reporting").hide();
+        }
+        //Hide Manage
+        if (!via.undef(appDisplayList) && appDisplayList.indexOf("M")===-1) {
+            $(".appHome_manage").hide();
+        }
+        //Hide Upload
+        if (!via.undef(appDisplayList) && appDisplayList.indexOf("U")===-1) {
+            $(".appHome_upload").hide();
+        }
 
-                if (!via.undef(data, true) && data.success === false) {
-                    via.debug("Failure checking application:", data.message);
-                    via.alert("Failure checking application", data.message);
-                } else {
-                    via.debug("Successful checking application:", data);
+        //For Data Management
+        if (odinLite.dataMgmtAppId === odinLite.currentApplication) {
+            $(".appHome_extraSpacer").show();
+            $(".appHome_reporting").hide();
+            $(".appHome_manage").hide();
+        }
 
-                    //Hide Interface
-                    if(via.undef(data.jobInfo) || Object.keys(data.jobInfo).length === 0){
-                        $(".appHome_reporting").hide();
-                    }
-                    //Hide Manage and Upload
-                    if((via.undef(data.requiredModels) || data.requiredModels.length === 0) && (via.undef(data.optionalModels) || data.optionalModels.length === 0)){
-                        $(".appHome_upload").hide();
-                        $(".appHome_manage").hide();
-                    }
-                    //For Data Management
-                    if(odinLite.dataMgmtAppId === odinLite.currentApplication){
-                        $(".appHome_extraSpacer").show();
-                        $(".appHome_reporting").hide();
-                        $(".appHome_manage").hide();
-                    }
-
-
-                    odinLite.loadApplicationHome();
-                }
-            },
-            'json');
+        odinLite.loadApplicationHome();
     },
 
     /**

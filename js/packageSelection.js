@@ -591,13 +591,19 @@ var packageSelection = {
 
                     //Popup
                     if(!via.undef(addPackageList)) {
-                        via.kendoAlert("Transaction Successful", "You have been successfully subscribed to the package(s).");
+                        via.kendoAlert("Transaction Successful", "You have been successfully subscribed to the package(s).",
+                        function(){
+                            location.reload();
+                        });
                         var tooltip = $("#home_yourPackagesButton").data('kendoTooltip');
                         if(!via.undef(tooltip)) {
                             tooltip.destroy();
                         }
                     }else{
-                        via.kendoAlert("Successfully Unsubscribed", "You have been successfully unsubscribed from the package(s).");
+                        via.kendoAlert("Successfully Unsubscribed", "You have been successfully unsubscribed from the package(s).",
+                            function(){
+                                location.reload();
+                            });
                     }
 
                     //Update packages and load home
@@ -696,7 +702,7 @@ var packageSelection = {
                     $('#discount-code-response').addClass('label-success');
                     $('#discount-code').val(data.isDiscountCodeValid[0]);
                     $('#discount-code-response').html(data.isDiscountCodeValid[1]);
-                }else if(!via.undef(data.discountCode) && via.undef(data.isDiscountCodeValid)){
+                }else if(!via.undef(data.discountCode,true) && via.undef(data.isDiscountCodeValid)){
                     $('#discount-code-response').removeClass('label-success');
                     $('#discount-code-response').addClass('label-danger');
                     $('#discount-code-response').html("Discount code is invalid.");

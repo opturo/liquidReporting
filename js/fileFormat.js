@@ -2323,7 +2323,6 @@ var odinLite_fileFormat = {
 
         //Button Events
         $('.fileFormat_sqlQuery_refresh').click(function(){
-            console.log('here!!!');
             var codeeditor = $('#fileFormat_dbTransfer_sqlArea').data('CodeMirrorInstance');
             codeeditor.setValue(via.undef(odinLite_fileFormat.defaultSQLQuery)?"":odinLite_fileFormat.defaultSQLQuery);
         });
@@ -2945,8 +2944,6 @@ var odinLite_fileFormat = {
                     }
                 },
                 'json');
-
-            console.log(serverVars);
         });
     },
 
