@@ -1,4 +1,9 @@
 var userTour = {
+/* Tour of the Application Home Page */
+  appPageTour: new Tour({
+      storage : false,
+      backdrop: false
+  }),
   /* Tour of the Home Page */
   homeTour: new Tour({
       storage : false,
@@ -34,7 +39,52 @@ var userTour = {
       storage : false,
       backdrop: true
   }),
+  
+ initAppPageTour: function(){
+    userTour.appPageTour.addSteps([
+      {
+        element: ".tour-step.app-page-tour-step-1",
+        placement: "left",
+        title: "List of Applications",
+        content: "Once you've signed up for packages in the upper right you will see the list of applications available below.<br></br>You can select <b>All</b> to list all of them or <b>Grouped</b> to see the applications grouped by functionality.",
+        animation: true
+      },
+      {
+        element: ".tour-step.home-tour-step-4",
+        placement: "left",
+        title: "Selecting Packages",
+        content: "If you have just signed up, you will only see the demo report. Here is where you can sign up for the report packages you're interested in.",
+        animation: true
+      },
+      {
+        element: ".tour-step.home-tour-step-5",
+        placement: "left",
+        title: "More Help",
+        content: "This help button will take you to a more detailed walkthrough of each report. Use this in conjunction with the demo tour to understand how to run reports.",
+        animation: true
+      },
+      {
+        element: ".tour-step.home-tour-step-6",
+        placement: "left",
+        title: "Messages",
+        content: "This will contain messages that are specific to your account and system-related alerts.",
+        animation: true
+      },
+      {
+        element: ".tour-step.home-tour-step-7",
+        placement: "left",
+        title: "User Settings",
+        content: "Click here to see your user settings, billing information, change your password, or submit a support ticket.",
+        animation: true,
+        onNext: function(tour){
+                }
+      }
+    ]);
 
+    userTour.appPageTour.init();
+    userTour.appPageTour.start(true);
+  },
+  
   initTour: function(){
     userTour.homeTour.addSteps([
       {
