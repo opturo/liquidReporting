@@ -138,6 +138,8 @@ var odinLite = {
                             odinLite.ENTITY_DIR = via.getParamsValue("entitydir");
                             odinLite.ENTITY_NAME = via.getParamsValue("entityname");
                             odinLite.OVERRIDE_USER = via.getParamsValue("overrideuser");
+                            odinLite.currentApplication = via.getParamsValue("appid");
+                            odinLite.currentApplicationName = via.getParamsValue("appname");
                             odinLite.ENTITY_CODE = data.entityCode;
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
@@ -149,6 +151,10 @@ var odinLite = {
 
                             odinLite.initOdinLite();
 
+                            //Check to see if there is an app selected.
+                            if(!via.undef(odinLite.currentApplication) && !via.undef(odinLite.currentApplicationName)){
+                                odinLite.loadApplicationHome();
+                            }
                         } else if (odinLite.isMultiEntity()) {
                             odinLite.createMultiEntityWindow(data, function () {
                                 //The entity dir and name is set in the multi entity window
@@ -1245,7 +1251,6 @@ var odinLite = {
             appDisplayList = appInfo[3];
         }
 
-        console.log(appDisplayList);
         odinLite.currentApplication = appId;
 
         $(".appHome_upload").show();
@@ -1375,7 +1380,7 @@ var odinLite = {
             //    + "&appId=" + odinLite.currentApplication);
             window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME +
                 "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser
-                + "&appId=" + odinLite.currentApplication;
+                + "&appId=" + odinLite.currentApplication + "&appName=" + odinLite.currentApplicationName;
         });
     },
 
