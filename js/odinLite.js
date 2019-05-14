@@ -140,6 +140,7 @@ var odinLite = {
                             odinLite.OVERRIDE_USER = via.getParamsValue("overrideuser");
                             odinLite.currentApplication = via.getParamsValue("appid");
                             odinLite.currentApplicationName = via.getParamsValue("appname");
+                            odinLite.currentApplicationPackage = via.getParamsValue("apppackage");
                             odinLite.ENTITY_CODE = data.entityCode;
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
@@ -1238,6 +1239,7 @@ var odinLite = {
                     $.each(app, function (currAppId, arr) {
                         if(appId === currAppId && !via.undef(arr)){
                             odinLite.currentApplicationName = arr[0];
+                            odinLite.currentApplicationPackage = arr[4];
                             appInfo = arr;
                             return;
                         }
@@ -1278,7 +1280,52 @@ var odinLite = {
             $(".appHome_manage").hide();
         }
 
+        //Check the tour and user images.
+        $('.imageDisplayButton').hide();
+        odinLite.appImageList = null;
+        $.get(odin.SERVLET_PATH + "/ODIN_LITE/GET_PACKAGE_TOUR?packageId=" + odinLite.currentApplicationPackage,
+            function (data) {
+                if(via.undef(data)){ return; }
+                var jsonResponse = JSON.parse(data);
+                if(via.undef(jsonResponse) || via.undef(jsonResponse.imageList) || jsonResponse.imageList.length === 0){ return; }
+                odinLite.appImageList = jsonResponse.imageList.split(";;");
+                $('.imageDisplayButton').fadeIn();
+            }
+        );
+
         odinLite.loadApplicationHome();
+    },
+
+    /**
+     * Loads the image window.
+     */
+    appImageWindow: function(){
+        if(via.undef(odinLite.appImageList)){
+            return;
+        }
+
+        var imageList = [];
+        for(var idx in odinLite.appImageList){
+            var [caption,imageUrl] = odinLite.appImageList[idx].split(";");
+            imageList.push({
+                src: imageUrl,
+                title: caption
+            });
+        }
+
+        $.magnificPopup.open({
+            items: imageList,
+            type: 'image',
+            gallery: {
+                enabled: true
+            },
+            callbacks: {
+                imageLoadComplete: function() {
+                    var img = this.content.find('img');
+                    img.css('max-height', parseFloat(img.css('max-height')) * 0.95);
+                }
+            }
+        });
     },
 
     /**
@@ -1380,7 +1427,7 @@ var odinLite = {
             //    + "&appId=" + odinLite.currentApplication);
             window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME +
                 "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser
-                + "&appId=" + odinLite.currentApplication + "&appName=" + odinLite.currentApplicationName;
+                + "&appId=" + odinLite.currentApplication + "&appName=" + odinLite.currentApplicationName + "&appPackage=" + odinLite.currentApplicationPackage;
         });
     },
 

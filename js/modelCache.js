@@ -16,6 +16,8 @@ var odinLite_modelCache = {
      * This will initialize ODIN Lite Model Cache and set it up
      */
     init: function(){
+        $('#modelDefinition_modelPlatforms').hide();
+
         kendo.ui.progress($("body"), true);//Wait Message
 
         //Make the call to get the initial values for Model Cache
