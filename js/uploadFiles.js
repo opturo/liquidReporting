@@ -323,19 +323,17 @@ var odinLite_uploadFiles = {
             return;
         }
 
-        odinLite_uploadFiles.confirmPlatformFiles(function(){
-            checkFiles(function () {
-                //Display warning message if needed.
-                if (files.length > 1) {
-                    via.confirm("<i class=\"fa fa-files-o\"></i> Multiple Files", "You have chosen to upload multiple files. Please confirm that each file you are uploading has the same format.", function () {
-                        uploadFiles();
-                    });
-                } else {
+        //Run a check on the files to make sure everything is good to upload if not handle it.
+        checkFiles(function () {
+            //Display warning message if needed.
+            if (files.length > 1) {
+                via.confirm("<i class=\"fa fa-files-o\"></i> Multiple Files", "You have chosen to upload multiple files. Please confirm that each file you are uploading has the same format.", function () {
                     uploadFiles();
-                }
-            })
+                });
+            } else {
+                uploadFiles();
+            }
         });
-
 
         function checkFiles(callbackFn) {
             var fileNames = JSON.stringify(files.map(function (o) {
@@ -466,70 +464,9 @@ var odinLite_uploadFiles = {
                     odinLite_uploadFiles.init();
                 });
             });
+
         }
-    },
 
-    /**
-     * confirmPlatformFiles
-     * Creates a qindow displaying the platfoirm spec.
-     */
-    confirmPlatformFiles: function(callbackFn){
-        if(odinLite_fileFormat.isUnionFile === true && !via.undef(callbackFn)){
-            callbackFn();
-        }else if(!via.undef(odinLite_modelCache.currentPlatform.helpLink)){
-            $("#kendoDialog").remove();//Remove if it is already there.
-            kendo.ui.progress($("body"), true);
-            $.post(odin.SERVLET_PATH,
-                {
-                    action: 'admin.getHtmlPageContents',
-                    url: odinLite_modelCache.currentPlatform.helpLink
-                },
-                function(data, status){
-                    kendo.ui.progress($("body"), false);//wait off
-
-                    if(!via.undef(data,true) && data.success === false){
-                        via.debug("Help Link Error:", data.message);
-                        via.alert("Help Link Error",data.message);
-                    }else{//Success - File Preview
-                        via.debug("Help Link Successful:", data);
-
-                        if(!via.undef(data.html)){
-                            $('body').append(` <div id="kendoDialog">
-                                    Please confirm that the upload ${odinLite_modelCache.currentPlatform.platform} data/files match the criteria below?
-                                    <button class="btn btn-danger pull-right platformDeny" style="margin:0 0 10px 10px;">No</button>
-                                    <button class="btn btn-success pull-right platformConfirm">Yes</button>
-                                    <hr style="clear:both;"/>
-                                    ${data.html}
-                                    </div>`);
-                            var dialog = $("#kendoDialog").kendoWindow({
-                                width: "75%",
-                                height: "75%",
-                                title: odinLite_modelCache.currentPlatform.specification,
-                                actions: ["Maximize", "Close"],
-                                modal: true,
-                                close: function () {
-                                    $("#kendoDialog").remove();
-                                }
-                            }).data("kendoWindow");
-                            dialog.center();
-
-                            $('.platformDeny').click(function(){
-                                dialog.close();
-                            });
-                            $('.platformConfirm').click(function(){
-                                dialog.close();
-
-                                if(!via.undef(callbackFn)){
-                                    callbackFn(data);
-                                }
-                            });
-                        }
-                    }
-                },
-                'json');
-        }else if(!via.undef(callbackFn)){
-            callbackFn();
-        }
     },
 
     /**
@@ -571,9 +508,7 @@ var odinLite_uploadFiles = {
                             via.debug("Web Service success:", data.message);
 
                             //Import Data and move to file format
-                            odinLite_uploadFiles.confirmPlatformFiles(function(){
-                                odinLite_uploadFiles.importData(data);
-                            });
+                            odinLite_uploadFiles.importData(data);
                         }
                     },
                     'json');
@@ -754,9 +689,7 @@ var odinLite_uploadFiles = {
                 runDbQuery(dbType,dbName,serverVars);
             });
             $("#odinLite_dbImportButton").on("click", function () {
-                odinLite_uploadFiles.confirmPlatformFiles(function(){
-                    importDbData(dbType,dbName,serverVars);
-                });
+                importDbData(dbType,dbName,serverVars);
             });
 
 
@@ -1072,9 +1005,7 @@ var odinLite_uploadFiles = {
                 addItemToFileManager();
             });
             $('#odinLite_ftpFileManager_transferButton').click(function(){
-                odinLite_uploadFiles.confirmPlatformFiles(function(){
-                    transferFtpFiles();
-                });
+                transferFtpFiles();
             });
 
             /* Functions */
@@ -1085,18 +1016,7 @@ var odinLite_uploadFiles = {
                 if(gridData.length === 0){
                     via.kendoAlert("FTP Transfer","There are no files in the list.");
                     return;
-                }else if(gridData.length > 1){
-                    via.confirm("<i class=\"fa fa-files-o\"></i> Multiple Files", "You have chosen to upload multiple files. Please confirm that each file you are uploading has the same format.", function () {
-                        performFtpTransfer();
-                    });
-                }else{
-                    performFtpTransfer();
                 }
-            }
-            /*This handles the actual transfer from ftp.*/
-            function performFtpTransfer(){
-                var fileManagerGrid = $("#odinLite_ftpFileManager").data('kendoGrid');
-                var gridData = fileManagerGrid.dataSource.data();
 
                 odin.progressBar("FTP Transfer",100,"Transferring " + gridData.length + ((gridData.length>1)?" files.":" file."));
 
@@ -1120,13 +1040,14 @@ var odinLite_uploadFiles = {
                         }
                     },
                     'json');
+
             }
 
             //Add the item to the file manager grid.
             function addItemToFileManager() {
                 var tree = $("#odinLite_ftpTreeview").data('kendoTreeList');
                 var selected = tree.select();
-
+                console.log(selected);
                 for(var i=0;i<selected.length;i++) {
                     var dataItem = tree.dataItem(selected[i]);
                     if (dataItem.isFolder === true) {
@@ -1240,8 +1161,6 @@ var odinLite_uploadFiles = {
                                 }),
                                 dataType: "json",
                                 success: function(result) {
-                                    console.log(result);
-
                                     $('#odinLite_ftpTransfer_directoryField').val("");
                                     $('#odinLite_ftpTransfer_directoryField').prop("disabled",false);
 
@@ -1258,9 +1177,6 @@ var odinLite_uploadFiles = {
                                         for(var i in result.childNodes){
                                             if(via.undef(result.childNodes[i].parentId)) {
                                                 result.childNodes[i].parentId = null;
-                                            }``
-                                            if(!via.undef(result.childNodes[i].lastModified) && (result.childNodes[i].lastModified+"").length === 10){
-                                                result.childNodes[i].lastModified = result.childNodes[i].lastModified * 1000;
                                             }
                                         }
 

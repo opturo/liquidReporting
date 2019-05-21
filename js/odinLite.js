@@ -138,9 +138,6 @@ var odinLite = {
                             odinLite.ENTITY_DIR = via.getParamsValue("entitydir");
                             odinLite.ENTITY_NAME = via.getParamsValue("entityname");
                             odinLite.OVERRIDE_USER = via.getParamsValue("overrideuser");
-                            odinLite.currentApplication = via.getParamsValue("appid");
-                            odinLite.currentApplicationName = via.getParamsValue("appname");
-                            odinLite.currentApplicationPackage = via.getParamsValue("apppackage");
                             odinLite.ENTITY_CODE = data.entityCode;
                             odinLite.APP_NAME = data.appName;
                             odinLite.systemNotifications = data.systemNotifications;
@@ -152,10 +149,6 @@ var odinLite = {
 
                             odinLite.initOdinLite();
 
-                            //Check to see if there is an app selected.
-                            if(!via.undef(odinLite.currentApplication) && !via.undef(odinLite.currentApplicationName)){
-                                odinLite.loadApplicationHome();
-                            }
                         } else if (odinLite.isMultiEntity()) {
                             odinLite.createMultiEntityWindow(data, function () {
                                 //The entity dir and name is set in the multi entity window
@@ -340,7 +333,7 @@ var odinLite = {
 
         //Order the Groups
         const orderedGroups = {};
-        Object.keys(JSON.parse(JSON.stringify(odinLite.appList))).sort().forEach(function(key) {
+        Object.keys({...odinLite.appList}).sort().forEach(function(key) {
             orderedGroups[key] = JSON.parse(JSON.stringify(odinLite.appList[key]));
         });
 
@@ -1239,7 +1232,6 @@ var odinLite = {
                     $.each(app, function (currAppId, arr) {
                         if(appId === currAppId && !via.undef(arr)){
                             odinLite.currentApplicationName = arr[0];
-                            odinLite.currentApplicationPackage = arr[4];
                             appInfo = arr;
                             return;
                         }
@@ -1253,6 +1245,7 @@ var odinLite = {
             appDisplayList = appInfo[3];
         }
 
+        console.log(appDisplayList);
         odinLite.currentApplication = appId;
 
         $(".appHome_upload").show();
@@ -1280,52 +1273,7 @@ var odinLite = {
             $(".appHome_manage").hide();
         }
 
-        //Check the tour and user images.
-        $('.imageDisplayButton').hide();
-        odinLite.appImageList = null;
-        $.get(odin.SERVLET_PATH + "/ODIN_LITE/GET_PACKAGE_TOUR?packageId=" + odinLite.currentApplicationPackage,
-            function (data) {
-                if(via.undef(data)){ return; }
-                var jsonResponse = JSON.parse(data);
-                if(via.undef(jsonResponse) || via.undef(jsonResponse.imageList) || jsonResponse.imageList.length === 0){ return; }
-                odinLite.appImageList = jsonResponse.imageList.split(";;");
-                $('.imageDisplayButton').fadeIn();
-            }
-        );
-
         odinLite.loadApplicationHome();
-    },
-
-    /**
-     * Loads the image window.
-     */
-    appImageWindow: function(){
-        if(via.undef(odinLite.appImageList)){
-            return;
-        }
-
-        var imageList = [];
-        for(var idx in odinLite.appImageList){
-            var [caption,imageUrl] = odinLite.appImageList[idx].split(";");
-            imageList.push({
-                src: imageUrl,
-                title: caption
-            });
-        }
-
-        $.magnificPopup.open({
-            items: imageList,
-            type: 'image',
-            gallery: {
-                enabled: true
-            },
-            callbacks: {
-                imageLoadComplete: function() {
-                    var img = this.content.find('img');
-                    img.css('max-height', parseFloat(img.css('max-height')) * 0.95);
-                }
-            }
-        });
     },
 
     /**
@@ -1427,7 +1375,7 @@ var odinLite = {
             //    + "&appId=" + odinLite.currentApplication);
             window.location = "../appBuilder/?entityDir=" + odinLite.ENTITY_DIR + "&entityName=" + odinLite.ENTITY_NAME + "&appName=" + odinLite.APP_NAME +
                 "&overrideUser=" + (via.undef(odinLite.OVERRIDE_USER, true) ? "" : odinLite.OVERRIDE_USER) + debug + "&isFreeOnlyUser=" + odinLite.isFreeOnlyUser
-                + "&appId=" + odinLite.currentApplication + "&appName=" + odinLite.currentApplicationName + "&appPackage=" + odinLite.currentApplicationPackage;
+                + "&appId=" + odinLite.currentApplication;
         });
     },
 

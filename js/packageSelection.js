@@ -34,7 +34,7 @@ var packageSelection = {
                         id: input.value
                     });
                 }
-            });
+            })
             packageSelection.updateSelectedPackages();
         });
     },
@@ -324,26 +324,20 @@ var packageSelection = {
 
         //Loop through the packages.
         if (!via.undef(packages) && packages.length > 0) {
-            var allPackages = [];
             $.each(packages, function (index, packageId) {
                 var packageData = {
                     packageId: packageId,
                     packageName: packageId
                 };
                 //Get the name from the id.
-                if (!via.undef(packageSelection.packagePricing.rowHeaders)) {
-                    var idx = $.inArray(packageId, packageSelection.packagePricing.rowHeaders);
+                if(!via.undef(packageSelection.packagePricing.rowHeaders)){
+                    var idx = $.inArray(packageId,packageSelection.packagePricing.rowHeaders);
                     var row = packageSelection.packagePricing.data[idx];
-                    if (idx !== -1 && !via.undef(row)) {
+                    if(idx !== -1 && !via.undef(row)){
                         packageData.packageName = row[1];
                     }
                 }
-                allPackages.push(packageData);
-            });
 
-            allPackages.sort((a, b) => (a.packageName > b.packageName) ? 1 : -1)
-            for(var idx in allPackages){
-                var packageData = allPackages[idx];
                 var packageListItem = "<li>" +
                     "<div class='alert alert-info alert-dismissible'>" +
                     "<a onclick='packageSelection.cancelCurrentPackageModal(\"{{packageId}}\", \"{{packageName}}\")' class='close'><i class='tr fa fa-trash fa-fw'></i></a>" +
@@ -353,7 +347,7 @@ var packageSelection = {
                 var output = Mustache.render(packageListItem, packageData);
 
                 currentPackageList.find("ul").append(output);
-            }
+            });
         }
     },
 
