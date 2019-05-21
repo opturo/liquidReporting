@@ -237,7 +237,7 @@ var userTour = {
   },
   */
 
-  initTemplateTour: function(){
+  initStandardUploadTour: function(){
 
     userTour.templateTour.addSteps([
       {
@@ -250,29 +250,43 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-2",
         placement: "right",
-        title: "Required vs. Optional Templates",
-        content: "Certain data templates are required to run the reports. Make sure to upload data for these templates. Other data templates are optional and not needed to run the report.",
+        title: "Required vs. Optional Models",
+        content: "Certain data models are required to run the reports. Make sure to upload data for these models. Other data models are optional and not needed to run the report.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-3",
         placement: "right",
         title: "Defining Data Columns that will be used",
-        content: "The data is loaded through an Excel file with rows and columns. You will be able to export the template to see how it looks at the end.",
+        content: "The data is defined with rows and data columns. You will be able to export the data model to see how it looks at the end.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-4",
         placement: "bottom",
-        title: "Template Description",
+        title: "Model Description",
         content: "This field gives a brief description of the data that you will upload.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-5",
         placement: "bottom",
+        title: "Viewing Sample Data",
+        content: "Click this button to view sample data for this model to see an example of what the data looks like in the system.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-6",
+        placement: "bottom",
+        title: "Viewing Data Column List",
+        content: "Click this button to view the list of required and optional data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-7",
+        placement: "bottom",
         title: "Using Plugin to Easily Import Data",
-        content: "If you have certain data files from certain systems, you can easily upload in their original format.",
+        content: "Some data models can be seamlessly integrated with existing systems. Here you can easily upload in their original format.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".modelDefinition_choosePlatformButton");
@@ -280,24 +294,153 @@ var userTour = {
         }
       },
       {
-        element: ".tour-step.template-tour-step-6",
+        element: ".tour-step.template-tour-step-8",
         placement: "left",
-        title: "Editing the Template",
-        content: "Edit saved template let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        title: "Editing the Data Model",
+        content: "Edit the data model let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        animation: true,
+        onNext: function(tour){
+          var nextButton = $(".template-tour-step-8");
+          nextButton[0].click();
+        }
+      },
+      {
+        element: ".tour-step.template-tour-step-9",
+        placement: "left",
+        title: "Example Data Column",
+        content: "Each box displays info related to the data columns of the model. It shows what data type, whether null values are allowed, and whether there is a limit on text length.<br></br>Click the blue question mark for more info on each column.",
+        animation: true,
+        onNext: function(tour){
+          // Hit cancel button to get to the upload button
+          odinLite_modelCache.displaySelectedModelTemplate()
+        }
+      },
+      {
+        element: ".tour-step.template-tour-step-10",
+        placement: "left",
+        title: "Uploading Your Data",
+        content: "Once you have formatted your data model you will upload the respective data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
+        animation: true
+      }
+    ]);
+
+    var modelTree = $("#modelCacheSelection_treeview");
+
+    //Application Name, e.g. Composite Reporting
+    var reportTree = modelTree.find(".k-top").eq(0);
+    reportTree.addClass("tour-step template-tour-step-1");
+
+    //Required template tree
+    var requiredTemplates = modelTree.find(".k-top").eq(1);
+    requiredTemplates.addClass("tour-step template-tour-step-2");
+
+    var modelGroup = modelTree.find(".k-group").eq(1);
+    var modelList = modelGroup.find("li").eq(0);
+
+    var requiredList = modelList.find("ul").eq(0);
+    var requiredFirstItem = requiredList.find("li").eq(0);
+
+    //Select the template so the modelCache field gets populated
+    var firstItem = requiredFirstItem.find(".k-in").eq(0);
+    firstItem.click();
+
+    firstItem.addClass("tour-step template-tour-step-3");
+
+    userTour.templateTour.init();
+    userTour.templateTour.start(true);
+
+  },
+
+  initCustomColumnUploadTour: function(modelExample){
+
+    userTour.templateTour.addSteps([
+      {
+        element: ".tour-step.template-tour-step-1",
+        placement: "right",
+        title: "Selecting a Data Model",
+        content: "Under each report there will be different data inputs needed to run it.<br></br>For example, for the demo risk/return analysis report \"Investment Returns\" would need to be loaded.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-2",
+        placement: "right",
+        title: "Required vs. Optional Models",
+        content: "Certain data models are required to run the reports. Make sure to upload data for these models. Other data models are optional and not needed to run the report.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-3",
+        placement: "right",
+        title: "Defining Data Columns that will be used",
+        content: "The data is defined with rows and data columns. You will be able to export the data model to see how it looks at the end.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-4",
+        placement: "bottom",
+        title: "Model Description",
+        content: "This field gives a brief description of the data that you will upload.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-5",
+        placement: "bottom",
+        title: "Viewing Sample Data",
+        content: "Click this button to view sample data for this model to see an example of what the data looks like in the system.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-6",
+        placement: "bottom",
+        title: "Viewing Data Column List",
+        content: "Click this button to view the list of required and optional data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-7",
-        placement: "left",
-        title: "Exporting to Excel",
-        content: "Export the data template to Excel to see how it looks. This will be the format of the data needed to load into SAYS.",
-        animation: true
+        placement: "bottom",
+        title: "Using Plugin to Easily Import Data",
+        content: "Some data models can be seamlessly integrated with existing systems. Here you can easily upload in their original format.",
+        animation: true,
+        onNext: function(tour){
+          var nextButton = $(".modelDefinition_choosePlatformButton");
+          nextButton[0].click();
+        }
       },
       {
         element: ".tour-step.template-tour-step-8",
         placement: "left",
+        title: "Editing the Data Model",
+        content: "Edit the data model let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        animation: true,
+        onNext: function(tour){
+          var nextButton = $(".template-tour-step-8");
+          nextButton[0].click();
+        }
+      },
+      {
+        element: ".tour-step.customColumnButton",
+        placement: "bottom",
+        title: "Adding a Custom Column",
+        content: "If you want to add a new column to the data model, click <b>Add Custom Column</b> to define a new column. You can choose the data type, set whether nulls allowed, and if there is a maximum text length for text data types.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-9",
+        placement: "left",
+        title: "Example Data Column",
+        content: "Each box displays info related to the data columns of the model. It shows what data type, whether null values are allowed, and whether there is a limit on text length.<br></br>Click the blue question mark for more info on each column.",
+        animation: true,
+        onNext: function(tour){
+          // Hit cancel button to get to the upload button
+          odinLite_modelCache.displaySelectedModelTemplate()
+        }
+      },
+      {
+        element: ".tour-step.template-tour-step-10",
+        placement: "left",
         title: "Uploading Your Data",
-        content: "Once you have formatted your data in the Excel template you will upload that data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
+        content: "Once you have formatted your data model you will upload the respective data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
         animation: true
       }
     ]);
@@ -322,33 +465,195 @@ var userTour = {
     var requiredList = modelList.find("ul").eq(0);
     var requiredFirstItem = requiredList.find("li").eq(0);
 
-    //Select the template so the modelCache field gets populated
-    var firstItem = requiredFirstItem.find(".k-in").eq(0);
-    firstItem.click();
+    //Select the template so the modelCache field gets populated - specific for model with custom column
+    //TODO: get model text specific for the data model if it has custom columns
+    var dataModelText = modelExample;
 
-    firstItem.addClass("tour-step template-tour-step-3");
+    var dataModelExample = $('span:contains('+ dataModelText + ')');
+    dataModelExample.click();
 
-    var requiredSecondItem = requiredList.find("li").eq(1);
-    var secondItem = requiredSecondItem.find(".k-in").eq(0);
-    //firstItem.click();
-
-    //secondItem.addClass("tour-step template-tour-step-8");
-
-
+    dataModelExample.addClass("tour-step template-tour-step-3");
 
     userTour.templateTour.init();
     userTour.templateTour.start(true);
 
   },
 
+  initSupportedPlatformUploadTour: function(modelExample){
 
+    userTour.templateTour.addSteps([
+      {
+        element: ".tour-step.template-tour-step-1",
+        placement: "right",
+        title: "Selecting a Data Model",
+        content: "Under each report there will be different data inputs needed to run it.<br></br>For example, for the demo risk/return analysis report \"Investment Returns\" would need to be loaded.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-2",
+        placement: "right",
+        title: "Required vs. Optional Models",
+        content: "Certain data models are required to run the reports. Make sure to upload data for these models. Other data models are optional and not needed to run the report.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-3",
+        placement: "right",
+        title: "Defining Data Columns that will be used",
+        content: "The data is defined with rows and data columns. You will be able to export the data model to see how it looks at the end.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-4",
+        placement: "bottom",
+        title: "Model Description",
+        content: "This field gives a brief description of the data that you will upload.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-5",
+        placement: "bottom",
+        title: "Viewing Sample Data",
+        content: "Click this button to view sample data for this model to see an example of what the data looks like in the system.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-6",
+        placement: "bottom",
+        title: "Viewing Data Column List",
+        content: "Click this button to view the list of required and optional data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-7",
+        placement: "bottom",
+        title: "Using Plugin to Easily Import Data",
+        content: "Some data models can be seamlessly integrated with existing systems. Here you can easily upload in their original format.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-7a",
+        placement: "bottom",
+        title: "Selecting Your Platform",
+        content: "If your data is exported from a supported system, select it from the dropdown. This way you can easily upload the data in the raw format.",
+        animation: true,
+      },
+      {
+        element: ".tour-step.template-tour-step-7b",
+        placement: "bottom",
+        title: "Platform Upload Steps",
+        content: "Once you've selected your platform, there will be a couple steps in this dropdown to load the data. <br></br>Click the blue help button to make sure the file is supported in the system.",
+        animation: true,
+        onNext: function(tour){
+          var nextButton = $(".modelDefinition_choosePlatformButton");
+          nextButton[0].click();
+        }
+      },
+      {
+        element: ".tour-step.template-tour-step-8",
+        placement: "left",
+        title: "Editing the Data Model",
+        content: "Edit the data model let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        animation: true,
+        onNext: function(tour){
+          var nextButton = $(".template-tour-step-8");
+          nextButton[0].click();
+        }
+      },
+      {
+        element: ".tour-step.customColumnButton",
+        placement: "bottom",
+        title: "Adding a Custom Column",
+        content: "If you want to add a new column to the data model, click <b>Add Custom Column</b> to define a new column. You can choose the data type, set whether nulls allowed, and if there is a maximum text length for text data types.",
+        animation: true
+      },
+      {
+        element: ".tour-step.template-tour-step-9",
+        placement: "left",
+        title: "Example Data Column",
+        content: "Each box displays info related to the data columns of the model. It shows what data type, whether null values are allowed, and whether there is a limit on text length.<br></br>Click the blue question mark for more info on each column.",
+        animation: true,
+        onNext: function(tour){
+          // Hit cancel button to get to the upload button
+          odinLite_modelCache.displaySelectedModelTemplate()
+        }
+      },
+      {
+        element: ".tour-step.template-tour-step-10",
+        placement: "left",
+        title: "Uploading Your Data",
+        content: "Once you have formatted your data model you will upload the respective data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
+        animation: true
+      }
+    ]);
+
+    var modelTree = $("#modelCacheSelection_treeview");
+
+    //Application Name, e.g. Composite Reporting
+    var reportTree = modelTree.find(".k-top").eq(0);
+    reportTree.addClass("tour-step template-tour-step-1");
+
+    //Required template tree
+    var requiredTemplates = modelTree.find(".k-top").eq(1);
+    requiredTemplates.addClass("tour-step template-tour-step-2");
+
+    //Example of a data template
+    var sampleTemplate = modelTree.find(".k-top").eq(2);
+
+
+    var modelGroup = modelTree.find(".k-group").eq(1);
+    var modelList = modelGroup.find("li").eq(0);
+
+    var requiredList = modelList.find("ul").eq(0);
+    var requiredFirstItem = requiredList.find("li").eq(0);
+
+    //Select the template so the modelCache field gets populated - specific for model with custom column
+    //TODO: get model text specific for the data model if it has custom columns
+    var dataModelText = modelExample;
+
+    var dataModelExample = $('span:contains('+ dataModelText + ')');
+ 
+    dataModelExample.click();
+
+    dataModelExample.addClass("tour-step template-tour-step-3");
+
+    userTour.templateTour.init();
+    userTour.templateTour.start(true);
+
+  },
+
+  initUploadTour: function(){
+    $.get(odin.SERVLET_PATH + "/ODIN_LITE/GET_PACKAGE_TOUR?packageId=" + odinLite.currentApplicationPackage,
+            function (data) {
+                if(via.undef(data)){ return; }
+                var jsonResponse = JSON.parse(data);
+                
+                var tourList = jsonResponse.tourText.split(";");
+                
+                if (tourList.length > 0){
+                  var tourType = tourList[0];
+                  var modelExample = tourList[1];
+  
+                  if (tourType === 'SupportedPlatformsUploadTour'){
+                    userTour.initSupportedPlatformUploadTour(modelExample);
+                  } else if (tourType === 'CustomColumnUploadTour'){
+                    userTour.initCustomColumnUploadTour(modelExample);
+                  } else {
+                    userTour.initStandardUploadTour();
+                  }
+                }
+            }
+    );
+
+
+  },
 
   initLoadTour: function(){
     userTour.loadTour.addSteps([
       {
         element: ".tour-step.tour-step-loading-1",
         placement: "left",
-        title: "Uploading Data to Liquid Reporting",
+        title: "Uploading Data to SAYS Platform",
         content: "This is the data you will be loading into the system and a brief description.",
         animation: true
       },

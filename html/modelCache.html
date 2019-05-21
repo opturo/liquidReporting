@@ -2,7 +2,7 @@
    <div class="col-md-4"></div>
    <div class="col-md-4">
       <h3 style="text-align:center;" class="tr">
-         <button id="start-upload-tour" type="button" class="tr btn btn-success" onclick="userTour.initTemplateTour()"><i class="fa fa-play"></i> Tour</button>
+         <button id="start-upload-tour" type="button" class="tr btn btn-success" onclick="userTour.initUploadTour('SupportedPlatform')"><i class="fa fa-play"></i> Tour</button>
       </h3>
    </div>
    <div class="col-md-4"></div>
@@ -27,8 +27,8 @@
    <div id="entityList_existingEntity" style="display:none;" class="col-md-9">
       <div class="tour-step template-tour-step-4 tr well">
          <h4><span class="entityList_modelName"></span><br/><small class="entityList_modelDescription"></small></h4>
-         <button onclick="odinLite_modelCache.displaySampleData();" class="tr btn btn-primary btn-xs"><i class="fa fa-th"></i> See Sample Data</button> |
-         <button onclick="odinLite_modelCache.displayColumnListInfo();" class="tr btn btn-primary btn-xs"><i class="fa fa-th"></i> See Data Column List</button>
+         <button onclick="odinLite_modelCache.displaySampleData();" class="tr btn btn-primary btn-xs tour-step template-tour-step-5"><i class="fa fa-th"></i> See Sample Data</button> |
+         <button onclick="odinLite_modelCache.displayColumnListInfo();" class="tr btn btn-primary btn-xs tour-step template-tour-step-6"><i class="fa fa-th"></i> See Data Column List</button>
          </small>
       </div>
    </div>
@@ -36,14 +36,18 @@
    <!-- Model Platforms -->
    <div id="modelDefinition_modelPlatforms" style="display:none;" class="col-md-9">
       <h4>Platform Selector</h4>
-      <div class="tr well tour-step template-tour-step-5">
-         <label class="tr">Platform Selection:</label><br/>
-         <span class="modelDefinition_platformNameContainer"></span>
-         <div style="margin-top:10px;" class="modelDefinition_platformNameDefinition"></div>
+      <div class="tr well tour-step template-tour-step-7">
+         <div class="tour-step template-tour-step-7a">
+            <label class="tr">Platform Selection:</label><br/>
+            <span class="modelDefinition_platformNameContainer"></span>
+            <div style="margin-top:10px;" class="modelDefinition_platformNameDefinition"></div>
+         </div>
          <hr/>
-         <label class="tr">Platform Upload Specification:</label><br/>
-         <span class="modelDefinition_platformSpecContainer"></span><span class="modelDefinition_platformSpecContainer_helpLink"></span>
-         <div style="margin-top:10px;" class="modelDefinition_platformSpecDefinition"></div>
+         <div class="tour-step template-tour-step-7b">
+            <label class="tr">Platform Upload Specification:</label><br/>
+            <span class="modelDefinition_platformSpecContainer"></span><span class="modelDefinition_platformSpecContainer_helpLink"></span>
+            <div style="margin-top:10px;" class="modelDefinition_platformSpecDefinition tour-step template-tour-step-7b"></div>
+         </div>
       </div>
       <button style="margin:10px 0 0 0;" type="button" class="tr btn btn-primary pull-right modelDefinition_choosePlatformButton"><i style="margin-right:5px;" class="fa fa-file-text-o"></i> Next</button>
    </div>
@@ -52,17 +56,17 @@
    <div id="modelDefinition_existingModel" style="display:none;" class="col-md-9">
       <h4 class="dataMgmtHide">Data Model Column Definition</h4>
       <div class="tr well dataMgmtHide">
-         <button onclick="odinLite_modelCache.displaySelectedModelTemplate(true);" style="position:relative;top:-5px;margin:10px 0 0 0;" type="button" class="tour-step template-tour-step-6 tr btn btn-primary"><i class="fa fa-pencil-square-o"></i> Edit Data Model</button>
-		 <button title="Download example data model file" onclick="odinLite_modelCache.downloadModelTemplate();" style="position:relative;top:-5px;margin:10px 0 0 0;float:right;" type="button" class="exampleTemplateFile tour-step template-tour-step-7 tr btn btn-success"><i class="fa fa-file-excel-o"></i></button>
+         <button onclick="odinLite_modelCache.displaySelectedModelTemplate(true);" style="position:relative;top:-5px;margin:10px 0 0 0;" type="button" class="tour-step template-tour-step-8 tr btn btn-primary"><i class="fa fa-pencil-square-o"></i> Edit Data Model</button>
+		 <button title="Download example data model file" onclick="odinLite_modelCache.downloadModelTemplate();" style="position:relative;top:-5px;margin:10px 0 0 0;float:right;" type="button" class="exampleTemplateFile tr btn btn-success"><i class="fa fa-file-excel-o"></i></button>
       </div>
-      <button onclick="odinLite_modelCache.goToUploadFiles();" style="margin:10px 0 0 0;" type="button" class="tour-step template-tour-step-8 tr demoButton btn btn-primary pull-right"><i style="margin-right:5px;" class="fa fa-cloud-upload"></i> Continue to Upload</button>
+      <button onclick="odinLite_modelCache.goToUploadFiles();" style="margin:10px 0 0 0;" type="button" class="tour-step template-tour-step-10 tr demoButton btn btn-primary pull-right"><i style="margin-right:5px;" class="fa fa-cloud-upload"></i> Continue to Upload</button>
    </div>
 
    <!-- Edit Model -->
-   <div id="modelDefinition_editModel" style="display:none;" class="col-md-9">
+   <div id="modelDefinition_editModel" style="display:none;" class="col-md-9 tour-step template-tour-step-9">
       <h4>
          Data Model Column Definition
-         <button onclick="odinLite_modelCache.addCustomColumn();" style="position:relative;top:-6px;margin:10px 0 0 0;" type="button" class="tr btn btn-primary customColumnButton"><i class="fa fa-plus-circle"></i> Add Custom Column</button>
+         <button onclick="odinLite_modelCache.addCustomColumn();" style="position:relative;top:-6px;margin:10px 0 0 0;" type="button" class="tr btn btn-primary tour-step customColumnButton"><i class="fa fa-plus-circle"></i> Add Custom Column</button>
       </h4>
       <div class="tr well">
          <p>
