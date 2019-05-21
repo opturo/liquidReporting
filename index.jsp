@@ -6,22 +6,25 @@
       <title>Software At Your Service</title>
       <link rel="shortcut icon" href="../../favicon.ico">
       <!-- Bootstrap core CSS -->
-      <link title="bootstrap" href="../bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet"/>
-      <link rel="stylesheet" href="../font-awesome-4.5.0/css/font-awesome.min.css"/>
+      <link title="bootstrap" href="../bootstrap-3.3.5-dist/css/bootstrap.min.css?buildDate=20190520" rel="stylesheet"/>
+      <link rel="stylesheet" href="../font-awesome-4.5.0/css/font-awesome.min.css?buildDate=20190520"/>
       <!-- Opturo CSS -->
-      <link rel="stylesheet" href="css/odinLite.css"/>
+      <link rel="stylesheet" href="css/odinLite.css?buildDate=20190520"/>
       <!-- Kendo UI CSS -->
-      <link rel="stylesheet" href="../js/kendoui/styles/kendo.common-bootstrap.min.css" />
-      <link rel="stylesheet" href="../js/kendoui/styles/kendo.bootstrap.min.css">
-      <link rel="stylesheet" href="../js/kendoui/styles/kendo.bootstrap.mobile.min.css">
+      <link rel="stylesheet" href="../js/kendoui/styles/kendo.common-bootstrap.min.css?buildDate=20190520" />
+      <link rel="stylesheet" href="../js/kendoui/styles/kendo.bootstrap.min.css?buildDate=20190520">
+      <link rel="stylesheet" href="../js/kendoui/styles/kendo.bootstrap.mobile.min.css?buildDate=20190520">
       <!-- Code Mirror CSS -->
-      <link rel="stylesheet" href="../js/codemirror-5.43.0/lib/codemirror.css">
-      <link rel="stylesheet" href="../js/codemirror-5.43.0/addon/hint/show-hint.css" />
+      <link rel="stylesheet" href="../js/codemirror-5.43.0/lib/codemirror.css?buildDate=20190520">
+      <link rel="stylesheet" href="../js/codemirror-5.43.0/addon/hint/show-hint.css?buildDate=20190520" />
 	  <!-- Bootstrap Tour -->
-	  <link rel="stylesheet" href="css/bootstrap-tour.min.css" />
+	  <link rel="stylesheet" href="css/bootstrap-tour.min.css?buildDate=20190520" />
 
-	  <!-- Additional Styling for liquid reporting -->
-	  <link rel="stylesheet" href="css/liquidReporting.css" />
+      <!-- Magnific Popup -->
+      <link rel="stylesheet" href="../js/magnific-popup/magnific-popup.css?buildDate=20190520" />
+
+      <!-- Additional Styling for liquid reporting -->
+	  <link rel="stylesheet" href="css/liquidReporting.css?buildDate=20190520" />
 
    </head>
    <body class="desktopBackground">
@@ -137,56 +140,49 @@
       <!-- End - Powered Panel -->
 
       <!-- Kickoff script -->
-      <script src="../js/aes.js"></script>
-      <script src="../js/jquery-2.1.3.min.js"></script>
-      <script src="../js/jquery.format-1.3.min.js"></script>
-      <script src="../bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
-      <script src="../js/via.js"></script>
-      <script src="../js/odin.js"></script>
-      <script src="../js/odinKendoTable.js"></script>
-      <script src="js/odinLite.js"></script>
-      <script src="js/modelCache.js"></script>
-      <script src="js/uploadFiles.js"></script>
-      <script src="js/fileFormat.js"></script>
-      <script src="js/modelMapping.js"></script>
-      <script src="js/billing.js"></script>
-      <script src="js/support.js"></script>
-      <script src="js/manageData.js"></script>
-      <script src="js/packageSelection.js"></script>
-      <script src="js/unionFile.js"></script>
+      <script src="../js/aes.js?buildDate=20190520"></script>
+      <script src="../js/jquery-2.1.3.min.js?buildDate=20190520"></script>
+      <script src="../js/jquery.format-1.3.min.js?buildDate=20190520"></script>
+      <script src="../bootstrap-3.3.5-dist/js/bootstrap.min.js?buildDate=20190520"></script>
+      <script src="../js/via.js?buildDate=20190520"></script>
+      <script src="../js/odin.js?buildDate=20190520"></script>
+      <script src="../js/odinKendoTable.js?buildDate=20190520"></script>
+      <script src="js/odinLite.js?buildDate=20190520"></script>
+      <script src="js/modelCache.js?buildDate=20190520"></script>
+      <script src="js/uploadFiles.js?buildDate=20190520"></script>
+      <script src="js/fileFormat.js?buildDate=20190520"></script>
+      <script src="js/modelMapping.js?buildDate=20190520"></script>
+      <script src="js/billing.js?buildDate=20190520"></script>
+      <script src="js/support.js?buildDate=20190520"></script>
+      <script src="js/manageData.js?buildDate=20190520"></script>
+      <script src="js/packageSelection.js?buildDate=20190520"></script>
+      <script src="js/unionFile.js?buildDate=20190520"></script>
 
       <!-- Classes -->
-      <script src="js/classes/UploadInfo.js"></script>
+      <script src="js/classes/UploadInfo.js?buildDate=20190520"></script>
 
       <!-- SAYS Tour -->
-	  <script src="../js/bootstrap-tour.min.js"></script>
-      <script src="../js/mustache.min.js"></script>
-	  <script src="js/userTour.js"></script>
+	  <script src="../js/bootstrap-tour.min.js?buildDate=20190520"></script>
+      <script src="../js/mustache.min.js?buildDate=20190520"></script>
+	  <script src="js/userTour.js?buildDate=20190520"></script>
 	  
       <!-- Kendo UI -->
-      <script src="../js/kendoui/js/kendo.all.min.js"></script>
+      <script src="../js/kendoui/js/kendo.all.min.js?buildDate=20190520"></script>
+
+      <!-- Magnific Popup -->
+      <script src="../js/magnific-popup/jquery.magnific-popup.min.js?buildDate=20190520"></script>
 
       <!-- Code Mirror -->
-      <script src="../js/codemirror-5.43.0/lib/codemirror.js"></script>
-      <script src="../js/codemirror-5.43.0/mode/sql/sql.js"></script>
-      <script src="../js/codemirror-5.43.0/addon/selection/active-line.js"></script>
-      <script src="../js/codemirror-5.43.0/addon/hint/show-hint.js"></script>
-      <script src="../js/codemirror-5.43.0/addon/hint/sql-hint.js"></script>
+      <script src="../js/codemirror-5.43.0/lib/codemirror.js?buildDate=20190520"></script>
+      <script src="../js/codemirror-5.43.0/mode/sql/sql.js?buildDate=20190520"></script>
+      <script src="../js/codemirror-5.43.0/addon/selection/active-line.js?buildDate=20190520"></script>
+      <script src="../js/codemirror-5.43.0/addon/hint/show-hint.js?buildDate=20190520"></script>
+      <script src="../js/codemirror-5.43.0/addon/hint/sql-hint.js?buildDate=20190520"></script>
       
 	  <!-- Init ODIN Lite -->
       <script>
          $(document).ready(function(){
             odinLite.init();
-
-            /** TESTING **/
-            //multi file
-            //var fileData = {"endColumn":6,"localFiles":["ReturnModel_20180409.xlsx","ReturnModel_20180410.xlsx"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["cR87PZvg.xlsx","qbDDRuPu.xlsx"],"sheetNames":["Sheet1"],"message":"Upload successful.","type":".xlsx","isTemplateFile":false};
-            //multi sheet
-            //var fileData = {"endColumn":3,"localFiles":["benchmarkData.xlsx"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["z7DYQ8OM.xlsx"],"sheetNames":["Return","Blend Definition","Starting Position","Blend Details","20170103","20170104","20170105","Sheet1"],"message":"Upload successful.","type":".xlsx","isTemplateFile":false};
-            //csv multi
-            //var fileData = {"endColumn":6,"localFiles":["ReturnModel_20180405.csv","ReturnModel_20180406.csv"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["jl3S7Pll.csv","LV8ybuzY.csv"],"message":"Upload successful.","type":".csv","isTemplateFile":false,"delimType":","};
-            //odinLite_fileFormat.FILE_DATA = {"endColumn":6,"localFiles":["ReturnModel_20180403.csv"],"dateFormats":[{"text":"yyyyMMdd (20190206)","value":"yyyyMMdd"},{"text":"MMddyy (020619)","value":"MMddyy"},{"text":"MMddyyyy (02062019)","value":"MMddyyyy"},{"text":"dd-MMM-yyyy (06-Feb-2019)","value":"dd-MMM-yyyy"},{"text":"yyyyMM (201902)","value":"yyyyMM"},{"text":"yy'M'M (19M2)","value":"yy'M'M"},{"text":"yyyy'Q' (2019Q1)","value":"yyyy'Q'"},{"text":"MM/dd/yyyy (02/06/2019)","value":"MM/dd/yyyy"},{"text":"dd/MM/yyyy (06/02/2019)","value":"dd/MM/yyyy"},{"text":"yyyy (2019)","value":"yyyy"},{"text":"MMMMM (February)","value":"MMMMM"},{"text":"MMM (Feb)","value":"MMM"},{"text":"MMMM-yyyy (February-2019)","value":"MMMM-yyyy"},{"text":"MMM-yyyy (Feb-2019)","value":"MMM-yyyy"},{"text":"MMM-yy (Feb-19)","value":"MMM-yy"}],"success":true,"files":["ILhNrPvR.csv"],"message":"Upload successful.","type":".csv","isTemplateFile":false,"delimType":","};
-            //odinLite_unionFiles.getRowHeaderWindow(fileData);
          });
       </script>
    </body>

@@ -2,7 +2,7 @@
    <div class="col-md-4"></div>
    <div class="col-md-4">
       <h3 style="text-align:center;" class="tr">
-         <button id="start-upload-tour" type="button" class="tr btn btn-success" onclick="userTour.initUploadTour('SupportedPlatform')"><i class="fa fa-play"></i> Tour</button>
+         <button id="start-upload-tour" type="button" class="tr btn btn-success" onclick="userTour.initUploadTour()"><i class="fa fa-play"></i> Tour</button>
       </h3>
    </div>
    <div class="col-md-4"></div>
@@ -29,7 +29,6 @@
          <h4><span class="entityList_modelName"></span><br/><small class="entityList_modelDescription"></small></h4>
          <button onclick="odinLite_modelCache.displaySampleData();" class="tr btn btn-primary btn-xs tour-step template-tour-step-5"><i class="fa fa-th"></i> See Sample Data</button> |
          <button onclick="odinLite_modelCache.displayColumnListInfo();" class="tr btn btn-primary btn-xs tour-step template-tour-step-6"><i class="fa fa-th"></i> See Data Column List</button>
-         </small>
       </div>
    </div>
 
@@ -37,17 +36,17 @@
    <div id="modelDefinition_modelPlatforms" style="display:none;" class="col-md-9">
       <h4>Platform Selector</h4>
       <div class="tr well tour-step template-tour-step-7">
-         <div class="tour-step template-tour-step-7a">
-            <label class="tr">Platform Selection:</label><br/>
-            <span class="modelDefinition_platformNameContainer"></span>
-            <div style="margin-top:10px;" class="modelDefinition_platformNameDefinition"></div>
-         </div>
+		<div class="tour-step template-tour-step-7a">
+			<label class="tr">Platform Selection:</label><br/> 
+			<span class="modelDefinition_platformNameContainer"></span>
+			<div style="margin-top:10px;" class="modelDefinition_platformNameDefinition"></div>
+		</div>
          <hr/>
-         <div class="tour-step template-tour-step-7b">
-            <label class="tr">Platform Upload Specification:</label><br/>
-            <span class="modelDefinition_platformSpecContainer"></span><span class="modelDefinition_platformSpecContainer_helpLink"></span>
-            <div style="margin-top:10px;" class="modelDefinition_platformSpecDefinition tour-step template-tour-step-7b"></div>
-         </div>
+		<div class="tour-step template-tour-step-7b">
+         <label class="tr">Platform Upload Specification:</label><br/>
+         <span class="modelDefinition_platformSpecContainer"></span><span class="modelDefinition_platformSpecContainer_helpLink"></span>
+         <div style="margin-top:10px;" class="modelDefinition_platformSpecDefinition tour-step template-tour-step-7b"></div>
+		</div>
       </div>
       <button style="margin:10px 0 0 0;" type="button" class="tr btn btn-primary pull-right modelDefinition_choosePlatformButton"><i style="margin-right:5px;" class="fa fa-file-text-o"></i> Next</button>
    </div>
