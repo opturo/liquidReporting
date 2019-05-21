@@ -340,7 +340,7 @@ var odinLite = {
 
         //Order the Groups
         const orderedGroups = {};
-        Object.keys({...odinLite.appList}).sort().forEach(function(key) {
+        Object.keys(JSON.parse(JSON.stringify(odinLite.appList))).sort().forEach(function(key) {
             orderedGroups[key] = JSON.parse(JSON.stringify(odinLite.appList[key]));
         });
 

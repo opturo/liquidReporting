@@ -517,6 +517,7 @@ var odinLite_modelCache = {
                 var dataItem = e.sender.dataItem();
                 //Update the description
                 $('.modelDefinition_platformSpecDefinition').html(dataItem.description);
+                $(".modelDefinition_platformSpecContainer_helpLink").empty();
                 if(!via.undef(dataItem.helpLink)) {
                     $(".modelDefinition_platformSpecContainer_helpLink").empty();
                     $(".modelDefinition_platformSpecContainer_helpLink").append(`<button title="Additional Information"
@@ -565,6 +566,10 @@ var odinLite_modelCache = {
             var dataItem = platformSpecInput.dataItem().toJSON();
             odinLite_modelCache.currentPlatform = dataItem;
 
+            platformChosen();
+        });
+
+        function platformChosen(){
             //Hide Template
             if(odinLite_modelCache.currentPlatform.platform !== 'Custom'){
                 $('.exampleTemplateFile').hide();
@@ -610,7 +615,7 @@ var odinLite_modelCache = {
             }else{
                 odinLite_modelCache.displaySelectedModelTemplate();
             }
-        });
+        }
 
         /** Functions **/
         //Return a list of platform names
