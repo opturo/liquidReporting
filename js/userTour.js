@@ -53,14 +53,14 @@ var userTour = {
         element: ".tour-step.home-tour-step-4",
         placement: "left",
         title: "Selecting Packages",
-        content: "If you have just signed up, you will only see the demo report. Here is where you can sign up for the report packages you're interested in.",
+        content: "Here is where you can subscribe to <b>FREE</b> or <b>PAID</b> report packages you're interested in.",
         animation: true
       },
       {
         element: ".tour-step.home-tour-step-5",
         placement: "left",
         title: "More Help",
-        content: "This help button will take you to a more detailed walkthrough of each report. Use this in conjunction with the demo tour to understand how to run reports.",
+        content: "This help button will take you to the Help Guide. Use this in conjunction with the <b>Application Overview</b> available when you select an Application.",
         animation: true
       },
       {
@@ -74,7 +74,7 @@ var userTour = {
         element: ".tour-step.home-tour-step-7",
         placement: "left",
         title: "User Settings",
-        content: "Click here to see your user settings, billing information, change your password, or submit a support ticket.",
+        content: "Click here to view/edit your user settings, billing information and password. It also provides a section to <b>Submit a Support Ticket</b>.",
         animation: true,
         onNext: function(tour){
                 }
@@ -88,38 +88,45 @@ var userTour = {
   initTour: function(){
     userTour.homeTour.addSteps([
       {
+        element: ".imageDisplayButton",
+        placement: "bottom",
+        title: "Application Overview",
+        content: "Click here to get a detailed overview of the selected Application.",
+        animation: true
+      },
+      {
         element: ".tour-step.home-tour-step-1",
         placement: "bottom",
         title: "Uploading Data",
-        content: "SAYS (Software At Your Service) is a tool designed to easily upload data in Excel files and text files. <br></br>Data is loaded in specific templates that helps to format the data.",
+        content: "The SAYS Platform provides tools designed to easily upload data from any third-party platform including custom Excel/Text files. <br></br>For custom data upload the system provides Data Model specific downloadable Excel templates.",
         animation: true
       },
       {
         element: ".tour-step.home-tour-step-2",
         placement: "bottom",
         title: "Managing Data",
-        content: "Once data has been loaded and saved in your account, you can edit and delete existing data. The type of data could be static or time series data.",
+        content: "Data uploaded to your profile can viewed, edited or deleted. It also allows for download of your data in Excel and Text formats.",
         animation: true
       },
       {
         element: ".tour-step.home-tour-step-3",
         placement: "bottom",
-        title: "Running Reports",
-        content: "Using the data stored in the system, users can run reports and download them. Custom settings let you add your company logo and modify the reports.",
+        title: "Generating Reports",
+        content: "Use the Application UI to select/edit/save settings and generate custom reports.",
         animation: true
       },
       {
         element: ".tour-step.home-tour-step-4",
         placement: "left",
         title: "Selecting Packages",
-        content: "If you have just signed up, you will only see the demo report. Here is where you can sign up for the report packages you're interested in.",
+        content: "Here is where you can subscribe to <b>FREE</b> or <b>PAID</b> report packages you're interested in.",
         animation: true
       },
       {
         element: ".tour-step.home-tour-step-5",
         placement: "left",
         title: "More Help",
-        content: "This help button will take you to a more detailed walkthrough of each report. Use this in conjunction with the demo tour to understand how to run reports.",
+        content: "This help button will take you to the Help Guide. Use this in conjunction with the <b>Application Overview</b> available when you select an Application.",
         animation: true
       },
       {
@@ -133,7 +140,7 @@ var userTour = {
         element: ".tour-step.home-tour-step-7",
         placement: "left",
         title: "User Settings",
-        content: "Click here to see your user settings, billing information, change your password, or submit a support ticket.",
+        content: "Click here to view/edit your user settings, billing information and password. It also provides a section to <b>Submit a Support Ticket</b>.",
         animation: true,
         onNext: function(tour){
                 //  document.getElementById("accountButton").click();
@@ -244,49 +251,49 @@ var userTour = {
         element: ".tour-step.template-tour-step-1",
         placement: "right",
         title: "Selecting a Data Model",
-        content: "Under each report there will be different data inputs needed to run it.<br></br>For example, for the demo risk/return analysis report \"Investment Returns\" would need to be loaded.",
+        content: "For each application there are different data inputs that are needed.<br></br>For example, the Return/Risk Analysis application would need time-series of \"Investment Returns\" to be uploaded.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-2",
         placement: "right",
         title: "Required vs. Optional Models",
-        content: "Certain data models are required to run the reports. Make sure to upload data for these models. Other data models are optional and not needed to run the report.",
+        content: "The Data Models under Required are needed for any Application core analysis or report generation. Optional Data Models are required or not required based on the user's setting selection under Application Interface.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-3",
         placement: "right",
-        title: "Defining Data Columns that will be used",
-        content: "The data is defined with rows and data columns. You will be able to export the data model to see how it looks at the end.",
+        title: "Structure of a Data Model",
+        content: "A Data Model has a Row and Column Structure similar to a Relational Database Table. Certain Data Model Column(s) are designated as primary keys to keep records unique. Some Data Models allow adding one or more user-defined Custom Columns.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-4",
         placement: "bottom",
-        title: "Model Description",
-        content: "This field gives a brief description of the data that you will upload.",
+        title: "Data Model Description",
+        content: "Review the description text carefully to understand the data requirements for each Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-5",
         placement: "bottom",
-        title: "Viewing Sample Data",
-        content: "Click this button to view sample data for this model to see an example of what the data looks like in the system.",
+        title: "View Sample Data",
+        content: "Click this button to view sample data for a data model. This should help provide further insight to the data requirements for each Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-6",
         placement: "bottom",
-        title: "Viewing Data Column List",
-        content: "Click this button to view the list of required and optional data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
+        title: "View Data Column Structure",
+        content: "Click this button to view the list of required/optional, null/non-null, custom/non-custom and other attributes for each data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-7",
         placement: "bottom",
-        title: "Using Plugin to Easily Import Data",
-        content: "Some data models can be seamlessly integrated with existing systems. Here you can easily upload in their original format.",
+        title: "Platform Selection",
+        content: "SAYS has a flexible upload interface that allows upload of data files from any third-party and/or in-house platform.<br></br>For certain Data Models, SAYS is pre-configured (mapping and validation) to accept certain types of file extracts from certain widely used third-party platforms/systems. If required, we work with clients to integrate third-party platforms that are not currently supported.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".modelDefinition_choosePlatformButton");
@@ -296,8 +303,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-8",
         placement: "left",
-        title: "Editing the Data Model",
-        content: "Edit the data model let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        title: "Edit the Data Model",
+        content: "Prior to initial data upload, users can Edit the Data Model.<br></br>Certain column attributes such as Text Length, Use Column, Column Name, Apply FX Return, Upload Value In Percentage, Is Null Value Allowed and other column attributes can be configured.<br></br>Once data has been loaded for the Data Model, the system will not allow updates to the Data Model structure. To Edit structure, all data persisted under the Data Model should be deleted in the <b>Manage Data</b> section of the Application.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".template-tour-step-8");
@@ -307,8 +314,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-9",
         placement: "left",
-        title: "Example Data Column",
-        content: "Each box displays info related to the data columns of the model. It shows what data type, whether null values are allowed, and whether there is a limit on text length.<br></br>Click the blue question mark for more info on each column.",
+        title: "Sample Data Column",
+        content: "Relevant Attribute information related to each column of the selected Data Model is available for review and update in certain cases.<br></br>Click the blue question mark for details on each column.",
         animation: true,
         onNext: function(tour){
           // Hit cancel button to get to the upload button
@@ -318,8 +325,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-10",
         placement: "left",
-        title: "Uploading Your Data",
-        content: "Once you have formatted your data model you will upload the respective data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
+        title: "Uploading Data",
+        content: "Once you have reviewed, customized and saved the Data Model structure, the system will take you to the Upload Screen.<br></br>If Data Model structure has already been saved, you can skip to this step.",
         animation: true
       }
     ]);
@@ -358,49 +365,49 @@ var userTour = {
         element: ".tour-step.template-tour-step-1",
         placement: "right",
         title: "Selecting a Data Model",
-        content: "Under each report there will be different data inputs needed to run it.<br></br>For example, for the demo risk/return analysis report \"Investment Returns\" would need to be loaded.",
+        content: "For each application there are different data inputs that are needed.<br></br>For example, the Return/Risk Analysis application would need time-series of \"Investment Returns\" to be uploaded.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-2",
         placement: "right",
         title: "Required vs. Optional Models",
-        content: "Certain data models are required to run the reports. Make sure to upload data for these models. Other data models are optional and not needed to run the report.",
+        content: "The Data Models under Required are needed for any Application core analysis or report generation. Optional Data Models are required or not required based on the user's setting selection under Application Interface.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-3",
         placement: "right",
-        title: "Defining Data Columns that will be used",
-        content: "The data is defined with rows and data columns. You will be able to export the data model to see how it looks at the end.",
+        title: "Structure of a Data Model",
+        content: "A Data Model has a Row and Column Structure similar to a Relational Database Table. Certain Data Model Column(s) are designated as primary keys to keep records unique. Some Data Models allow adding one or more user-defined Custom Columns.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-4",
         placement: "bottom",
-        title: "Model Description",
-        content: "This field gives a brief description of the data that you will upload.",
+        title: "Data Model Description",
+        content: "Review the description text carefully to understand the data requirements for each Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-5",
         placement: "bottom",
-        title: "Viewing Sample Data",
-        content: "Click this button to view sample data for this model to see an example of what the data looks like in the system.",
+        title: "View Sample Data",
+        content: "Click this button to view sample data for a data model. This should help provide further insight to the data requirements for each Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-6",
         placement: "bottom",
-        title: "Viewing Data Column List",
-        content: "Click this button to view the list of required and optional data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
+        title: "View Data Column Structure",
+        content: "Click this button to view the list of required/optional, null/non-null, custom/non-custom and other attributes for each data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-7",
         placement: "bottom",
-        title: "Using Plugin to Easily Import Data",
-        content: "Some data models can be seamlessly integrated with existing systems. Here you can easily upload in their original format.",
+        title: "Platform Selection",
+        content: "SAYS has a flexible upload interface that allows upload of data files from any third-party and/or in-house platform.<br></br>For certain Data Models, SAYS is pre-configured (mapping and validation) to accept certain types of file extracts from certain widely used third-party platforms/systems. If required, we work with clients to integrate third-party platforms that are not currently supported.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".modelDefinition_choosePlatformButton");
@@ -410,8 +417,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-8",
         placement: "left",
-        title: "Editing the Data Model",
-        content: "Edit the data model let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        title: "Edit the Data Model",
+        content: "Prior to initial data upload, users can Edit the Data Model.<br></br>Certain column attributes such as Text Length, Use Column, Column Name, Apply FX Return, Upload Value In Percentage, Is Null Value Allowed and other column attributes can be configured.<br></br>Once data has been loaded for the Data Model, the system will not allow updates to the Data Model structure. To Edit structure, all data persisted under the Data Model should be deleted in the <b>Manage Data</b> section of the Application.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".template-tour-step-8");
@@ -422,14 +429,14 @@ var userTour = {
         element: ".tour-step.customColumnButton",
         placement: "bottom",
         title: "Adding a Custom Column",
-        content: "If you want to add a new column to the data model, click <b>Add Custom Column</b> to define a new column. You can choose the data type, set whether nulls allowed, and if there is a maximum text length for text data types.",
+        content: "Certain Data Models allow for one or more Custom Columns to be defined. Click <b>Add Custom Column</b> to define the type of custom column to be added. It will then allow the attributes of the custom column to be configured. Users can also delete an existing Custom Column assumming no data is persisted in the Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-9",
         placement: "left",
-        title: "Example Data Column",
-        content: "Each box displays info related to the data columns of the model. It shows what data type, whether null values are allowed, and whether there is a limit on text length.<br></br>Click the blue question mark for more info on each column.",
+        title: "Sample Data Column",
+        content: "Relevant Attribute information related to each column of the selected Data Model is available for review and update in certain cases.<br></br>Click the blue question mark for details on each column.",
         animation: true,
         onNext: function(tour){
           // Hit cancel button to get to the upload button
@@ -439,8 +446,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-10",
         placement: "left",
-        title: "Uploading Your Data",
-        content: "Once you have formatted your data model you will upload the respective data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
+        title: "Uploading Data",
+        content: "Once you have reviewed, customized and saved the Data Model structure, the system will take you to the Upload Screen.<br></br>If Data Model structure has already been saved, you can skip to this step.",
         animation: true
       }
     ]);
@@ -486,63 +493,63 @@ var userTour = {
         element: ".tour-step.template-tour-step-1",
         placement: "right",
         title: "Selecting a Data Model",
-        content: "Under each report there will be different data inputs needed to run it.<br></br>For example, for the demo risk/return analysis report \"Investment Returns\" would need to be loaded.",
+        content: "For each application there are different data inputs that are needed.<br></br>For example, the Return/Risk Analysis application would need time-series of \"Investment Returns\" to be uploaded.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-2",
         placement: "right",
         title: "Required vs. Optional Models",
-        content: "Certain data models are required to run the reports. Make sure to upload data for these models. Other data models are optional and not needed to run the report.",
+        content: "The Data Models under Required are needed for any Application core analysis or report generation. Optional Data Models are required or not required based on the user's setting selection under Application Interface.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-3",
         placement: "right",
-        title: "Defining Data Columns that will be used",
-        content: "The data is defined with rows and data columns. You will be able to export the data model to see how it looks at the end.",
+        title: "Structure of a Data Model",
+        content: "A Data Model has a Row and Column Structure similar to a Relational Database Table. Certain Data Model Column(s) are designated as primary keys to keep records unique. Some Data Models allow adding one or more user-defined Custom Columns.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-4",
         placement: "bottom",
-        title: "Model Description",
-        content: "This field gives a brief description of the data that you will upload.",
+        title: "Data Model Description",
+        content: "Review the description text carefully to understand the data requirements for each Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-5",
         placement: "bottom",
-        title: "Viewing Sample Data",
-        content: "Click this button to view sample data for this model to see an example of what the data looks like in the system.",
+        title: "View Sample Data",
+        content: "Click this button to view sample data for a data model. This should help provide further insight to the data requirements for each Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-6",
         placement: "bottom",
-        title: "Viewing Data Column List",
-        content: "Click this button to view the list of required and optional data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
+        title: "View Data Column Structure",
+        content: "Click this button to view the list of required/optional, null/non-null, custom/non-custom and other attributes for each data columns associated with this data model.<br></br>Explanations of data types and descriptions of the columns are provided.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-7",
         placement: "bottom",
-        title: "Using Plugin to Easily Import Data",
-        content: "Some data models can be seamlessly integrated with existing systems. Here you can easily upload in their original format.",
+        title: "Platform Selection",
+        content: "SAYS has a flexible upload interface that allows upload of data files from any third-party and/or in-house platform.<br></br>For certain Data Models, SAYS is pre-configured (mapping and validation) to accept certain types of file extracts from certain widely used third-party platforms/systems. If required, we work with clients to integrate third-party platforms that are not currently supported.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-7a",
         placement: "bottom",
         title: "Selecting Your Platform",
-        content: "If your data is exported from a supported system, select it from the dropdown. This way you can easily upload the data in the raw format.",
+        content: "Depending on the Data Model, SAYS has a list of <b>supported third-party platforms</b> that the user can select from for data upload.<br></br>If your platform is not supported, select <b>Custom</b> and proceed. We also work with clients to integrate third-party platforms that are not currently supported. ",
         animation: true,
       },
       {
         element: ".tour-step.template-tour-step-7b",
         placement: "bottom",
         title: "Platform Upload Steps",
-        content: "Once you've selected your platform, there will be a couple steps in this dropdown to load the data. <br></br>Click the blue help button to make sure the file is supported in the system.",
+        content: "Depending on the platform selection, SAYS is pre-configured to load certain types of Data Extract files which are provided as Options or Multi-Step upload process.<br></br>Click the blue help button to determine the third-party platform extract file and format matches the one that is supported by the system. We also work with clients to integrate third-party platform Data Extracts that are not currently supported.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".modelDefinition_choosePlatformButton");
@@ -552,8 +559,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-8",
         placement: "left",
-        title: "Editing the Data Model",
-        content: "Edit the data model let's you add custom columns, change column names, and define the data types that will go in the columns.",
+        title: "Edit the Data Model",
+        content: "Prior to initial data upload, users can Edit the Data Model.<br></br>Certain column attributes such as Text Length, Use Column, Column Name, Apply FX Return, Upload Value In Percentage, Is Null Value Allowed and other column attributes can be configured.<br></br>Once data has been loaded for the Data Model, the system will not allow updates to the Data Model structure. To Edit structure, all data persisted under the Data Model should be deleted in the <b>Manage Data</b> section of the Application.",
         animation: true,
         onNext: function(tour){
           var nextButton = $(".template-tour-step-8");
@@ -564,14 +571,14 @@ var userTour = {
         element: ".tour-step.customColumnButton",
         placement: "bottom",
         title: "Adding a Custom Column",
-        content: "If you want to add a new column to the data model, click <b>Add Custom Column</b> to define a new column. You can choose the data type, set whether nulls allowed, and if there is a maximum text length for text data types.",
+        content: "Certain Data Models allow for one or more Custom Columns to be defined. Click <b>Add Custom Column</b> to define the type of custom column to be added. It will then allow the attributes of the custom column to be configured. Users can also delete an existing Custom Column assumming no data is persisted in the Data Model.",
         animation: true
       },
       {
         element: ".tour-step.template-tour-step-9",
         placement: "left",
-        title: "Example Data Column",
-        content: "Each box displays info related to the data columns of the model. It shows what data type, whether null values are allowed, and whether there is a limit on text length.<br></br>Click the blue question mark for more info on each column.",
+        title: "Sample Data Column",
+        content: "Relevant Attribute information related to each column of the selected Data Model is available for review and update in certain cases.<br></br>Click the blue question mark for details on each column.",
         animation: true,
         onNext: function(tour){
           // Hit cancel button to get to the upload button
@@ -581,8 +588,8 @@ var userTour = {
       {
         element: ".tour-step.template-tour-step-10",
         placement: "left",
-        title: "Uploading Your Data",
-        content: "Once you have formatted your data model you will upload the respective data. Don't worry you will be able to see how the data looks before you save it. You can also go back any time to edit the data.",
+        title: "Uploading Data",
+        content: "Once you have reviewed, customized and saved the Data Model structure, the system will take you to the Upload Screen.<br></br>If Data Model structure has already been saved, you can skip to this step.",
         animation: true
       }
     ]);
@@ -648,123 +655,34 @@ var userTour = {
 
   },
 
-  initLoadTour: function(){
-    userTour.loadTour.addSteps([
-      {
-        element: ".tour-step.tour-step-loading-1",
-        placement: "left",
-        title: "Uploading Data to SAYS Platform",
-        content: "This is the data you will be loading into the system and a brief description.",
-        animation: true
-      },
-      {
-        element: ".tour-step.tour-step-loading-2",
-        placement: "left",
-        title: "Browsing for your file",
-        content: "Find the Excel template on your local machine that contains your data.",
-        animation: true
-      },
-      {
-        element: ".tour-step.tour-step-loading-3",
-        placement: "left",
-        title: "File is Added to Upload Stage",
-        content: "You should now see the file name in the upload box.",
-        animation: true
-      },
-      {
-        element: ".tour-step.tour-step-loading-4",
-        placement: "left",
-        title: "Uploading a Template File",
-        content: "SAYS gives you the option to load data in the raw format or the templated format. Select 'Uploading a Template File' if you used the template files.",
-        animation: true
-      },
-      {
-        element: ".tour-step.tour-step-formatting-1",
-        placement: "bottom",
-        title: "Import Wizard",
-        content: "The next few steps use the Import Wizard, which helps you verify and modify data before it is saved.",
-        animation: true
-      },
-      {}
-    ]);
-
-    userTour.loadTour.init();
-    userTour.loadTour.start(true);
-  },
-
-
-  initFormattingTour: function(){
-    userTour.formattingTour.addSteps([
-      {
-        element: ".tour-step.tour-step-formatting-1",
-        placement: "bottom",
-        title: "Import Wizard",
-        content: "The Import Wizard helps users verify and check their data before saving. This first screen displays the column headers and rows of the previously loaded data in the Data Preview",
-        animation: true
-      }
-    ]);
-
-    userTour.formattingTour.init();
-    userTour.formattingTour.start(true);
-  },
-
-  initModelMappingTour: function(){
-    userTour.modelMappingTour.addSteps([
-      {
-        element: ".tour-step.tour-step-model-mapping-1",
-        placement: "bottom",
-        title: "Import Wizard - Column Mapping",
-        content: "This part of the Import Wizard lets the user map data columns to the data template. If a template is used the mapping is already straightforward.",
-        animation: true
-      },
-      {
-        element: ".tour-step.tour-step-model-mapping-2",
-        placement: "bottom",
-        title: "File Date Formatting",
-        content: "Verify that the system has read the dates in properly. Select the proper date format if the date columns didn't parse the dates properly.",
-        animation: true
-      },
-      {
-        element: ".tour-step.tour-step-model-mapping-3",
-        placement: "bottom",
-        title: "Saving Mapped Data",
-        content: "Once you've checked over the data, click \"Saved Mapped Data\" to save the data in the system.",
-        animation: true
-      }
-    ]);
-
-    userTour.formattingTour.init();
-    userTour.formattingTour.start(true);
-  },
-
   initManageDataTour: function(){
     userTour.manageDataTour.addSteps([
       {
         element: ".tour-step.tour-step-manage-data-1",
         placement: "right",
-        title: "Modifying the Data You've Loaded",
-        content: "Once you've loaded the data you can use this section to update and delete your data.",
+        title: "View/Edit/Delete Uploaded Data",
+        content: "Select the appropiate Data Model and Review uploaded data for accuracy and consistancy.",
         animation: true
       },
       {
         element: ".tour-step.tour-step-manage-data-2",
         placement: "left",
-        title: "Viewing Data",
-        content: "Data that has been loaded in to the system, both static and time series data, will be displayed here. Time-series data will be listed by date.",
+        title: "Data Element Selection",
+        content: "Depending on the Data Model, time series data is organized by date or identifier and non-time series data/static data is persisted as a StaticDataSet",
         animation: true
       },
       {
         element: ".tour-step.tour-step-manage-data-3",
         placement: "right",
-        title: "Run SQL Queries On Data",
-        content: "Click this icon to run simple SQL queries against the data that you've loaded. The data models will be stored as temporary databases that you can then query.",
+        title: "Execute Custom SQL Queries On Data",
+        content: "Click this icon to execute simple SQL queries against the uploaded data. The selected data model items create a temporary database that can be queried.",
         animation: true
       },
       {
         element: ".tour-step.tour-step-manage-data-4",
         placement: "right",
-        title: "Zip & Export Data to CSV Files",
-        content: "Click this icon to see the file structure of your data models. This allows you to easily zip and export the data you have loaded into the system.",
+        title: "Review and Export Data",
+        content: "Click this icon to view the file structure of your persisted data. System allows any data files to be extracted as CSV and other formats. Multiple extract files are exported as a ZIP file.",
         animation: true
       }
     ]);
